@@ -3,12 +3,16 @@
  */
 package com.dowhile.controller.bean;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.dowhile.frontend.mapping.bean.InventoryCountDetailBean;
 import com.dowhile.frontend.mapping.bean.InventoryCountTypeBean;
 import com.dowhile.frontend.mapping.bean.OutletBean;
 import com.dowhile.frontend.mapping.bean.ProductVariantBean;
+import com.dowhile.frontend.mapping.bean.ProductBean;
+
 
 /**
  * @author Zafar Shakeel
@@ -23,6 +27,8 @@ public class InventoryCountControllerBean {
 	private List<ProductVariantBean> productVariantBeansList;
 	private List<ProductVariantBean> allProductBeansList;
 	private List<ProductVariantBean> allProductVariantBeansList;
+	private Map<String, ProductVariantBean> productVariantMap = new HashMap<>();
+	private Map<String, ProductBean> productMap = new HashMap<>();
 	private List<InventoryCountDetailBean> inventoryCountDetailBeansList;
 	private boolean auditTransfer;
 	/**
@@ -173,5 +179,17 @@ public class InventoryCountControllerBean {
 	 */
 	public void setAuditTransfer(boolean autoTransfer) {
 		this.auditTransfer = autoTransfer;
+	}
+	public Map<String, ProductVariantBean> getProductVariantMap() {
+		return productVariantMap;
+	}
+	public void setProductVariantMap(Map<String, ProductVariantBean> productVariantMap) {
+		this.productVariantMap = productVariantMap;
+	}
+	public Map<String, ProductBean> getProductMap() {
+		return productMap;
+	}
+	public void setProductMap(Map<String, ProductBean> productMap) {
+		this.productMap = productMap;
 	}
 }

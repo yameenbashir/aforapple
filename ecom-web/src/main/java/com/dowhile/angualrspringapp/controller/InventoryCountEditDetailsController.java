@@ -105,7 +105,9 @@ public class InventoryCountEditDetailsController {
 
 	private List<Product> productList;
 	private List<ProductVariant> productVariantList;
-
+	private Map productVariantMap = new HashMap<>();
+	private Map productMap = new HashMap<>();
+	
 	@RequestMapping("/layout")
 	public String getInventoryCountEditDetialsControllerPartialPage(ModelMap modelMap) {
 		return "inventoryCountEditDetails/layout";
@@ -176,6 +178,8 @@ public class InventoryCountEditDetailsController {
 				inventoryCountControllerBean.setAllProductBeansList(allProductBeansList);
 				inventoryCountControllerBean.setAllProductVariantBeansList(allProductVariantBeansList);
 				inventoryCountControllerBean.setInventoryCountDetailBeansList(inventoryCountDetailBeansList);
+				inventoryCountControllerBean.setProductVariantMap(productVariantMap);
+				inventoryCountControllerBean.setProductMap(productMap);
 				util.AuditTrail(request, currentUser, "InventoryCountEditDetailsController.getInventoryCountEditDetailsControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived getInventoryCountEditDetailsControllerData successfully ",false);
 				return new Response(inventoryCountControllerBean, StatusConstants.SUCCESS,
@@ -197,12 +201,15 @@ public class InventoryCountEditDetailsController {
 
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping(value = "/getAllProductsByOutletId/{sessionId}", method = RequestMethod.POST)
 	public @ResponseBody Response getAllProductsByOutletId(@PathVariable("sessionId") String sessionId, HttpServletRequest request){
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			productList = null;
+			productVariantMap = new HashMap<>();
 			try {			
 				productList = productService.getAllProductsByOutletIdByCompanyIdGroupByProductUuId(currentUser.getOutlet().getOutletId() ,currentUser.getCompany().getCompanyId());
 				if(productList != null){
@@ -241,6 +248,7 @@ public class InventoryCountEditDetailsController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
+							productMap.put(product.getSku(), productVariantBean);
 						}						
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getAllProducts", "User "+ 
@@ -281,6 +289,7 @@ public class InventoryCountEditDetailsController {
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			productList = null;
+			productMap = new HashMap<>();
 			try {			
 				productList = productService.getAllProducts(currentUser.getCompany().getCompanyId());
 				if(productList != null){
@@ -320,7 +329,9 @@ public class InventoryCountEditDetailsController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
-						}						
+							productMap.put(product.getSku(), productVariantBean);
+						}
+						
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getAllProducts", "User "+ 
 							currentUser.getUserEmail()+" Get Products and Products",false);
@@ -360,6 +371,7 @@ public class InventoryCountEditDetailsController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
+			productVariantMap = new HashMap<>();
 			productVariantList = null;
 			try {			
 				productVariantList = productVariantService.getAllProductVariantsByOutletIdGroupbyUuid(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId());
@@ -401,6 +413,7 @@ public class InventoryCountEditDetailsController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -440,6 +453,7 @@ public class InventoryCountEditDetailsController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
+			productVariantMap = new HashMap<>();
 			productVariantList = null;
 			try {			
 				productVariantList = productVariantService.getAllProductVariants(currentUser.getCompany().getCompanyId());
@@ -482,6 +496,7 @@ public class InventoryCountEditDetailsController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -513,6 +528,7 @@ public class InventoryCountEditDetailsController {
 		}	
 	}
 
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(value = "/getAllDetailsByInventoryCountId/{sessionId}", method = RequestMethod.POST)
 	public @ResponseBody Response getAllDetailsByInventoryCountId(@PathVariable("sessionId") String sessionId,
@@ -674,6 +690,14 @@ public class InventoryCountEditDetailsController {
 	 */
 	public void setProductVariantList(List<ProductVariant> productVariantList) {
 		this.productVariantList = productVariantList;
+	}
+	
+	public Map getProductMap() {
+		return productMap;
+	}
+
+	public void setProdutMap(Map produtMap) {
+		this.productMap = produtMap;
 	}
 
 }

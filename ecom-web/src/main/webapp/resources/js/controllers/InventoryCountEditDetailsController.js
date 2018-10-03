@@ -13,6 +13,12 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 	$scope.inventoryCountDetailBean = {};
 	$scope.delInventoryCountDetailBean = {};
 	$scope.inventoryCountDetailBeansList = [];
+	$scope.productVariantMap = [];
+	$scope.productMap = [];
+	$scope.productMap = [];
+	$scope.productSKU = '';
+	$scope.skudisable = false;
+	$scope.inputTypeScan = true;
 
 	$scope.counter = 1;
 
@@ -70,6 +76,12 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 				}
 				if($scope.data.allProductVariantBeansList!=null){
 					$scope.allProductVariantBeansList = $scope.data.allProductVariantBeansList;
+				}
+				if($scope.data.productVariantMap!=null){
+					$scope.productVariantMap = $scope.data.productVariantMap;
+				}
+				if($scope.data.productMap!=null){
+					$scope.productMap = $scope.data.productMap;
 				}
 				if($scope.data.allProductBeansList != null){
 					$scope.allProductBeansList = $scope.data.allProductBeansList;
@@ -746,7 +758,20 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 
 			}
 	};
-
+	
+	$scope.skuinput = function(){
+		//console.log($scope.productVariantMap[$scope.productSKU]);
+		$scope.skudisable = true;
+		if($scope.productVariantMap[$scope.productSKU] != null){
+			$scope.inventoryCountDetailBean.countedProdQty = 1;
+			$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+			//console.log($scope.productVariantMap[$scope.productSKU]);			
+			$scope.checkProductStatus();
+		}
+		$scope.productSKU = '';
+		$scope.skudisable = false;
+	};
+	
 	
 	$scope.sessionValidation();
 }];
