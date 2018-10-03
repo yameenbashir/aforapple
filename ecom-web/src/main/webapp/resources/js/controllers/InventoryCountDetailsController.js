@@ -769,16 +769,22 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 	};
 	
 	$scope.skuinput = function(){
-		//console.log($scope.productVariantMap[$scope.productSKU]);
-		$scope.skudisable = true;
-		if($scope.productVariantMap[$scope.productSKU] != null){
-			$scope.inventoryCountDetailBean.countedProdQty = 1;
-			$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
-			//console.log($scope.productVariantMap[$scope.productSKU]);			
-			$scope.checkProductStatus();
+		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
+			if($scope.productVariantMap[$scope.productSKU] != null){
+				$scope.skudisable = true;
+				$scope.inventoryCountDetailBean.countedProdQty = 1;
+				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+				//console.log($scope.productVariantMap[$scope.productSKU]);			
+				$scope.checkProductStatus();
+				$scope.productSKU = '';
+				$scope.skudisable = false;
+			}else{
+				if($scope.productSKU.length>15){
+					$scope.productSKU = '';
+					$scope.skudisable = false;
+				}
+			}
 		}
-		$scope.productSKU = '';
-		$scope.skudisable = false;
 	};
 	
 	$scope.sessionValidation();
