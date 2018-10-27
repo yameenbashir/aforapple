@@ -186,7 +186,9 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 			
 	};
 	$scope.loadSalesProductDataOnlyAjax = function() {
-		$scope.loadingSalePageComplete = true;
+		console.log("$scope.loadSalesProductDataOnlyAjax");
+		//$scope.loadingSalePageComplete = true;
+		//** Sales Speed Test **//
 		if($rootScope.online){
 			$http.get('sell/getAllProductsOnly/' + $scope._s_tk_com).success(function(Response) {
 				$scope.sellControllerBean = Response;

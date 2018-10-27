@@ -92,6 +92,10 @@ public class PurchaseOrderDetailsController {
 	@Resource
 	private ProductService productService;
 
+
+	private Map productVariantMap = new HashMap<>();
+	private Map productMap = new HashMap<>();
+	
 	@RequestMapping("/layout")
 	public String getPurchaseOrderDetialsControllerPartialPage(ModelMap modelMap) {
 		return "purchaseOrderDetails/layout";
@@ -120,6 +124,8 @@ public class PurchaseOrderDetailsController {
 				PurchaseOrderControllerBean purchaseOrderControllerBean = new PurchaseOrderControllerBean();
 				purchaseOrderControllerBean.setProductBeansList(productBeansList);
 				purchaseOrderControllerBean.setProductVariantBeansList(productVariantBeansList);
+				purchaseOrderControllerBean.setProductVariantMap(productVariantMap);
+				purchaseOrderControllerBean.setProductMap(productMap);
 				util.AuditTrail(request, currentUser, "PurchaseOrderController.getPurchaseOrderControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived PurchaseOrderControllerData successfully ",false);
 				return new Response(purchaseOrderControllerBean, StatusConstants.SUCCESS,
@@ -170,6 +176,8 @@ public class PurchaseOrderDetailsController {
 				purchaseOrderControllerBean.setProductBeansList(productBeansList);
 				purchaseOrderControllerBean.setProductVariantBeansList(productVariantBeansList);
 				purchaseOrderControllerBean.setStockTransferOrderBeansList(stockTransferOrderBeansList);
+				purchaseOrderControllerBean.setProductVariantMap(productVariantMap);
+				purchaseOrderControllerBean.setProductMap(productMap);
 				util.AuditTrail(request, currentUser, "PurchaseOrderController.getPurchaseOrderControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived PurchaseOrderControllerData successfully ",false);
 				return new Response(purchaseOrderControllerBean, StatusConstants.SUCCESS,
@@ -214,6 +222,8 @@ public class PurchaseOrderDetailsController {
 				PurchaseOrderControllerBean purchaseOrderControllerBean = new PurchaseOrderControllerBean();
 				purchaseOrderControllerBean.setProductBeansList(productBeansList);
 				purchaseOrderControllerBean.setProductVariantBeansList(productVariantBeansList);
+				purchaseOrderControllerBean.setProductVariantMap(productVariantMap);
+				purchaseOrderControllerBean.setProductMap(productMap);
 				util.AuditTrail(request, currentUser, "PurchaseOrderController.getPurchaseOrderControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived PurchaseOrderControllerData successfully ",false);
 				return new Response(purchaseOrderControllerBean, StatusConstants.SUCCESS,
@@ -3271,6 +3281,7 @@ public class PurchaseOrderDetailsController {
 			Map recvProductVariantMap = new HashMap<>();
 			Map recvProductMap = new HashMap<>();
 			Map productMap = new HashMap<>();
+			productVariantMap = new HashMap<>();
 			int outletId = Integer.parseInt(stockOrderBean.getOutletId());
 			if(stockOrderBean.getSourceOutletId() != null && !stockOrderBean.getSourceOutletId().equalsIgnoreCase(""))
 			{
@@ -3356,6 +3367,7 @@ public class PurchaseOrderDetailsController {
 							}
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get Products and ProductVariants",false);
@@ -3394,6 +3406,7 @@ public class PurchaseOrderDetailsController {
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			List<Product> productList = null;
+			productMap = new HashMap<>();
 			try {			
 				productList = productService.getAllProductsByOutletIdByCompanyIdGroupByProductUuId(Integer.parseInt(outletId), currentUser.getCompany().getCompanyId());
 				if(productList != null){
@@ -3433,6 +3446,7 @@ public class PurchaseOrderDetailsController {
 
 							}
 							productVariantBeansList.add(productVariantBean);
+							productMap.put(product.getSku(), productVariantBean);
 						}						
 					}				
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProducts", "User "+ 
@@ -3474,6 +3488,7 @@ public class PurchaseOrderDetailsController {
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			List<ProductVariant> productVariantList = null;
+			productVariantMap = new HashMap<>();
 			try {			
 				productVariantList = productVariantService.getAllProductVariantsByOutletIdGroupbyUuid(Integer.parseInt(outletId), currentUser.getCompany().getCompanyId());
 				Map<Integer, Product> productsMap = new HashMap<>();
@@ -3515,6 +3530,7 @@ public class PurchaseOrderDetailsController {
 
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -3557,6 +3573,7 @@ public class PurchaseOrderDetailsController {
 			List<Product> productList = null;
 			List<Product> recvProductList = null;
 			Map recvProductMap = new HashMap<>();
+			productMap = new HashMap<>();
 			try {			
 				productList = productService.getAllProductsByOutletIdByCompanyIdGroupByProductUuId(Integer.parseInt(stockOrderBean.getSourceOutletId()), currentUser.getCompany().getCompanyId());
 				if(stockOrderBean.getSourceOutletId() != null && !stockOrderBean.getSourceOutletId().equalsIgnoreCase("")){ //Stock Transfer Case
@@ -3611,6 +3628,7 @@ public class PurchaseOrderDetailsController {
 								}
 							}
 							productVariantBeansList.add(productVariantBean);
+							productMap.put(product.getSku(), productVariantBean);
 						}
 						
 					}
@@ -3655,6 +3673,7 @@ public class PurchaseOrderDetailsController {
 			List<ProductVariant> productVariantList = null;
 			List<ProductVariant> recvProductVariantList = null;
 			Map recvProductVariantMap = new HashMap<>();
+			productVariantMap = new HashMap<>();
 			try {			
 				productVariantList = productVariantService.getAllProductVariantsByOutletIdGroupbyUuid(Integer.parseInt(stockOrderBean.getSourceOutletId()), currentUser.getCompany().getCompanyId());
 				Map<Integer, Product> productsMap = new HashMap<>();
@@ -3719,6 +3738,7 @@ public class PurchaseOrderDetailsController {
 							}
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -3758,6 +3778,7 @@ public class PurchaseOrderDetailsController {
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			List<Product> productList = null;
+			productMap = new HashMap<>();
 			try {			
 				productList = productService.getAllProductsByCompanyIdGroupByProductUuId(currentUser.getCompany().getCompanyId());
 				if(productList != null){
@@ -3796,6 +3817,7 @@ public class PurchaseOrderDetailsController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
+							productMap.put(product.getSku(), productVariantBean);
 						}						
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProducts", "User "+ 
@@ -3837,6 +3859,7 @@ public class PurchaseOrderDetailsController {
 			User currentUser = (User) session.getAttribute("user");	
 			List<ProductVariantBean> productVariantBeansList = new ArrayList<>();
 			List<ProductVariant> productVariantList = null;
+			productVariantMap = new HashMap<>();
 			try {			
 				productVariantList = productVariantService.getAllProductVariantsGroupbyUuid(currentUser.getCompany().getCompanyId());
 				Map<Integer, Product> productsMap = new HashMap<>();
@@ -3877,6 +3900,7 @@ public class PurchaseOrderDetailsController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
+						productVariantMap.put(productVariant.getSku(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -3906,6 +3930,22 @@ public class PurchaseOrderDetailsController {
 		else{
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
 		}	
+	}
+
+	public Map getProductVariantMap() {
+		return productVariantMap;
+	}
+
+	public void setProductVariantMap(HashMap productVariantMap) {
+		this.productVariantMap = productVariantMap;
+	}
+
+	public Map getProductMap() {
+		return productMap;
+	}
+
+	public void setProductMap(HashMap productMap) {
+		this.productMap = productMap;
 	}
 
 }

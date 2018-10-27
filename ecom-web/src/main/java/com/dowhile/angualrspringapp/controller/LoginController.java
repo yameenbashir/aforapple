@@ -3,15 +3,20 @@ package com.dowhile.angualrspringapp.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -19,10 +24,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -70,6 +79,7 @@ import com.dowhile.service.VariantAttributeService;
 import com.dowhile.service.VariantAttributeValuesService;
 import com.dowhile.service.util.ServiceUtil;
 import com.dowhile.util.SessionValidator;
+import com.dowhile.util.StringUtils;
 
 /**
  * @author Yameen Bashir
@@ -120,6 +130,10 @@ public class LoginController {
 	@RequestMapping(value = "/doLogin", method = RequestMethod.POST)
 	public @ResponseBody Response doLogin(@RequestBody UserBean appuser,
 			HttpServletRequest request) {
+		
+	//	StringUtils.encode(str);
+		
+		
 		HttpSession session = request.getSession(true);
 		boolean isExist = false;
 		User user = null;
@@ -156,6 +170,19 @@ public class LoginController {
 				session.setAttribute("user", user);
 				Map<String ,Configuration> configurationMap = configurationService.getAllConfigurationsByCompanyId(company.getCompanyId());
 				session.setAttribute("configurationMap", configurationMap);
+				//For Local Installation
+				Configuration configruationForLocal = configurationMap.get("COMPANY_RECEIPT_IMAGE");
+				if(configruationForLocal!=null){
+					String companyImagePath = configruationForLocal.getPropertyValue();
+					String encodeString = StringUtils.encode(companyImagePath);
+					System.out.println("Encode: "+encodeString);
+					String decode = StringUtils.decode(encodeString);
+					System.out.println("Decode: "+decode);
+					
+					
+				}
+				
+				
 				LoginBean loginBean = new LoginBean();
 				loginBean.setUserName(user.getFirstName() + " "
 						+ user.getLastName());
@@ -183,7 +210,7 @@ public class LoginController {
 					session.setAttribute("subDomianName", subDomianName);
 				}
 				
-				//				SynchSupplierData(user);
+				//SynchProductMartInData(user);
 				if(domianConfiguration==null){
 					System.out.println("domain configuration is null ");
 					util.AuditTrail(request, user, "LoginController.doLogin", "domain configuration is null for user : "+
@@ -256,8 +283,9 @@ public class LoginController {
 	//INSERT INTO `ecom`.`variant_attribute` (`ATTRIBUTE_NAME`, `ACTIVE_INDICATOR`, `CREATED_DATE`, `LAST_UPDATED`, `CREATED_BY`, `UPDATED_BY`, `VARIANT_ATTRIBUTE_ASSOCIATION_ID`, `COMPANY_ASSOCIATION_ID`) VALUES ( 'Color', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1', '1', '0', '1');
 	//INSERT INTO `ecom`.`variant_attribute` (`ATTRIBUTE_NAME`, `ACTIVE_INDICATOR`, `CREATED_DATE`, `LAST_UPDATED`, `CREATED_BY`, `UPDATED_BY`, `VARIANT_ATTRIBUTE_ASSOCIATION_ID`, `COMPANY_ASSOCIATION_ID`) VALUES ( 'Size', TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1', '1', '0', '1');
 
-	private static final String FILE_NAME = "/var/lib/openshift/58d95a9689f5cf06c50001ca/app-root/data/Products_Kites_2017.xlsx";
-	// private static final String FILE_NAME = "C:\\Users\\IBM_ADMIN\\Desktop\\Products_Kites_2017.xlsx";
+	//private static final String FILE_NAME = "/var/lib/openshift/58d95a9689f5cf06c50001ca/app-root/data/Products_Kites_2017.xlsx";
+	 private static final String FILE_NAME = "C:\\mart.xlsx";//C:\
+	 private static final String FILE_NAME_NEW_MART = "C:\\newmart.xlsx";//C:\
 
 	public void SynchSupplierData(User user) {
 
@@ -526,5 +554,325 @@ public class LoginController {
 		}
 
 	}
+	
+	@SuppressWarnings("deprecation")
+	public  void SynchProductMartInData(User user) {
+
+		try {
+
+			FileInputStream excelFile = new FileInputStream(new File(FILE_NAME_NEW_MART));
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet datatypeSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = datatypeSheet.iterator();
+			SalesTax salesTax = salesTaxService.getSalesTaxBySalesTaxId(1, user.getCompany().getCompanyId());
+			Brand brand = brandService.getBrandByBrandId(1, user.getCompany().getCompanyId());
+			VariantAttribute variantAttributeByVariantAttributeAssocicationId1 = variantAttributeService.getVariantAttributeByVariantAttributeId(1, user.getCompany().getCompanyId());
+			ProductType productType = new ProductType();
+			productType.setProductTypeId(1);
+			Contact contact = new Contact();
+			contact.setContactId(2);
+			int count = 0;
+			int variantDefalutInventory = 10;
+			String colour = "MI";
+			//VariantAttribute variantAttributeByVariantAttributeAssocicationId2 = variantAttributeService.getVariantAttributeByVariantAttributeId(2, user.getCompany().getCompanyId());
+			int rowNum = 0;
+			while (iterator.hasNext()) {
+				rowNum = rowNum+1;
+				System.out.println(rowNum);
+
+				Row currentRow = iterator.next();
+				String sku = currentRow.getCell(0).getStringCellValue();
+				String productName = currentRow.getCell(1).getStringCellValue();
+				String retailPrice = currentRow.getCell(2).getStringCellValue();
+				String supplierPrice = currentRow.getCell(3).getStringCellValue();
+				double retailPr = Double.parseDouble(retailPrice);
+				double supplierPr = Double.parseDouble(supplierPrice);
+				
+				double markUp = (retailPr-supplierPr)*100/supplierPr;
+				DecimalFormat numberFormat = new DecimalFormat("#.00");
+				//System.out.println("Markup: "+numberFormat.format(markUp));
+				BigDecimal markUpPrct = new BigDecimal(numberFormat.format(markUp)).setScale(2, RoundingMode.HALF_EVEN);
+				System.out.println("Big Decimal markUpPrct: "+markUpPrct);
+				//System.out.println("Row Number: "+rowNum+" sku: "+sku+" Product Name: "+productName+" supplierPrice: "+supplierPrice+" retailPrice: "+retailPrice);
+				
+				//result = (supplyPrice*(markUp/100)+supplyPrice).toFixed(2);
+				//double newRetailPrice = (supplierPr*(markUp/100)+supplierPr);
+				//System.out.println("newRetailPrice: "+newRetailPrice+" oldRetailPrice: "+retailPr);
+				
+				
+				
+				
+				Product product =  productService.getProductByProductName(productName, user.getCompany().getCompanyId());
+				if(product ==null){
+					Product newProduct = new Product();
+					newProduct.setProductName(productName);
+					newProduct.setSku(sku);
+					
+					newProduct.setProductType(productType);
+					UUID uuidProd = UUID.randomUUID();
+					String randomUUIDProduct = uuidProd.toString();
+					newProduct.setProductUuid(productName);
+					newProduct.setProductHandler(productName);
+					
+					newProduct.setContact(contact);
+					newProduct.setBrand(brand);
+					newProduct.setProductCanBeSold("true");
+					newProduct.setStandardProduct("true");
+					newProduct.setTrackingProduct("true");
+					newProduct.setVariantProducts("true");
+					newProduct.setCurrentInventory(0);
+					newProduct.setReorderPoint(0);
+					newProduct.setReorderAmount(BigDecimal.ZERO);
+					newProduct.setSupplyPriceExclTax(new BigDecimal(supplierPrice));
+					newProduct.setMarkupPrct(markUpPrct);
+					newProduct.setOutlet(user.getOutlet());
+					newProduct.setSalesTax(salesTax);
+					newProduct.setActiveIndicator(true);
+					newProduct.setCreatedDate(new Date());
+					newProduct.setUserByCreatedBy(user);
+					newProduct.setUserByUpdatedBy(user);
+					newProduct.setCompany(user.getCompany());
+					newProduct.setLastUpdated(new Date());
+					newProduct.setImagePath("");
+					product = productService.addProduct(newProduct, Actions.CREATE, 0, user.getCompany());
+
+					ProductVariant productVariant = new ProductVariant();
+					productVariant.setProduct(product);
+					productVariant.setProductVariantUuid(UUID.randomUUID().toString());
+					productVariant.setVariantAttributeName(colour);
+					productVariant.setVariantAttributeValue1(colour);
+					//productVariant.setVariantAttributeValue2(size);
+
+					productVariant.setVariantAttributeByVariantAttributeAssocicationId1(variantAttributeByVariantAttributeAssocicationId1);
+					//productVariant.setVariantAttributeByVariantAttributeAssocicationId2(variantAttributeByVariantAttributeAssocicationId2);
+					productVariant.setCurrentInventory(variantDefalutInventory);
+					productVariant.setReorderPoint(0);
+					productVariant.setReorderAmount(BigDecimal.ZERO);
+					productVariant.setProductUuid(product.getProductUuid());
+					productVariant.setSupplyPriceExclTax(new BigDecimal(supplierPrice));
+					productVariant.setMarkupPrct(markUpPrct);
+					productVariant.setSku(sku);
+					productVariant.setOutlet(user.getOutlet());
+					productVariant.setSalesTax(salesTax);
+					productVariant.setActiveIndicator(true);
+					productVariant.setCreatedDate(new Date());
+					productVariant.setLastUpdated(new Date());
+					productVariant.setUserByCreatedBy(user);
+					productVariant.setUserByUpdatedBy(user);
+					productVariant.setCompany(user.getCompany());
+					productVariant = productVariantService.addProductVariant(productVariant, Actions.CREATE, 0,  user.getCompany(), String.valueOf(product.getProductId()));
+
+
+					VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+					variantAttributeValues.setActiveIndicator(true);
+					variantAttributeValues.setAttributeValue(colour);
+					variantAttributeValues.setCompany(user.getCompany());
+					variantAttributeValues.setCreatedDate(new Date());
+					variantAttributeValues.setLastUpdated(new Date());
+					variantAttributeValues.setProduct(product);
+					variantAttributeValues.setProductVariant(productVariant);
+					variantAttributeValues.setUserByCreatedBy(user);
+					variantAttributeValues.setUserByUpdatedBy(user);
+					variantAttributeValues.setProductUuid(productName);
+					variantAttributeValues.setVariantAttribute(variantAttributeByVariantAttributeAssocicationId1);
+					variantAttributeValuesService.addVariantAttributeValues(variantAttributeValues, user.getCompany().getCompanyId());
+
+					
+				}else{
+					System.out.println("Product Already exit");
+					System.out.println("Row Number: "+rowNum+" sku: "+sku+" Product Name: "+productName+" supplierPrice: "+supplierPrice+" retailPrice: "+retailPrice);
+				}
+
+
+
+
+				//     System.out.println(retail_price);
+
+			
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@SuppressWarnings({ "deprecation", "unchecked" })
+	public static void SynchProductData1() {
+
+		try {
+
+			FileInputStream excelFile = new FileInputStream(new File(FILE_NAME));
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet datatypeSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = datatypeSheet.iterator();
+			
+			//Create blank workbook
+		      XSSFWorkbook workbookWrite = new XSSFWorkbook();
+		    //Create a blank sheet
+		      XSSFSheet spreadsheet = workbookWrite.createSheet( " Mart Info ");
+		      Map < String, Object[] > productInfo = new TreeMap < String, Object[] >();
+		      int i =0;
+		      productInfo.put( i+"", new Object[] {
+		    	         "ITEM CODE", "PRODUCT NAME", "SALE PRICE","COST PRICE" });
+		      Map productMap = new HashMap<>();
+			
+		/*	SalesTax salesTax = salesTaxService.getSalesTaxBySalesTaxId(1, user.getCompany().getCompanyId());
+			Brand brand = brandService.getBrandByBrandId(1, user.getCompany().getCompanyId());
+			VariantAttribute variantAttributeByVariantAttributeAssocicationId1 = variantAttributeService.getVariantAttributeByVariantAttributeId(1, user.getCompany().getCompanyId());
+			VariantAttribute variantAttributeByVariantAttributeAssocicationId2 = variantAttributeService.getVariantAttributeByVariantAttributeId(2, user.getCompany().getCompanyId());*/
+			int rowNum = 0;
+			while (iterator.hasNext()) {
+				rowNum = rowNum+1;
+				System.out.println(rowNum);
+
+				Row currentRow = iterator.next();
+				String barCode = "";
+				currentRow.getCell(0).setCellType(CellType.STRING);
+				if (currentRow.getCell(0).getCellTypeEnum() == CellType.STRING) {
+					barCode = currentRow.getCell(0).getStringCellValue();
+				} else if (currentRow.getCell(0).getCellTypeEnum() == CellType.NUMERIC) {
+					//currentRow.getCell(0).setCellType(currentRow.getCell(0).CELL_TYPE_STRING);
+					Double doub = currentRow.getCell(0).getNumericCellValue();
+					System.out.println("doub: "+Double.toString(doub));
+					//System.out.println("currentRow.getCell(0).getNumericCellValue(); "+currentRow.getCell(0).getNumericCellValue());
+					barCode = String.valueOf(currentRow.getCell(0).getNumericCellValue());
+				}
+				System.out.println("Barcode: "+barCode);
+				if(barCode.equalsIgnoreCase("")||barCode.equalsIgnoreCase("LIST OF ITEM FILE SORTED BY COST PRICE DESCENDING")
+						||barCode.equalsIgnoreCase("Item Code")
+						||barCode.equalsIgnoreCase("MART INN")||barCode.equalsIgnoreCase("LIST OF ITEM FILE SORTED BY COST PRICE DESCENDING")){
+					continue;
+				}
+				//	                String lineItemName = currentRow.getCell(1).getStringCellValue();
+				currentRow.getCell(1).setCellType(CellType.STRING);
+				String productName =  currentRow.getCell(1).getStringCellValue();
+				System.out.println("ProductName: "+productName);
+				productMap.get(barCode);
+				if(productMap.get(barCode)!=null){
+					System.out.println("dublicate bar Code: "+barCode+" with productName: "+productName);
+				}else{
+					productMap.put(barCode, productName);
+				}
+				
+				
+				
+				//	                String product_code = currentRow.getCell(2).getStringCellValue();
+				//	                String Product_number = currentRow.getCell(4).getStringCellValue();
+				double retailPrice = (double) currentRow.getCell(7).getNumericCellValue();
+				double supplierPrice = (double) currentRow.getCell(8).getNumericCellValue();
+				if(supplierPrice==0){
+					System.out.println("supplierPrice: "+supplierPrice);
+					supplierPrice = retailPrice;
+				}
+				if(retailPrice==0){
+					retailPrice = 1.00;
+					supplierPrice = 1.00;
+				}
+				System.out.println("Product Name: "+productName+" salePrice: "+retailPrice+" retailPrice: "+supplierPrice);
+				productInfo.put( i+++"", new Object[] {
+						barCode, productName, retailPrice+"",supplierPrice+"" });
+				//	                String supplier_name = currentRow.getCell(6).getStringCellValue();
+			//	String size = currentRow.getCell(7).getStringCellValue().replaceAll("temp_", "");
+				//String Color = currentRow.getCell(8).getStringCellValue();
+				//String bar_code = currentRow.getCell(9).getStringCellValue();
+				//String retail_price = String.valueOf(currentRow.getCell(10).getNumericCellValue());
+				//int count = (int) currentRow.getCell(11).getNumericCellValue();
+			
+
+
+
+
+				//     System.out.println(retail_price);
+
+			}
+			//Iterate over data and write to sheet
+		      Set < String > keyid = productInfo.keySet();
+			//Create row object
+		      XSSFRow row;
+			int rowid = 0;
+		      
+		      for (String key : keyid) {
+		         row = spreadsheet.createRow(rowid);
+		         Object [] objectArr = productInfo.get(key);
+		         int cellid = 0;
+		         
+		         for (Object obj : objectArr){
+		            Cell cell = row.createCell(cellid++);
+		            cell.setCellValue((String)obj);
+		         }
+		         rowid++;
+		      }
+		      //Write the workbook in file system
+		      FileOutputStream out = new FileOutputStream(
+		         new File("C:\\newmart.xlsx"));
+		      
+		      workbookWrite.write(out);
+		      out.close();
+		      System.out.println("New mart written successfully");
+		   	
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static void SynchProductData2() {
+
+		try {
+			FileInputStream excelFile = new FileInputStream(new File(FILE_NAME_NEW_MART));
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet datatypeSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = datatypeSheet.iterator();
+			int rowNum = 0;
+			while (iterator.hasNext()) {
+				rowNum = rowNum+1;
+				//System.out.println("Row Number: "+rowNum);
+				Row currentRow = iterator.next();
+				String barCode = "";
+				currentRow.getCell(0).setCellType(CellType.STRING);
+				if (currentRow.getCell(0).getCellTypeEnum() == CellType.STRING) {
+					barCode = currentRow.getCell(0).getStringCellValue();
+				} else if (currentRow.getCell(0).getCellTypeEnum() == CellType.NUMERIC) {
+					barCode = String.valueOf(currentRow.getCell(0).getNumericCellValue());
+				}
+				String productName =  currentRow.getCell(1).getStringCellValue();
+				String retailPrice = currentRow.getCell(2).getStringCellValue();
+				String supplierPrice = currentRow.getCell(3).getStringCellValue();
+				
+				double retailPr = Double.parseDouble(retailPrice);
+				double supplierPr = Double.parseDouble(supplierPrice);
+				
+				double markUp = (retailPr-supplierPr)*100/supplierPr;
+				DecimalFormat numberFormat = new DecimalFormat("#.00");
+				System.out.println("Markup: "+numberFormat.format(markUp));
+				BigDecimal mark = new BigDecimal(numberFormat.format(markUp));
+				System.out.println("Big Decimal mark: "+mark);
+				System.out.println("Row Number: "+rowNum+" barCode: "+barCode+" Product Name: "+productName+" supplierPrice: "+supplierPrice+" retailPrice: "+retailPrice);
+				
+				//result = (supplyPrice*(markUp/100)+supplyPrice).toFixed(2);
+				double newRetailPrice = (supplierPr*(markUp/100)+supplierPr);
+				System.out.println("newRetailPrice: "+newRetailPrice+" oldRetailPrice: "+retailPr);
+				//System.out.println("markUp: "+markUp.setScale(5, RoundingMode.HALF_EVEN));
+			}
+						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public static void main(String args[]){
+		/*double number = 90909090.123456789;
+		DecimalFormat numberFormat = new DecimalFormat("#.00000");
+		System.out.println(numberFormat.format(number));*/
+		LoginController.SynchProductData1();
+	}
+
 
 }

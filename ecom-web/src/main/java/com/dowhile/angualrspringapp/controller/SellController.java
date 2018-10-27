@@ -221,7 +221,7 @@ public class SellController  {
 			HttpSession session = request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId());
+				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(),currentUser.getUserId());
 				sellControllerBean.setRegisterStatus("false");
 				if (dailyRegister != null) {
 					sellControllerBean.setDailyRegisterId(dailyRegister
@@ -319,7 +319,7 @@ public class SellController  {
 					sellControllerBean.setPhoneNumber(address.getPhone());
 
 				}
-				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId());
+				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(),currentUser.getUserId());
 				sellControllerBean.setRegisterStatus("false");
 				if (dailyRegister != null) {
 					sellControllerBean.setDailyRegisterId(dailyRegister
@@ -1125,7 +1125,7 @@ public class SellController  {
 				dailyRegister.setCompany(companyService
 						.getCompanyDetailsByCompanyID(currentUser.getCompany().getCompanyId()));
 				dailyRegister.setRegister(registerService
-						.getRegestersByOutletId(currentUser.getOutlet().getOutletId(),currentUser.getCompany().getCompanyId()).get(0));
+						.getRegestersByOutletId(currentUser.getOutlet().getOutletId(),currentUser.getCompany().getCompanyId(),currentUser.getUserId()).get(0));
 				dailyRegister.setCompany(currentUser.getCompany());
 				dailyRegister.setCreatedBy(currentUser.getUserId());
 				dailyRegister = dailyRegisterService.addDailyRegister(dailyRegister,currentUser.getCompany().getCompanyId());
