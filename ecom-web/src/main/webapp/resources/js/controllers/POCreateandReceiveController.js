@@ -27,6 +27,11 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 	$scope.gui.varientProducts = false;
 	$scope.gui.standardProduct = true;
 	$scope.hideRefValues = false;
+	$scope.productVariantMap = [];
+	$scope.productMap = [];
+	$scope.productSKU = '';
+	$scope.skudisable = false;
+	$scope.inputTypeScan = true;
 
 	// product info declarions end
 	$scope.sessionValidation = function(){
@@ -70,6 +75,12 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 				for (var i = 0; i < $scope.productVariantBeansList.length; i++) {
 					$scope.productBeansList.push($scope.productVariantBeansList[i]);
 				}
+			}
+			if($scope.data.productVariantMap!=null){
+				$scope.productVariantMap = $scope.data.productVariantMap;
+			}
+			if($scope.data.productMap!=null){
+				$scope.productMap = $scope.data.productMap;
 			}
 			if($scope.data.outletBeansList!=null){
 				$scope.outletList = $scope.data.outletBeansList;
@@ -662,7 +673,16 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 					return skuLowercase == term;
 
 				});
-				
+				if(customerResults.length == 0){
+					customerResults = _.filter($scope.allProductBeansList, function(val) {
+						return val.variantAttributeName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term);
+					});				
+					customerVariantResults = _.filter($scope.allProductBeansList, function(val) {
+						var skuLowercase =  val.sku.toLowerCase();
+						return skuLowercase == term;
+
+					});	
+				}
 				if(customerVariantResults && customerVariantResults.length>0){
 					$scope.hideRefValues = true;
 					$scope.stockOrderDetailBean.orderProdQty = 1;
@@ -1262,7 +1282,25 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 			}
 		}
 	};
-
+	
+	$scope.skuinput = function(){
+		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
+			if($scope.productVariantMap[$scope.productSKU] != null){
+				$scope.skudisable = true;
+				$scope.stockOrderDetailBean.orderProdQty = 1;
+				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+				//console.log($scope.productVariantMap[$scope.productSKU]);			
+				$scope.checkProductStatus();
+				$scope.productSKU = '';
+				$scope.skudisable = false;
+			}else{
+				if($scope.productSKU.length>15){
+					$scope.productSKU = '';
+					$scope.skudisable = false;
+				}
+			}
+		}
+	};
 //	Add Variants code end
 	$scope.sessionValidation();
 }];
