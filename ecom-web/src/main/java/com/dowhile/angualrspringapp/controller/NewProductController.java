@@ -420,12 +420,25 @@ public class NewProductController {
 					for(Outlet outlet:outlets){
 						outletMap.put(outlet.getOutletId(), outlet);
 					}
+					
+					UUID uuidProd = UUID.randomUUID();
+					String randomUUIDProduct = uuidProd.toString();
+					
+					if(!productBean.getVarientProducts().equalsIgnoreCase("true")){
+						Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
+						Configuration configurationAutoCreateSV = configurationMap.get("AUTO_CREATE_STANDARD_VARIANT");
+						if(configurationAutoCreateSV!=null && configurationAutoCreateSV.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+							productBean.setVarientProducts(ControllersConstants.TRUE);
+							productBean.setProductUuid(randomUUIDProduct);
+							addVariantValueBeanInProductBean(productBean,currentUser);
+						}
+					}
+					
 
 					if(productBean.getTrackingProduct().equalsIgnoreCase("true") && !productBean.getVarientProducts().equalsIgnoreCase("true")){
 						totalQunatity = ControllerUtil.getTotlalQuantityForAllOutlets(outletsist);
 					}
-					UUID uuidProd = UUID.randomUUID();
-					String randomUUIDProduct = uuidProd.toString();
+					
 
 					Configuration configuration = configurationService.getConfigurationByPropertyNameByCompanyId("PRODCUT_TEMPLATE_FOR_ALL_OUTLETS",currentUser.getCompany().getCompanyId());
 					if(configuration!=null && configuration.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
@@ -460,6 +473,44 @@ public class NewProductController {
 			}
 		}else{
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
+		}
+	}
+	
+	public void addVariantValueBeanInProductBean( ProductBean productBean,User currentUser){
+		try{
+			List<VarientValueBean> productVariantValuesCollection = new ArrayList<>();
+			List<OutletBean> varientsOutletList = new ArrayList<>();
+			VarientValueBean varientValueBean = new VarientValueBean();
+			varientValueBean.setVarientName("STANDARD");
+			varientValueBean.setuUid(productBean.getProductUuid());
+			
+			OutletBean OutletBean  = new OutletBean();
+			
+			if(productBean.getOutletList().get(0).getCurrentInventory()!=null && !productBean.getOutletList().get(0).getCurrentInventory().equalsIgnoreCase("")){
+				OutletBean.setCurrentInventory(productBean.getOutletList().get(0).getCurrentInventory());
+			}
+			OutletBean.setMarkupPrct(productBean.getMarkupPrct());
+			OutletBean.setSupplyPriceExclTax(productBean.getSupplyPriceExclTax());
+			OutletBean.setOutletId(String.valueOf(currentUser.getOutlet().getOutletId()));
+			OutletBean.setSku(productBean.getSku());
+			varientsOutletList.add(OutletBean);
+			varientValueBean.setVarientsOutletList(varientsOutletList);
+			productVariantValuesCollection.add(varientValueBean);
+			productBean.setProductVariantValuesCollection(productVariantValuesCollection);
+			VarientAttributeBean varientAttributeBean = new VarientAttributeBean();
+			String attributeId = "1";
+			varientAttributeBean.setVarientAttributeId(attributeId);
+			List<VarientAttributeBean> productVariantAttributeCollection =  new ArrayList<>();
+			productVariantAttributeCollection.add(varientAttributeBean);
+			productBean.setProductVariantAttributeCollection(productVariantAttributeCollection);
+			List<VarientAttributeValueBean> productVariantValuesCollectionOne = new ArrayList<>();
+			VarientAttributeValueBean varientAttributeValueBean =  new VarientAttributeValueBean();
+			varientAttributeValueBean.setValue("STANDARD");
+			productVariantValuesCollectionOne.add(varientAttributeValueBean);
+			productBean.setProductVariantValuesCollectionOne(productVariantValuesCollectionOne);
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
 		}
 	}
 
