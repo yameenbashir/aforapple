@@ -33,7 +33,7 @@ public interface SaleDAO  {
 
 	InvoiceDetail updateInvoiceDetailByDetailID(InvoiceDetail paramInvoiceDetl);
 
-	double getTodaysRevenue(int outletId, int companyId);
+	double getTodaysRevenue(int outletId, int companyId,int dailyRegisterId);
 	@SuppressWarnings("rawtypes")
 	List getGrossProfit(int outletId, int copmayId, Date startDate, Date endDate) ;
 	@SuppressWarnings("rawtypes")

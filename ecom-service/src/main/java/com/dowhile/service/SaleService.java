@@ -48,7 +48,7 @@ public interface SaleService   {
 	List getDiscounts(int outletId, int copmayId, Date startDate, Date endDate) ;
 	@SuppressWarnings("rawtypes")
 	List getBasketSize(int outletId, int copmayId, Date startDate, Date endDate) ;
-	double getTodaysRevenue(int outletId, int companyId);
+	double getTodaysRevenue(int outletId, int companyId,int dailyRegisterId);
 	@SuppressWarnings("rawtypes")
 	List getBasketValue(int outletId, int copmayId, Date startDate, Date endDate) ;
 	@SuppressWarnings("rawtypes")

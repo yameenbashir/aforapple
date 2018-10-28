@@ -106,9 +106,9 @@ public class SaleServiceImpl implements SaleService {
 	}
 
 	@Override
-	public double getTodaysRevenue(int outletId, int companyId) {
+	public double getTodaysRevenue(int outletId, int companyId,int dailyRegisterId) {
 		// TODO Auto-generated method stub
-		return getSaleDAO().getTodaysRevenue(outletId, companyId);
+		return getSaleDAO().getTodaysRevenue(outletId, companyId,dailyRegisterId);
 	}
 
 	@SuppressWarnings("rawtypes")

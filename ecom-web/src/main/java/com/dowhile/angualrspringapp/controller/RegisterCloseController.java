@@ -128,7 +128,7 @@ public class RegisterCloseController {
 						}
 						dailyRegisterBean.setPaymentReceived(String.valueOf(cashAmtExpected));*/
 
-					cashAmtReceived = saleService.getTodaysRevenue(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId());
+					cashAmtReceived = saleService.getTodaysRevenue(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId(),dailyRegister.getDailyRegisterId());
 
 					dailyRegisterBean.setPaymentReceived(String.valueOf(cashAmtReceived));
 
