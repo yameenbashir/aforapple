@@ -2,7 +2,7 @@
 
 /**
  * PurchaseOrderController
- * @constructor
+ * @constructor ....
  */
 var InventoryCountCreateController = ['$scope', '$filter', '$http', '$window','$cookieStore','$rootScope','$timeout','SessionService','InventoryCountCreateControllerPreLoad',function($scope, $filter, $http, $window,$cookieStore,$rootScope,$timeout,SessionService,InventoryCountCreateControllerPreLoad) {
 	
