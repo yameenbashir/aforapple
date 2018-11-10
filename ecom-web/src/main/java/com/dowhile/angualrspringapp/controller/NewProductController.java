@@ -430,7 +430,7 @@ public class NewProductController {
 						if(configurationAutoCreateSV!=null && configurationAutoCreateSV.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
 							productBean.setVarientProducts(ControllersConstants.TRUE);
 							productBean.setProductUuid(randomUUIDProduct);
-							addVariantValueBeanInProductBean(productBean,currentUser);
+							addVariantValueBeanInProductBean(productBean,currentUser,configurationMap);
 						}
 					}
 					
@@ -476,12 +476,17 @@ public class NewProductController {
 		}
 	}
 	
-	public void addVariantValueBeanInProductBean( ProductBean productBean,User currentUser){
+	public void addVariantValueBeanInProductBean( ProductBean productBean,User currentUser,Map<String ,Configuration> configurationMap){
 		try{
+			Configuration configurationDefaultVN = configurationMap.get("DEFAULT_VARIANT_NAME");
+			String variantName = "";
+			if(configurationDefaultVN!=null ){
+				variantName = configurationDefaultVN.getPropertyValue().toString();
+			}
 			List<VarientValueBean> productVariantValuesCollection = new ArrayList<>();
 			List<OutletBean> varientsOutletList = new ArrayList<>();
 			VarientValueBean varientValueBean = new VarientValueBean();
-			varientValueBean.setVarientName("STANDARD");
+			varientValueBean.setVarientName(variantName);
 			varientValueBean.setuUid(productBean.getProductUuid());
 			
 			OutletBean OutletBean  = new OutletBean();
@@ -505,7 +510,7 @@ public class NewProductController {
 			productBean.setProductVariantAttributeCollection(productVariantAttributeCollection);
 			List<VarientAttributeValueBean> productVariantValuesCollectionOne = new ArrayList<>();
 			VarientAttributeValueBean varientAttributeValueBean =  new VarientAttributeValueBean();
-			varientAttributeValueBean.setValue("STANDARD");
+			varientAttributeValueBean.setValue(variantName);
 			productVariantValuesCollectionOne.add(varientAttributeValueBean);
 			productBean.setProductVariantValuesCollectionOne(productVariantValuesCollectionOne);
 			
@@ -593,7 +598,49 @@ public class NewProductController {
 		product.setCompany(currentUser.getCompany());
 		if(productBean.getImageData()!=null ){
 			processImage(productBean.getImageData(), product, request);
-		}		
+		}	
+		if(productBean.getProductVariantValuesCollectionOne()!=null){
+			String attribut1 = "";
+			for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionOne()){
+				VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+				variantAttributeValues.setAttributeValue(attributeValue.getValue());
+				if(attribut1.equalsIgnoreCase("")){
+					attribut1= attributeValue.getValue();
+				}else{
+					attribut1 =attribut1+","+attributeValue.getValue();
+				}
+				
+			}
+			product.setAttribute1(attribut1);
+		}
+		if(productBean.getProductVariantValuesCollectionTwo()!=null){
+			String attribut2 = "";
+			for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionTwo()){
+				VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+				variantAttributeValues.setAttributeValue(attributeValue.getValue());
+				if(attribut2.equalsIgnoreCase("")){
+					attribut2= attributeValue.getValue();
+				}else{
+					attribut2 =attribut2+","+attributeValue.getValue();
+				}
+				
+			}
+			product.setAttribute2(attribut2);
+		}
+		if(productBean.getProductVariantValuesCollectionThree()!=null){
+			String attribut3 = "";
+			for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionThree()){
+				VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+				variantAttributeValues.setAttributeValue(attributeValue.getValue());
+				if(attribut3.equalsIgnoreCase("")){
+					attribut3= attributeValue.getValue();
+				}else{
+					attribut3 =attribut3+","+attributeValue.getValue();
+				}
+				
+			}
+			product.setAttribute3(attribut3);
+		}
 		Product newProduct = new Product();
 		//inventory will be updated through stock order
 		if(configurationStockOrder!=null && configurationStockOrder.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){

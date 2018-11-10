@@ -296,6 +296,51 @@ public class ManageProductController {
 						if(productBean.getImageData()!=null){
 							processImage(productBean.getImageData(), product, request);
 						}
+						
+						if(productBean.getProductVariantValuesCollectionOne()!=null){
+							String attribut1 = "";
+							for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionOne()){
+								VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+								variantAttributeValues.setAttributeValue(attributeValue.getValue());
+								if(attribut1.equalsIgnoreCase("")){
+									attribut1= attributeValue.getValue();
+								}else{
+									attribut1 =attribut1+","+attributeValue.getValue();
+								}
+								
+							}
+							product.setAttribute1(attribut1);
+						}
+						if(productBean.getProductVariantValuesCollectionTwo()!=null){
+							String attribut2 = "";
+							for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionTwo()){
+								VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+								variantAttributeValues.setAttributeValue(attributeValue.getValue());
+								if(attribut2.equalsIgnoreCase("")){
+									attribut2= attributeValue.getValue();
+								}else{
+									attribut2 =attribut2+","+attributeValue.getValue();
+								}
+								
+							}
+							product.setAttribute2(attribut2);
+						}
+						if(productBean.getProductVariantValuesCollectionThree()!=null){
+							String attribut3 = "";
+							for(VarientAttributeValueBean attributeValue : productBean.getProductVariantValuesCollectionThree()){
+								VariantAttributeValues variantAttributeValues = new VariantAttributeValues();
+								variantAttributeValues.setAttributeValue(attributeValue.getValue());
+								if(attribut3.equalsIgnoreCase("")){
+									attribut3= attributeValue.getValue();
+								}else{
+									attribut3 =attribut3+","+attributeValue.getValue();
+								}
+								
+							}
+							product.setAttribute3(attribut3);
+						}
+						
+						
 						if(productBean.getVarientProducts().equalsIgnoreCase("false")){
 							if(productBean.getCurrentInventory() !=null){
 								if(productBean.getOldInventory() != null){

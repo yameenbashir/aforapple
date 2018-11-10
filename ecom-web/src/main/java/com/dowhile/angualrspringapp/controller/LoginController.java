@@ -133,7 +133,9 @@ public class LoginController {
 		
 	//	StringUtils.encode(str);
 		
-		
+		//if(code.base64decode == currentdate+companyName){pass}
+			
+			
 		HttpSession session = request.getSession(true);
 		boolean isExist = false;
 		User user = null;
@@ -555,7 +557,7 @@ public class LoginController {
 
 	}
 	
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked", "rawtypes" })
 	public  void SynchProductMartInData(User user) {
 
 		try {
@@ -574,7 +576,8 @@ public class LoginController {
 			contact.setContactId(2);
 			int count = 0;
 			int variantDefalutInventory = 10;
-			String colour = "MI";
+			String colour = ".";
+			Map productMap = new HashMap<>();
 			//VariantAttribute variantAttributeByVariantAttributeAssocicationId2 = variantAttributeService.getVariantAttributeByVariantAttributeId(2, user.getCompany().getCompanyId());
 			int rowNum = 0;
 			while (iterator.hasNext()) {
@@ -603,15 +606,15 @@ public class LoginController {
 				
 				
 				
-				Product product =  productService.getProductByProductName(productName, user.getCompany().getCompanyId());
-				if(product ==null){
+				//Product product =  productService.getProductByProductName(productName, user.getCompany().getCompanyId());
+				if(productMap.get(sku)==null){
 					Product newProduct = new Product();
 					newProduct.setProductName(productName);
 					newProduct.setSku(sku);
-					
+					productMap.put(sku, productName);
 					newProduct.setProductType(productType);
 					UUID uuidProd = UUID.randomUUID();
-					String randomUUIDProduct = uuidProd.toString();
+					//String randomUUIDProduct = uuidProd.toString();
 					newProduct.setProductUuid(productName);
 					newProduct.setProductHandler(productName);
 					
@@ -635,7 +638,8 @@ public class LoginController {
 					newProduct.setCompany(user.getCompany());
 					newProduct.setLastUpdated(new Date());
 					newProduct.setImagePath("");
-					product = productService.addProduct(newProduct, Actions.CREATE, 0, user.getCompany());
+					newProduct.setAttribute1(colour);
+					Product product = productService.addProduct(newProduct, Actions.CREATE, 0, user.getCompany());
 
 					ProductVariant productVariant = new ProductVariant();
 					productVariant.setProduct(product);
@@ -713,8 +717,9 @@ public class LoginController {
 			//Create blank workbook
 		      XSSFWorkbook workbookWrite = new XSSFWorkbook();
 		    //Create a blank sheet
-		      XSSFSheet spreadsheet = workbookWrite.createSheet( " Mart Info ");
+		      XSSFSheet spreadsheet = workbookWrite.createSheet( " Mart Info new Code ");
 		      Map < String, Object[] > productInfo = new TreeMap < String, Object[] >();
+		      int duplicate = 0;
 		      int i =0;
 		      productInfo.put( i+"", new Object[] {
 		    	         "ITEM CODE", "PRODUCT NAME", "SALE PRICE","COST PRICE" });
@@ -751,12 +756,7 @@ public class LoginController {
 				currentRow.getCell(1).setCellType(CellType.STRING);
 				String productName =  currentRow.getCell(1).getStringCellValue();
 				System.out.println("ProductName: "+productName);
-				productMap.get(barCode);
-				if(productMap.get(barCode)!=null){
-					System.out.println("dublicate bar Code: "+barCode+" with productName: "+productName);
-				}else{
-					productMap.put(barCode, productName);
-				}
+				
 				
 				
 				
@@ -772,9 +772,17 @@ public class LoginController {
 					retailPrice = 1.00;
 					supplierPrice = 1.00;
 				}
+				productMap.get(barCode);
+				if(productMap.get(barCode)!=null){
+					duplicate++;
+					System.out.println("dublicate bar Code: "+barCode+" with productName: "+productName);
+				}else{
+					productMap.put(barCode, productName);
+					productInfo.put( i+++"", new Object[] {
+							barCode, productName, retailPrice+"",supplierPrice+"" });
+				}
 				System.out.println("Product Name: "+productName+" salePrice: "+retailPrice+" retailPrice: "+supplierPrice);
-				productInfo.put( i+++"", new Object[] {
-						barCode, productName, retailPrice+"",supplierPrice+"" });
+				
 				//	                String supplier_name = currentRow.getCell(6).getStringCellValue();
 			//	String size = currentRow.getCell(7).getStringCellValue().replaceAll("temp_", "");
 				//String Color = currentRow.getCell(8).getStringCellValue();
@@ -789,6 +797,7 @@ public class LoginController {
 				//     System.out.println(retail_price);
 
 			}
+			System.out.println("duplicate count:"+duplicate);
 			//Iterate over data and write to sheet
 		      Set < String > keyid = productInfo.keySet();
 			//Create row object

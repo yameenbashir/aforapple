@@ -36,6 +36,8 @@ public class SellControllerBean implements Serializable{
 	private String isReturnEnableonSell = "false"; 
 	private String isInvoiceLevelDiscountEnable = "true";
 	private String companyImagePath;
+	private String autoCreateStandardVariant;
+	private String defaultVariantName;
 	public List<ProductBean> getProductsBean() {
 		return productsBean;
 	}
@@ -133,6 +135,18 @@ public class SellControllerBean implements Serializable{
 	 */
 	public void setCompanyImagePath(String companyImagePath) {
 		this.companyImagePath = companyImagePath;
+	}
+	public String getAutoCreateStandardVariant() {
+		return autoCreateStandardVariant;
+	}
+	public void setAutoCreateStandardVariant(String autoCreateStandardVariant) {
+		this.autoCreateStandardVariant = autoCreateStandardVariant;
+	}
+	public String getDefaultVariantName() {
+		return defaultVariantName;
+	}
+	public void setDefaultVariantName(String defaultVariantName) {
+		this.defaultVariantName = defaultVariantName;
 	}
 
 }

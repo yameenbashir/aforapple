@@ -1331,7 +1331,14 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 							}
 						}
 					}else{
-						$scope.selectProduct = true;
+						
+						if($scope.sellControllerBean.autoCreateStandardVariant=='true'
+							&& $scope.productVaraintDetailBean.arrtibute1Values[0]==$scope.sellControllerBean.defaultVariantName){
+							$scope.addProduct($scope.productVariantsBeans[0]);
+						}else{
+							$scope.selectProduct = true;
+						}
+						
 					}
 
 				} else {

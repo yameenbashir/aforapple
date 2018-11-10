@@ -210,6 +210,7 @@ public class SellController  {
 			"#708090", "#FF9800", "#87CEEB", "#C0C0C0", "#A0522D", "#2E8B57",
 			"#F4A460", "#FA8072" };
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/getAllProducts/{sessionId}", method = RequestMethod.GET)
 	public @ResponseBody
 	SellControllerBean getAllProducts(
@@ -220,6 +221,7 @@ public class SellController  {
 		if (SessionValidator.isSessionValid(sessionId, request)) {
 			HttpSession session = request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
+			Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
 			try {
 				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(),currentUser.getUserId());
 				sellControllerBean.setRegisterStatus("false");
@@ -229,6 +231,14 @@ public class SellController  {
 					sellControllerBean.setRegisterStatus("true");
 				}
 				sellControllerBean.setDisplayProductsBean(displayProductsBean);
+				Configuration configurationAutoCreateSV = configurationMap.get("AUTO_CREATE_STANDARD_VARIANT");
+				Configuration configurationDefaultVN = configurationMap.get("DEFAULT_VARIANT_NAME");
+				if(configurationAutoCreateSV!=null && configurationAutoCreateSV.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+					sellControllerBean.setAutoCreateStandardVariant(ControllersConstants.TRUE);
+					sellControllerBean.setDefaultVariantName(configurationDefaultVN.getPropertyValue().toString());
+				}else{
+					sellControllerBean.setAutoCreateStandardVariant(ControllersConstants.FALSE);
+				}
 				return sellControllerBean;
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -327,7 +337,7 @@ public class SellController  {
 					sellControllerBean.setRegisterStatus("true");
 				}
 			sellControllerBean.setDisplayProductsBean(displayProductsBean);
-			List<VariantAttributeValues> variantAttributeValues = new ArrayList<VariantAttributeValues>();
+//			List<VariantAttributeValues> variantAttributeValues = new ArrayList<VariantAttributeValues>();
 				sellControllerBean.setCompanyName(company.getCompanyName());
 //				List<ContactsSummmary> customers = contactsSummmaryService.getActiveContactsSummmaryByCompanyId(currentUser.getCompany().getCompanyId());
 //			//	Map<String, Address> cutomerAddressMap = addressService.getALLAddressByCustomerId(currentUser.getCompany().getCompanyId());
@@ -344,7 +354,7 @@ public class SellController  {
 //					}
 //					sellControllerBean.setCustomersBean(customersBeans);
 //				}
-				variantAttributeValues = variantAttributeValuesService.getAllVariantAttributeValues(company.getCompanyId());
+//				variantAttributeValues = variantAttributeValuesService.getAllVariantAttributeValues(company.getCompanyId());
 				sellControllerBean.setUsers(usersBeans);
 				
 				if(currentUser.getOutlet().getAddress()!=null){
@@ -510,21 +520,20 @@ public class SellController  {
 						ProductVaraintDetailBean productVaraintDetailBean = new ProductVaraintDetailBean();
 						if(productVarients!=null && productVarients.size()>0){
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId1() != null) {
-								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1()!=null){
-									productVaraintDetailBean.setArrtibute1Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1().getVariantAttributeId(), product.getProductUuid()));
+							if (product.getAttribute1() != null) {
+								productVaraintDetailBean.setArrtibute1Values(product.getAttribute1().split(","));
 								}
 							}
 
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId2() != null) {
-								if(productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2()!=null){
-									productVaraintDetailBean.setArrtibute2Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2().getVariantAttributeId(), product.getProductUuid()));
-									
-								}
+								if (product.getAttribute2() != null) {
+									productVaraintDetailBean.setArrtibute2Values(product.getAttribute2().split(","));
+									}
 							}
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId3() != null) {
-								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3()!=null){
-								productVaraintDetailBean.setArrtibute3Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3().getVariantAttributeId(), product.getProductUuid()));
-								}
+								if (product.getAttribute3() != null) {
+									productVaraintDetailBean.setArrtibute3Values(product.getAttribute3().split(","));
+									}
 
 							}
 						}
@@ -576,7 +585,14 @@ public class SellController  {
 //			    String fromApacheBytes = new String(apacheBytes);
 //				zipData.setData(new String(bytes, "UTF-16"));
 //			    zipData.setData(fromApacheBytes);
-				
+				Configuration configurationAutoCreateSV = configurationMap.get("AUTO_CREATE_STANDARD_VARIANT");
+				Configuration configurationDefaultVN = configurationMap.get("DEFAULT_VARIANT_NAME");
+				if(configurationAutoCreateSV!=null && configurationAutoCreateSV.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+					sellControllerBean.setAutoCreateStandardVariant(ControllersConstants.TRUE);
+					sellControllerBean.setDefaultVariantName(configurationDefaultVN.getPropertyValue().toString());
+				}else{
+					sellControllerBean.setAutoCreateStandardVariant(ControllersConstants.FALSE);
+				}
 				return sellControllerBean;
 			} catch (Exception e) {
 				e.printStackTrace();
