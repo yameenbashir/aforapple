@@ -578,6 +578,23 @@ var StockReturntoWarehouseEditProductsController = ['$scope','$sce', '$http', '$
 		$scope.calculateGrandrecvTotal();
 	};
 
+	$scope.markAllReceive = function(){
+		if ($scope.stockOrderDetailBeansList.length > 0) {
+			for (var i = 0; i < $scope.stockOrderDetailBeansList.length; i++) {
+				$scope.stockOrderDetailBeansList[i].recvProdQty = "";
+				$scope.stockOrderDetailBeansList[i].recvProdQty = angular.copy($scope.stockOrderDetailBeansList[i].orderProdQty);
+				/*$scope.stockOrderDetailBeansList[i].recvSupplyPrice = "";
+				$scope.stockOrderDetailBeansList[i].recvSupplyPrice = angular.copy($scope.stockOrderDetailBeansList[i].ordrSupplyPrice);*/
+				$scope.stockOrderDetailBeansList[i].recvTotal = $scope.stockOrderDetailBeansList[i].retailPrice * $scope.stockOrderDetailBeansList[i].recvProdQty;
+				if(isNaN($scope.stockOrderDetailBeansList[i].recvTotal)){
+					$scope.stockOrderDetailBeansList[i].recvTotal = "0";
+				}
+			}
+
+		}
+		$scope.calculateItemCountAdmin();
+		$scope.calculateGrandrecvTotal();
+	};
 
 	$scope.calculateItemCount = function(){
 		$scope.stockOrderBean.itemCount = 0;
@@ -704,7 +721,7 @@ var StockReturntoWarehouseEditProductsController = ['$scope','$sce', '$http', '$
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -748,7 +765,7 @@ var StockReturntoWarehouseEditProductsController = ['$scope','$sce', '$http', '$
 		$scope.calculateGrandTotal();
 		$scope.calculateGrandrecvTotal();
 		$scope.stockOrderBean.statusId = "3"; // Completed status
-		$http.post('purchaseOrderDetails/updateAndReturntoHeadOffice/'+$scope._s_tk_com+'/'+$scope.grandrecvTotal, $scope.stockOrderDetailBeansList)
+		$http.post('purchaseOrderDetails/updateAndReturntoHeadOffice/'+$scope._s_tk_com+'/'+$scope.grandrecvTotal+'/'+$scope.stockOrderBean.itemCountRecv, $scope.stockOrderDetailBeansList)
 		.success(function(Response) {
 			$scope.loading = false;
 

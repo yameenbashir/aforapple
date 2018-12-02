@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.dowhile.Configuration;
 import com.dowhile.Contact;
 import com.dowhile.Outlet;
 import com.dowhile.Product;
@@ -35,6 +36,7 @@ import com.dowhile.StockOrderDetail;
 import com.dowhile.StockOrderType;
 import com.dowhile.User;
 import com.dowhile.constant.Actions;
+import com.dowhile.constants.ControllersConstants;
 import com.dowhile.constants.LayOutPageConstants;
 import com.dowhile.constants.MessageConstants;
 import com.dowhile.constants.StatusConstants;
@@ -47,6 +49,7 @@ import com.dowhile.frontend.mapping.bean.StockOrderBean;
 import com.dowhile.frontend.mapping.bean.StockOrderDetailBean;
 import com.dowhile.frontend.mapping.bean.StockOrderTypeBean;
 import com.dowhile.frontend.mapping.bean.SupplierBean;
+import com.dowhile.service.ConfigurationService;
 import com.dowhile.service.ContactService;
 import com.dowhile.service.OutletService;
 import com.dowhile.service.ProductService;
@@ -92,7 +95,9 @@ public class PurchaseOrderDetailsController {
 	@Resource
 	private ProductService productService;
 
-
+	@Resource
+	private ConfigurationService configurationService;
+	
 	private Map productVariantMap = new HashMap<>();
 	private Map productMap = new HashMap<>();
 	
@@ -348,8 +353,10 @@ public class PurchaseOrderDetailsController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping(value = "/updateStockOrderDetail/{sessionId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateStockOrderDetail/{sessionId}/{itemCountTotal}/{itemCount}", method = RequestMethod.POST)
 	public @ResponseBody Response updateStockOrderDetail(@PathVariable("sessionId") String sessionId,
+			@PathVariable("itemCountTotal") String itemCountTotal,
+			@PathVariable("itemCount") String itemCount,
 			@RequestBody List<StockOrderDetailBean> stockOrderDetailBeansList, HttpServletRequest request){
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
@@ -501,6 +508,8 @@ public class PurchaseOrderDetailsController {
 					stockOrder.setStatus(statusService.getStatusByStatusId(2));  //in Progress status
 					stockOrder.setOrdrRecvDate(new Date());
 					stockOrder.setLastUpdated(new Date());
+					stockOrder.setTotalAmount(new BigDecimal(itemCountTotal));
+					stockOrder.setTotalItems(new BigDecimal(itemCount));					
 					stockOrder.setUpdatedBy(currentUser.getUserId());				
 					stockOrderService.updateStockOrder(stockOrder,currentUser.getCompany().getCompanyId());
 					String layOutPath = LayOutPageConstants.STOCKCONTROL;
@@ -541,9 +550,10 @@ public class PurchaseOrderDetailsController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping(value = "/updateAndReceiveStockOrderDetails/{sessionId}/{grandTotal}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateAndReceiveStockOrderDetails/{sessionId}/{grandTotal}/{recItemCount}", method = RequestMethod.POST)
 	public @ResponseBody Response updateAndReceiveStockOrderDetails(@PathVariable("sessionId") String sessionId,
 			@PathVariable("grandTotal") String grandTotal,
+			@PathVariable("recItemCount") String recItemCount,
 			@RequestBody List<StockOrderDetailBean> stockOrderDetailBeansList, HttpServletRequest request){
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
@@ -908,6 +918,8 @@ public class PurchaseOrderDetailsController {
 					stockOrder.setStatus(statusService.getStatusByStatusId(3));  //completed status
 					stockOrder.setOrdrRecvDate(new Date());
 					stockOrder.setLastUpdated(new Date());
+					stockOrder.setTotalAmount(new BigDecimal(grandTotal));
+					stockOrder.setTotalItems(new BigDecimal(recItemCount));
 					stockOrder.setUpdatedBy(currentUser.getUserId());				
 					stockOrderService.updateStockOrder(stockOrder,currentUser.getCompany().getCompanyId());
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.updateandRecStockOrderDetail", 
@@ -943,9 +955,10 @@ public class PurchaseOrderDetailsController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping(value = "/updateAndReturnStockOrderDetails/{sessionId}/{grandTotal}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateAndReturnStockOrderDetails/{sessionId}/{grandTotal}/{itemCount}", method = RequestMethod.POST)
 	public @ResponseBody Response updateAndReturnStockOrderDetails(@PathVariable("sessionId") String sessionId,
 			@PathVariable("grandTotal") String grandTotal,
+			@PathVariable("itemCount") String itemCount,
 			@RequestBody List<StockOrderDetailBean> stockOrderDetailBeansList, HttpServletRequest request){
 
 		if(SessionValidator.isSessionValid(sessionId, request)){
@@ -1128,6 +1141,8 @@ public class PurchaseOrderDetailsController {
 					}
 					//StockOrder stockOrder = stockOrderService.getStockOrderByStockOrderID(Integer.parseInt(stockOrderDetailBeansList.get(0).getStockOrderId()),currentUser.getCompany().getCompanyId());				
 					stockOrder.setStatus(statusService.getStatusByStatusId(3)); //completed status
+					stockOrder.setTotalAmount(new BigDecimal(grandTotal));
+					stockOrder.setTotalItems(new BigDecimal(itemCount));
 					stockOrder.setOrdrRecvDate(new Date());
 					stockOrder.setLastUpdated(new Date());
 					stockOrder.setUpdatedBy(currentUser.getUserId());
@@ -1165,9 +1180,10 @@ public class PurchaseOrderDetailsController {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping(value = "/updateAndTransferStockOrderDetails/{sessionId}/{grandTotal}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateAndTransferStockOrderDetails/{sessionId}/{grandTotal}/{itemCount}", method = RequestMethod.POST)
 	public @ResponseBody Response updateAndTransferStockOrderDetails(@PathVariable("sessionId") String sessionId,
 			@PathVariable("grandTotal") String grandTotal,
+			@PathVariable("itemCount") String itemCount,
 			@RequestBody List<StockOrderDetailBean> stockOrderDetailBeansList, HttpServletRequest request){
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
@@ -1899,6 +1915,8 @@ public class PurchaseOrderDetailsController {
 						productVariantService.updateProductVariantList(productVariantUpdateList, currentUser.getCompany());
 					}
 					stockOrder.setStatus(statusService.getStatusByStatusId(3)); //completed status
+					stockOrder.setTotalAmount(new BigDecimal(grandTotal));
+					stockOrder.setTotalItems(new BigDecimal(itemCount));
 					stockOrder.setOrdrRecvDate(new Date());
 					stockOrder.setLastUpdated(new Date());
 					stockOrder.setUpdatedBy(currentUser.getUserId());
@@ -2395,9 +2413,10 @@ public class PurchaseOrderDetailsController {
 	}*/
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@RequestMapping(value = "/updateAndReturntoHeadOffice/{sessionId}/{grandTotal}", method = RequestMethod.POST)
+	@RequestMapping(value = "/updateAndReturntoHeadOffice/{sessionId}/{grandTotal}/{itemCount}", method = RequestMethod.POST)
 	public @ResponseBody Response updateAndReturntoHeadOffice(@PathVariable("sessionId") String sessionId,
 			@PathVariable("grandTotal") String grandTotal,
+			@PathVariable("itemCount") String itemCount,
 			@RequestBody List<StockOrderDetailBean> stockOrderDetailBeansList, HttpServletRequest request){		
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
@@ -2410,6 +2429,10 @@ public class PurchaseOrderDetailsController {
 					StockOrder stockOrder = stockOrderService.getStockOrderByStockOrderID(Integer.parseInt(stockOrderDetailBeansList.get(0).getStockOrderId()),currentUser.getCompany().getCompanyId());
 					Map<Integer, Product> productsMap = new HashMap<>();
 					List<Product> products = productService.getAllProducts(currentUser.getCompany().getCompanyId());
+					Configuration configurationStockOrderComplTable = configurationService.getConfigurationByPropertyNameByCompanyId("STOCK_ORDER_COMPL_TABLE",currentUser.getCompany().getCompanyId());			
+					if(configurationStockOrderComplTable == null){
+						configurationStockOrderComplTable = new Configuration(currentUser, currentUser, currentUser.getCompany(), "STOCK_ORDER_COMPL_TABLE", "false", true, new Date(), new Date());
+					}
 					List<StockOrderDetail> stockOrderDetailsUpdateList = new ArrayList<>();
 					List<StockOrderDetail> stockOrderDetailsDeleteList = new ArrayList<>();
 					List<StockOrderDetail> stockOrderDetailsAddList = new ArrayList<>();
@@ -3145,9 +3168,15 @@ public class PurchaseOrderDetailsController {
 						productVariantService.updateProductVariantList(productVariantUpdateList, currentUser.getCompany());
 					}
 					stockOrder.setStatus(statusService.getStatusByStatusId(3)); //completed status
+					stockOrder.setTotalAmount(new BigDecimal(grandTotal));
+					stockOrder.setTotalItems(new BigDecimal(itemCount));
 					stockOrder.setOrdrRecvDate(new Date());
 					stockOrder.setLastUpdated(new Date());
 					stockOrder.setUpdatedBy(currentUser.getUserId());
+					if(configurationStockOrderComplTable.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+						stockOrder.setTotalAmount(new BigDecimal(grandTotal));
+						//stockOrder.setTotalItems(new BigDecimal(grandTotal));
+					}
 					stockOrderService.updateStockOrder(stockOrder,currentUser.getCompany().getCompanyId());
 
 					Contact supplier = supplierService.getContactByContactOutletID(stockOrder.getOutletBySourceOutletAssocicationId().getOutletId(), currentUser.getCompany().getCompanyId());
@@ -3182,8 +3211,6 @@ public class PurchaseOrderDetailsController {
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
 		}		
 	}
-
-	
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(value = "/deleteStockOrderDetail/{sessionId}", method = RequestMethod.POST)

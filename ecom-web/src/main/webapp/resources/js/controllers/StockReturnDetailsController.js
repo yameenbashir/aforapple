@@ -14,6 +14,7 @@ var StockReturnDetailsController = ['$scope', '$sce', '$http', '$timeout', '$win
 	$scope.stockOrderDetailBean = {};
 	$scope.delStockOrderDetailBean = {};
 	$scope.stockOrderDetailBeansList = [];
+	$scope.itemCountTotal = 0;
 	$scope.counter = 1;
 	$scope.hideRefValues = false;
 	$scope.productVariantMap = [];
@@ -29,6 +30,7 @@ var StockReturnDetailsController = ['$scope', '$sce', '$http', '$timeout', '$win
 			$scope.stockOrderBean = $cookieStore.get('_e_cOt_pio');
 			$scope.roleId = $cookieStore.get('_s_tk_rId');
 			$scope.headOffice = $cookieStore.get('_s_tk_iho');
+			$scope.stockOrderBean.itemCount = 0;
 			$scope.data = StockReturnDetailsControllerPreLoad.loadControllerData();
 			$scope.fetchData();			
 			$scope.isAdmin();
@@ -397,7 +399,7 @@ var StockReturnDetailsController = ['$scope', '$sce', '$http', '$timeout', '$win
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -440,7 +442,7 @@ var StockReturnDetailsController = ['$scope', '$sce', '$http', '$timeout', '$win
 			$scope.error = false;
 			$scope.loading = true;
 			$scope.stockOrderBean.statusId = "3"; // Completed status
-			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;
 

@@ -689,6 +689,7 @@ public class NewProductController {
 			}
 			List<StockOrderDetailBean> stockOrderDetialBeansList = new ArrayList<>();
 			Double grandTotal = 0.0;
+			Double itemCount = 0.0;
 			if(productBean.getStandardProduct().equalsIgnoreCase("true")){
 				//Standard scenario
 				if(productBean.getVarientProducts().equalsIgnoreCase("true")){
@@ -721,6 +722,7 @@ public class NewProductController {
 										stockOrderDetailBean.setOrderProdQty(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory());
 										stockOrderDetailBean.setOrdrSupplyPrice(varientValueBean.getVarientsOutletList().get(0).getSupplyPriceExclTax());
 										grandTotal = grandTotal + (Double.parseDouble(stockOrderDetailBean.getOrderProdQty()) * Double.parseDouble(stockOrderDetailBean.getOrdrSupplyPrice())); 
+										itemCount = itemCount + Double.parseDouble(stockOrderDetailBean.getOrderProdQty());
 										stockOrderDetailBean.setIsProduct("false");
 										stockOrderDetialBeansList.add(stockOrderDetailBean);
 									}
@@ -739,6 +741,7 @@ public class NewProductController {
 							stockOrderDetailBean.setOrderProdQty(String.valueOf(newProduct.getCurrentInventory()));
 							stockOrderDetailBean.setOrdrSupplyPrice(String.valueOf(newProduct.getSupplyPriceExclTax()));
 							grandTotal = grandTotal + (Double.parseDouble(stockOrderDetailBean.getOrderProdQty()) * Double.parseDouble(stockOrderDetailBean.getOrdrSupplyPrice()));					
+							itemCount = itemCount + Double.parseDouble(stockOrderDetailBean.getOrderProdQty());
 							stockOrderDetailBean.setIsProduct("true");
 							stockOrderDetialBeansList.add(stockOrderDetailBean);
 						}
@@ -749,7 +752,7 @@ public class NewProductController {
 					StockOrderBean stockOrderBean = new StockOrderBean();
 					stockOrderBean.setOutlet(outletbean.getOutletId());
 					stockOrderBean.setSupplierId(productBean.getSupplierId());
-					AddStockOrder(sessionId, stockOrderBean, stockOrderDetialBeansList, grandTotal, request);
+					AddStockOrder(sessionId, stockOrderBean, stockOrderDetialBeansList, grandTotal, itemCount, request);
 				}
 
 			}else{
@@ -1708,7 +1711,7 @@ public class NewProductController {
 	}*/
 
 	@SuppressWarnings("rawtypes")
-	private boolean AddStockOrder(String sessionId, StockOrderBean stockOrderBean, List<StockOrderDetailBean> stockOrderDetailBeanList, Double grandTotal, HttpServletRequest request)
+	private boolean AddStockOrder(String sessionId, StockOrderBean stockOrderBean, List<StockOrderDetailBean> stockOrderDetailBeanList, Double grandTotal, Double itemCount, HttpServletRequest request)
 	{
 		boolean added = false;
 		if(stockOrderDetailBeanList.size() > 0){				
@@ -1746,7 +1749,8 @@ public class NewProductController {
 			}
 			//PurchaseOrderDetailsController purchaseOrderDetailsController = new PurchaseOrderDetailsController();
 			String total = grandTotal.toString();
-			purchaseOrderDetailsController.updateAndReceiveStockOrderDetails(sessionId, total, stockOrderDetailBeanList, request);
+			String items = itemCount.toString();
+			purchaseOrderDetailsController.updateAndReceiveStockOrderDetails(sessionId, total, items, stockOrderDetailBeanList, request);
 			//StockOrderDetail Finish
 			added = true;
 		}

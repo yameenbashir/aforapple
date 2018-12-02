@@ -553,7 +553,7 @@ var StockTransferDetailsController = ['$sce', '$scope', '$http', '$timeout', '$w
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -604,7 +604,7 @@ var StockTransferDetailsController = ['$sce', '$scope', '$http', '$timeout', '$w
 		$scope.loading = true;
 		$scope.calculateGrandTotal();
 		$scope.stockOrderBean.statusId = "3"; // Completed status
-		$http.post('purchaseOrderDetails/updateAndTransferStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+		$http.post('purchaseOrderDetails/updateAndTransferStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 		.success(function(Response) {
 			$scope.loading = false;
 

@@ -275,6 +275,11 @@
 														<th ng-bind = "grandTotal"></th>
 														<th  ng-hide="isAdmin()" >Total Recv</th>														
 														<th ng-hide="isAdmin()" ng-bind = "grandrecvTotal"></th>
+														<th <button class="btn btn-success btn pull-right"
+																ng-click="markAllReceive()"
+																ng-disabled="!checkStockOrderDetailList()">Mark
+																All Received</button>
+														</th>
 													</tr>
 												</tfoot>
 												</table>

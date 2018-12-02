@@ -509,7 +509,7 @@ var StockReturntoWarehouseDetailsController = ['$sce', '$scope', '$http', '$time
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -554,7 +554,7 @@ var StockReturntoWarehouseDetailsController = ['$sce', '$scope', '$http', '$time
 		$scope.loading = true;
 		$scope.calculateGrandTotal();
 		$scope.stockOrderBean.statusId = "3"; // Completed status
-		$http.post('purchaseOrderDetails/updateAndReturntoHeadOffice/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+		$http.post('purchaseOrderDetails/updateAndReturntoHeadOffice/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 		.success(function(Response) {
 			$scope.loading = false;
 

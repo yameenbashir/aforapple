@@ -2,6 +2,7 @@ package com.dowhile.angualrspringapp.controller;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -355,6 +356,8 @@ public class PurchaseOrderController {
 					stockOrder.setDiliveryDueDate(dateFormat.parse(stockOrderBean.getDiliveryDueDate()));
 					stockOrder.setLastUpdated(new Date());
 					stockOrder.setOrderNo(stockOrderBean.getOrderNo());
+					stockOrder.setTotalAmount(new BigDecimal(0));
+					stockOrder.setTotalItems(new BigDecimal(0));
 					//stockOrder.setOrdrRecvDate(dateFormat.parse(stockOrderBean.getOrdrRecvDate()));
 
 					//stockOrder.setRemarks(stockOrderBean.getRemarks());

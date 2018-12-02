@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.dowhile.Address;
+import com.dowhile.Company;
 import com.dowhile.Configuration;
 import com.dowhile.Contact;
 import com.dowhile.Country;
@@ -76,7 +78,7 @@ public class StockControlController {
 
 	@Resource
 	private CountryService countryService;
-	
+
 	@Resource
 	private ContactService supplierService;
 	@Resource
@@ -103,6 +105,11 @@ public class StockControlController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
+			Configuration configurationStockOrderComplTable = configurationService.getConfigurationByPropertyNameByCompanyId("STOCK_ORDER_COMPL_TABLE",currentUser.getCompany().getCompanyId());			
+			if(configurationStockOrderComplTable == null){
+				configurationStockOrderComplTable = new Configuration(currentUser, currentUser, currentUser.getCompany(), "STOCK_ORDER_COMPL_TABLE", "false", true, new Date(), new Date());
+			}
+			Map<Integer, List<StockOrderDetail>> stockOrderDetailsMap = new HashMap<>();
 			Map<Integer, Outlet> outletsMap = new HashMap<>();
 			List<Outlet> outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
 			if(outlets!=null){
@@ -133,39 +140,41 @@ public class StockControlController {
 					}
 				}
 			}
-			Map<Integer, Country> countryMap = new HashMap<>();
+			/*Map<Integer, Country> countryMap = new HashMap<>();
 			List<Country> countrys = countryService.GetAllCountry();
 			if(countryMap!=null){
 				for(Country country:countrys){					
-						countryMap.put(country.getCountryId(), country);
+					countryMap.put(country.getCountryId(), country);
 				}
 			}
 			Map<Integer, Address> addressMap = new HashMap<>();
 			List<Address> addresses = addressService.getAllAddress(currentUser.getCompany().getCompanyId());
 			if(addressMap!=null){
 				for(Address address:addresses){					
-						addressMap.put(address.getAddressId(), address);
+					addressMap.put(address.getAddressId(), address);
 				}
-			}
-			//Stock Order Map Region
-			List<StockOrderDetail> stockOrderDetails = new ArrayList<>();
-			Map<Integer, List<StockOrderDetail>> stockOrderDetailsMap = new HashMap<>();
-			stockOrderDetails = stockOrderDetailService.getAllStockOrderDetails(currentUser.getCompany().getCompanyId());
-			if(stockOrderDetails!=null){
-				for(StockOrderDetail stockOrderDetail:stockOrderDetails){
-					List<StockOrderDetail> addedstockOrderDetails = stockOrderDetailsMap.get(stockOrderDetail.getStockOrder().getStockOrderId());
-					if(addedstockOrderDetails!=null){
-						addedstockOrderDetails.add(stockOrderDetail);
-						stockOrderDetailsMap.put(stockOrderDetail.getStockOrder().getStockOrderId(), addedstockOrderDetails);
-					}else{
-						addedstockOrderDetails = new ArrayList<>();
-						addedstockOrderDetails.add(stockOrderDetail);
-						stockOrderDetailsMap.put(stockOrderDetail.getStockOrder().getStockOrderId(), addedstockOrderDetails);
-					}
+			}	*/		
+			if(!configurationStockOrderComplTable.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+				{//Stock Order Map Region
+					List<StockOrderDetail> stockOrderDetails = new ArrayList<>();
+					stockOrderDetails = stockOrderDetailService.getAllStockOrderDetails(currentUser.getCompany().getCompanyId());
+					if(stockOrderDetails!=null){
+						for(StockOrderDetail stockOrderDetail:stockOrderDetails){
+							List<StockOrderDetail> addedstockOrderDetails = stockOrderDetailsMap.get(stockOrderDetail.getStockOrder().getStockOrderId());
+							if(addedstockOrderDetails!=null){
+								addedstockOrderDetails.add(stockOrderDetail);
+								stockOrderDetailsMap.put(stockOrderDetail.getStockOrder().getStockOrderId(), addedstockOrderDetails);
+							}else{
+								addedstockOrderDetails = new ArrayList<>();
+								addedstockOrderDetails.add(stockOrderDetail);
+								stockOrderDetailsMap.put(stockOrderDetail.getStockOrder().getStockOrderId(), addedstockOrderDetails);
+							}
 
+						}
+					}
+					//End Region
 				}
 			}
-			//End Region
 			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 			try {
 				Outlet userOutlet = outletsMap.get(currentUser.getOutlet().getOutletId());
@@ -207,7 +216,7 @@ public class StockControlController {
 						if(outlet != null){
 							stockOrderBean.setOutlet(outlet.getOutletId().toString());
 							stockOrderBean.setOutletName(outlet.getOutletName());
-							if(outlet.getAddress() != null){
+							/*if(outlet.getAddress() != null){
 								Address address = addressMap.get(outlet.getAddress().getAddressId());					
 								if(address.getStreet() != null){
 									stockOrderBean.setOutletAddress(address.getStreet());
@@ -225,7 +234,7 @@ public class StockControlController {
 									Country country = countryMap.get(address.getCountry().getCountryId());
 									stockOrderBean.setOutletAddress(stockOrderBean.getOutletAddress() + " " + country.getCountryName());							
 								}
-							}
+							}*/
 						}
 						if(stockOrder.getOutletBySourceOutletAssocicationId() != null)
 						{
@@ -233,7 +242,7 @@ public class StockControlController {
 							if(outletSource != null){
 								stockOrderBean.setSourceOutletId(outletSource.getOutletId().toString());
 								stockOrderBean.setSourceOutletName(outletSource.getOutletName());
-								if(outletSource.getAddress() != null){								
+								/*if(outletSource.getAddress() != null){								
 									Address address = addressMap.get(outletSource.getAddress().getAddressId());
 									if(address.getStreet() != null){
 										stockOrderBean.setSourceOutletAddress(address.getStreet());
@@ -251,7 +260,7 @@ public class StockControlController {
 										Country country = countryMap.get(address.getCountry().getCountryId());
 										stockOrderBean.setOutletAddress(stockOrderBean.getOutletAddress() + " " + country.getCountryName());							
 									}
-								}
+								}*/
 							}
 						}
 						if(stockOrder.isRetailPriceBill()){
@@ -285,46 +294,62 @@ public class StockControlController {
 						}
 						stockOrderBean.setSupplierInvoiceNo(stockOrder.getContactInvoiceNo());
 						int stockOrderId = stockOrder.getStockOrderId();
-						List<StockOrderDetail> stockOrderDetailList = stockOrderDetailsMap.get(stockOrderId);
-						int itemCount = 0;
-						Double totalCost = 0.0;
-						if(stockOrderDetailList != null){
-							for(StockOrderDetail stockOrderDetail : stockOrderDetailList){
-								if(stockOrderDetail.getRecvProdQty()!= null){
-									itemCount = itemCount + stockOrderDetail.getRecvProdQty();
-								}
-								else{
-									itemCount = itemCount + stockOrderDetail.getOrderProdQty();
-								}
-								if(stockOrder.getStockOrderType().getStockOrderTypeId() == 1){ //Supplier Order
-									if(stockOrderDetail.getRecvSupplyPrice() != null && stockOrderDetail.getRecvProdQty()!= null){
-										totalCost = totalCost + (stockOrderDetail.getRecvSupplyPrice().doubleValue() * stockOrderDetail.getRecvProdQty());
+						
+						//Incomplete Table Region
+							if(!configurationStockOrderComplTable.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+								List<StockOrderDetail> stockOrderDetailList = stockOrderDetailsMap.get(stockOrderId);
+								int itemCount = 0;
+								Double totalCost = 0.0;
+								if(stockOrderDetailList != null){
+									for(StockOrderDetail stockOrderDetail : stockOrderDetailList){
+										if(stockOrderDetail.getRecvProdQty()!= null){
+											itemCount = itemCount + stockOrderDetail.getRecvProdQty();
+										}
+										else{
+											itemCount = itemCount + stockOrderDetail.getOrderProdQty();
+										}
+										if(stockOrder.getStockOrderType().getStockOrderTypeId() == 1){ //Supplier Order
+											if(stockOrderDetail.getRecvSupplyPrice() != null && stockOrderDetail.getRecvProdQty()!= null){
+												totalCost = totalCost + (stockOrderDetail.getRecvSupplyPrice().doubleValue() * stockOrderDetail.getRecvProdQty());
+											}
+											else{
+												totalCost = totalCost + (stockOrderDetail.getOrdrSupplyPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
+											}
+										}
+										else
+										{
+											if(stockOrder.isRetailPriceBill()){
+												totalCost = totalCost + (stockOrderDetail.getRetailPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
+											}
+											else{
+												totalCost = totalCost + (stockOrderDetail.getOrdrSupplyPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
+											}
+										}
 									}
-									else{
-										totalCost = totalCost + (stockOrderDetail.getOrdrSupplyPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
-									}
 								}
-								else
-								{
-									if(stockOrder.isRetailPriceBill()){
-										totalCost = totalCost + (stockOrderDetail.getRetailPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
-									}
-									else{
-										totalCost = totalCost + (stockOrderDetail.getOrdrSupplyPrice().doubleValue() * stockOrderDetail.getOrderProdQty());
-									}
-								}
+								stockOrderBean.setStockOrderId(Integer.toString(stockOrderId));
+								stockOrderBean.setItemCount(Integer.toString(itemCount));
+								NumberFormat formatter = new DecimalFormat("###.##");  
+								String total = formatter.format(totalCost);
+								stockOrderBean.setTotalCost(total);
+								//Region end
 							}
+						else{
+							stockOrderBean.setStockOrderId(Integer.toString(stockOrderId));
+							Double totalItems = stockOrder.getTotalItems().doubleValue();
+							NumberFormat formatter = new DecimalFormat("#####");  
+							String totalItem = formatter.format(totalItems);
+							stockOrderBean.setItemCount(totalItem);
+							Double totalCost = stockOrder.getTotalAmount().doubleValue();							
+							formatter = new DecimalFormat("###.##");  
+							String total = formatter.format(totalCost);
+							stockOrderBean.setTotalCost(total);
 						}
-						stockOrderBean.setStockOrderId(Integer.toString(stockOrderId));
-						stockOrderBean.setItemCount(Integer.toString(itemCount));
-						NumberFormat formatter = new DecimalFormat("###.##");  
-						String total = formatter.format(totalCost);
-						stockOrderBean.setTotalCost(total);
 						stockOrderBeansList.add(stockOrderBean);
 					}
-					
-					
-					
+
+
+
 					StockControlControllerBean stockControlControllerBean =  new StockControlControllerBean();
 					stockControlControllerBean.setStockOrderBeansList(stockOrderBeansList);
 					Configuration configurationStockTransferToSupplier = configurationMap.get("STOCK_TRANSFER_TO_SUPPLIER");

@@ -44,6 +44,7 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 			$scope.fetchData();
 			$scope.stockOrderBean.outletId= $scope.userOutletId;
 			$scope.stockOrderBean.itemCount = 0;
+			$scope.itemCountTotal = 0;
 			$scope.stockOrderBean.recItemCount = 0;
 		}
 	};
@@ -462,11 +463,19 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 
 	$scope.calculateItemCount = function(){
 		$scope.stockOrderBean.itemCount = 0;
+		$scope.itemCountTotal = "0";
 		if($scope.stockOrderDetailBeansList != null){
 			for (var i = 0; i < $scope.stockOrderDetailBeansList.length; i++) {
 				$scope.stockOrderBean.itemCount = parseInt($scope.stockOrderBean.itemCount) + parseInt($scope.stockOrderDetailBeansList[i].orderProdQty);
 				if(isNaN($scope.stockOrderBean.itemCount)){
 					$scope.stockOrderBean.itemCount = "0";
+				}
+				if(isNaN($scope.stockOrderDetailBeansList[i].total)){
+					$scope.stockOrderDetailBeansList[i].total = "0";
+				}
+				$scope.itemCountTotal = parseFloat($scope.itemCountTotal) + parseFloat($scope.stockOrderDetailBeansList[i].total);
+				if(isNaN($scope.itemCountTotal)){
+					$scope.itemCountTotal = "0";
 				}
 			}
 		}
@@ -574,7 +583,7 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.itemCountTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -617,7 +626,7 @@ var POCreateandReceiveController = ['$sce', '$filter','$scope', '$http', '$timeo
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateAndReceiveStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateAndReceiveStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.recItemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;

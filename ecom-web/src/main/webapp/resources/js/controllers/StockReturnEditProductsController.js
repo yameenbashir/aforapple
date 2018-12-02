@@ -21,13 +21,13 @@ var StockReturnEditProductsController = ['$sce', '$scope', '$http', '$timeout', 
 	$scope.skudisable = false;
 	$scope.inputTypeScan = true;
 	
-	
 	$scope.sessionValidation = function(){
 
 		if(SessionService.validate()){
 			$scope._s_tk_com =  $cookieStore.get('_s_tk_com') ;
 			$scope.roleId = $cookieStore.get('_s_tk_rId');
 			$scope.stockOrderBean = $cookieStore.get('_ct_bl_ost');
+			$scope.stockOrderBean.itemCount = 0;
 			if($scope.stockOrderBean.retailPriceBill != null) {
 				if($scope.stockOrderBean.retailPriceBill.toString() == "true"){
 					$scope.stockOrderBean.retailPriceBill = true;
@@ -401,7 +401,7 @@ var StockReturnEditProductsController = ['$sce', '$scope', '$http', '$timeout', 
 			$scope.success = false;
 			$scope.error = false;
 			$scope.loading = true;
-			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateStockOrderDetail/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;					
 				$scope.responseStatus = Response.status;
@@ -442,7 +442,7 @@ var StockReturnEditProductsController = ['$sce', '$scope', '$http', '$timeout', 
 		$scope.error = false;
 		$scope.loading = true;
 		$scope.stockOrderBean.statusId = "3"; // Completed status
-		$http.post('purchaseOrderDetails/updateAndTransferStockOrderDetails/'+$scope._s_tk_com, $scope.stockOrderDetailBeansList, parseInt($scope.grandTotal))
+		$http.post('purchaseOrderDetails/updateAndTransferStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 		.success(function(Response) {
 			$scope.loading = false;
 
@@ -485,7 +485,7 @@ var StockReturnEditProductsController = ['$sce', '$scope', '$http', '$timeout', 
 			$scope.error = false;
 			$scope.loading = true;
 			$scope.stockOrderBean.statusId = "3"; // Completed status
-			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;
 
