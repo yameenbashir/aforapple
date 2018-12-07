@@ -199,8 +199,11 @@ public class StockControlController {
 					for (StockOrder stockOrder : stockOrderList) {
 						StockOrderBean stockOrderBean = new StockOrderBean();					
 						stockOrderBean.setAutofillReorder(Boolean.toString(stockOrder.isAutofillReorder()));
-						if(stockOrder.getCreatedDate() != null){
-							stockOrderBean.setCreatedDate(DateTimeUtil.convertDBDateTimeToGuiFormat(stockOrder.getCreatedDate()).toString());
+						if(stockOrder.getCreatedDate() != null){							
+							stockOrderBean.setCreatedDate(simpleDateFormat.format(stockOrder.getCreatedDate()).toString());
+						}
+						if(stockOrder.getLastUpdated() != null){							
+							stockOrderBean.setLastUpdated(simpleDateFormat.format(stockOrder.getLastUpdated()).toString());
 						}
 						if(stockOrder.getCreatedBy() != null){
 							stockOrderBean.setCreatedBy(String.valueOf(stockOrder.getCreatedBy()));

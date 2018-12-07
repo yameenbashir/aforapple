@@ -61,12 +61,13 @@
 				        <tr >
 				           <th>Name / Reference</th>
 				          <th>Type</th>
-				           <th>Date</th>
+				           <th>Created</th>
+				           <th>Last Updated</th>
 				            <th>Delivery Due</th>
 				             <th>Order No</th>
 				              <th>Outlet</th>
 				               <th>Source</th>
-				                <th>Status</th>
+				                <th>Status</th>				                
 				                  <th>Items</th>
 				         		  <th>Total Cost</th>
 				          <th ng-hide="isAdmin()"></th>
@@ -78,6 +79,7 @@
 				         <td ><a href="" ng-bind="stockOrderBean.stockRefNo" ng-click="purchaseOrderActions(stockOrderBean)"></a></td>
 				            <td ng-bind="stockOrderBean.stockOrderTypeDesc"></td>
 				            <td ng-bind="stockOrderBean.createdDate"></td>
+				           <td ng-bind='stockOrderBean.lastUpdated'></td>
 				          <td ng-bind="stockOrderBean.diliveryDueDate"></td>
 				            <td ng-bind="stockOrderBean.orderNo"></td>
 				          <td ng-bind="stockOrderBean.outletName"></td>
