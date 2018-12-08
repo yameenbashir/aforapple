@@ -63,6 +63,7 @@ import com.dowhile.service.StatusService;
 import com.dowhile.service.InventoryCountDetailService;
 import com.dowhile.service.InventoryCountService;
 import com.dowhile.service.InventoryCountTypeService;
+import com.dowhile.service.StockOrderService;
 import com.dowhile.service.util.ServiceUtil;
 import com.dowhile.util.DateTimeUtil;
 import com.dowhile.util.SessionValidator;
@@ -79,6 +80,9 @@ public class InventoryCountEditDetailsController {
 	@Resource
 	private OutletService outletService;
 
+	@Resource
+	private StockOrderService stockOrderService;
+	
 	@Resource
 	private ContactService supplierService;
 
@@ -248,7 +252,7 @@ public class InventoryCountEditDetailsController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
-							productMap.put(product.getSku(), productVariantBean);
+							productMap.put(product.getSku().toLowerCase(), productVariantBean);
 						}						
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getAllProducts", "User "+ 
@@ -329,7 +333,7 @@ public class InventoryCountEditDetailsController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
-							productMap.put(product.getSku(), productVariantBean);
+							productMap.put(product.getSku().toLowerCase(), productVariantBean);
 						}
 						
 					}
@@ -413,7 +417,7 @@ public class InventoryCountEditDetailsController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -496,7 +500,7 @@ public class InventoryCountEditDetailsController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "InventoryCountDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);

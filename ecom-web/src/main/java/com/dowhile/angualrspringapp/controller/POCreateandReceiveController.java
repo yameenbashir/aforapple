@@ -539,7 +539,7 @@ public class POCreateandReceiveController {
 							}
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get Products and ProductVariants",false);
@@ -618,7 +618,7 @@ public class POCreateandReceiveController {
 
 							}
 							productVariantBeansList.add(productVariantBean);
-							productMap.put(product.getSku(), productVariantBean);
+							productMap.put(product.getSku().toLowerCase(), productVariantBean);
 						}						
 					}				
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProducts", "User "+ 
@@ -702,7 +702,7 @@ public class POCreateandReceiveController {
 
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -800,7 +800,7 @@ public class POCreateandReceiveController {
 								}
 							}
 							productVariantBeansList.add(productVariantBean);
-							productMap.put(product.getSku(), productVariantBean);
+							productMap.put(product.getSku().toLowerCase(), productVariantBean);
 						}
 						
 					}
@@ -910,7 +910,7 @@ public class POCreateandReceiveController {
 							}
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);
@@ -989,7 +989,7 @@ public class POCreateandReceiveController {
 								productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 							}
 							productVariantBeansList.add(productVariantBean);
-							productMap.put(product.getSku(), productVariantBean);
+							productMap.put(product.getSku().toLowerCase().toLowerCase(), productVariantBean);
 						}						
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getAllProducts", "User "+ 
@@ -1072,7 +1072,7 @@ public class POCreateandReceiveController {
 							productVariantBean.setRetailPriceExclTax(retailPrice.toString());
 						}
 						productVariantBeansList.add(productVariantBean);
-						productVariantMap.put(productVariant.getSku(), productVariantBean);
+						productVariantMap.put(productVariant.getSku().toLowerCase(), productVariantBean);
 					}
 					util.AuditTrail(request, currentUser, "PurchaseOrderDetails.getProductVariants", "User "+ 
 							currentUser.getUserEmail()+" Get ProductVariants",false);

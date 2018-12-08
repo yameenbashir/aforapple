@@ -37,7 +37,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 			$scope.inventoryCountBean.itemCountCounted = 0;
 			$scope.data = InventoryCountEditDetailsControllerPreLoad.loadControllerData();
 			$scope.fetchData();
-			if($scope.inventoryCountBean.inventoryCountTypeDesc.toString() == "FULL"){
+			if($scope.inventoryCountBean.inventoryCountTypeDesc.toString().toLowerCase() == "full"){
 				$scope.isFull = true;
 			}
 			else{
@@ -623,7 +623,13 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 					$window.location = Response.layOutPath;
-				} else {
+				}
+				else if($scope.responseStatus == 'WARNING'){
+				$scope.warning = true;
+				$scope.warningMessage = Response.data;
+				//$window.location = Response.layOutPath;
+			} 
+				else {
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 				}
@@ -663,7 +669,13 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 					$window.location = Response.layOutPath;
-				} else {
+				} 
+				else if($scope.responseStatus == 'WARNING'){
+				$scope.warning = true;
+				$scope.warningMessage = Response.data;
+				//$window.location = Response.layOutPath;
+				} 
+				else {
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 				}
@@ -761,10 +773,10 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 	
 	$scope.skuinput = function(){
 		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
-			if($scope.productVariantMap[$scope.productSKU] != null){
+			if($scope.productVariantMap[$scope.productSKU.toLowerCase()] != null){
 				$scope.skudisable = true;
 				$scope.inventoryCountDetailBean.countedProdQty = 1;
-				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU.toLowerCase()];
 				//console.log($scope.productVariantMap[$scope.productSKU]);			
 				$scope.checkProductStatus();
 				$scope.productSKU = '';

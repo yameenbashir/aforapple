@@ -30,7 +30,7 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 			$scope.inventoryCountBean = $cookieStore.get('_ct_sc_ost');
 			$scope.inventoryCountBean.itemCountExp = 0;
 			$scope.inventoryCountBean.itemCountCounted = 0;
-			if($scope.inventoryCountBean.inventoryCountTypeDesc.toString() == "FULL"){
+			if($scope.inventoryCountBean.inventoryCountTypeDesc.toString().toLowerCase() == "full"){
 				$scope.isFull = true;
 			}
 			else{
@@ -94,11 +94,13 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 				else{
 					if($scope.inventoryCountBean.inventoryCountTypeDesc.toString() == "FULL"){
 						for (var i = 0; i < $scope.productBeansList.length; i++) {
-							$scope.productVariantBean = $scope.productBeansList[i];
-							$scope.inventoryCountDetailBean.countedProdQty = 0;
-							$scope.checkProductStatus();
-							$scope.productVariantBean = null;
-							$scope.inventoryCountDetailBean.countedProdQty = null;
+							if($scope.productBeansList[i].currentInventory != "0"){
+								$scope.productVariantBean = $scope.productBeansList[i];
+								$scope.inventoryCountDetailBean.countedProdQty = 0;
+								$scope.checkProductStatus();
+								$scope.productVariantBean = null;
+								$scope.inventoryCountDetailBean.countedProdQty = null;
+							}
 						}
 						$scope.addInventoryCountDetail();
 					}
@@ -632,7 +634,13 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 					$window.location = Response.layOutPath;
-				} else {
+				} 
+				else if($scope.responseStatus == 'WARNING'){
+					$scope.warning = true;
+					$scope.warningMessage = Response.data;
+					//$window.location = Response.layOutPath;
+				} 
+				else {
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 				}
@@ -673,7 +681,13 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 					$window.location = Response.layOutPath;
-				} else {
+				} 
+				else if($scope.responseStatus == 'WARNING'){
+					$scope.warning = true;
+					$scope.warningMessage = Response.data;
+					//$window.location = Response.layOutPath;
+				} 
+				else {
 					$scope.error = true;
 					$scope.errorMessage = Response.data;
 				}
@@ -745,14 +759,14 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 			renderItem : function(item) {
 				var result = [];
 				if($scope.hideRefValues == false){
-				result = {
-						value : item.variantAttributeName,
-						label : $sce.trustAsHtml("<table class='auto-complete'>"
-								+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
-								+ item.variantAttributeName + "</td>"
-								+ "<td style='width: 10%'>" + "</td>"
-								+ "</tr>" + "</tbody>" + "</table>")
-				};
+					result = {
+							value : item.variantAttributeName,
+							label : $sce.trustAsHtml("<table class='auto-complete'>"
+									+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
+									+ item.variantAttributeName + "</td>"
+									+ "<td style='width: 10%'>" + "</td>"
+									+ "</tr>" + "</tbody>" + "</table>")
+					};
 				}
 				else{
 
@@ -767,13 +781,13 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 
 			}
 	};
-	
+
 	$scope.skuinput = function(){
 		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
-			if($scope.productVariantMap[$scope.productSKU] != null){
+			if($scope.productVariantMap[$scope.productSKU.toLowerCase()] != null){
 				$scope.skudisable = true;
 				$scope.inventoryCountDetailBean.countedProdQty = 1;
-				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU.toLowerCase()];
 				//console.log($scope.productVariantMap[$scope.productSKU]);			
 				$scope.checkProductStatus();
 				$scope.productSKU = '';
@@ -786,6 +800,6 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 			}
 		}
 	};
-	
+
 	$scope.sessionValidation();
 }];

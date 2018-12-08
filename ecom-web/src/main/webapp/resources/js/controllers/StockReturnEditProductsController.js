@@ -603,10 +603,10 @@ var StockReturnEditProductsController = ['$sce', '$scope', '$http', '$timeout', 
 
 	$scope.skuinput = function(){
 		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
-			if($scope.productVariantMap[$scope.productSKU] != null){
+			if($scope.productVariantMap[$scope.productSKU.toLowerCase()] != null){
 				$scope.skudisable = true;
 				$scope.stockOrderDetailBean.orderProdQty = 1;
-				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU];
+				$scope.productVariantBean = $scope.productVariantMap[$scope.productSKU.toLowerCase()];
 				//console.log($scope.productVariantMap[$scope.productSKU]);			
 				$scope.checkProductStatus();
 				$scope.productSKU = '';

@@ -28,6 +28,8 @@
 								ng-bind="successMessage" ng-cloak></div>
 							<div class="alert alert-danger alert-sm" ng-show="error"
 								ng-bind="errorMessage" ng-cloak></div>
+							<div class="alert alert-danger alert-sm" ng-show="warning"
+								bind-html-unsafe="warningMessage" ng-cloak></div>
 							<div class="box box-primary">
 							
 								<div class="row">								
@@ -241,12 +243,12 @@
 										</div>
 					<div class="box-footer text-right">
 								<button class="btn btn-primary btn  "
-									ng-click="addInventoryCountDetail()" ng-disabled="!checkInventoryCountDetailList()" ng-show="!loading">Save</button>
+									ng-click="addInventoryCountDetail()" ng-disabled="warning || !checkInventoryCountDetailList()" ng-show="!loading">Save</button>
 								<button  ng-show="loading" class="btn btn-primary btn">
 							    	Processing<i class="fa fa-arrow-right text-muted fa-spinner fa-spin " ></i>
 				       	    </button>
 				       	    <button class="btn btn-primary btn  "
-									ng-click="addAndUpdateInventoryCountDetail()" ng-disabled="!checkInventoryCountDetailList()" ng-show="!loading">Complete</button>
+									ng-click="addAndUpdateInventoryCountDetail()" ng-disabled="warning || !checkInventoryCountDetailList()" ng-show="!loading">Complete</button>
 								<button  ng-show="loading" class="btn btn-primary btn">
 							    	Processing<i class="fa fa-arrow-right text-muted fa-spinner fa-spin " ></i>
 				       	    </button>
