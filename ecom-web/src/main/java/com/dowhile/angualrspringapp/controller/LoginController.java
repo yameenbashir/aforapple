@@ -206,6 +206,11 @@ public class LoginController {
 					String companyImagePath = "/app/resources/images/"+configuration.getPropertyValue();
 					loginBean.setCompanyImagePath(companyImagePath.trim());
 				}
+				Configuration configurationTermsAndContitions = configurationMap.get("TERMS_AND_CONDITIONS");
+				if(configurationTermsAndContitions!=null){
+					String termsAndContitions = configurationTermsAndContitions.getPropertyValue();
+					loginBean.setTermsAndConditions(termsAndContitions);
+				}
 				Configuration domianConfiguration = configurationMap.get("SUB_DOMAIN_NAME");
 				if(domianConfiguration!=null){
 					String subDomianName = domianConfiguration.getPropertyValue();
@@ -876,11 +881,47 @@ public class LoginController {
 		}
 
 	}
+	public static void updateProductsAttributes(){
+		try{
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	private static final String FILE_NAME_HEATMAP = "C:\\heatmap\\Heatmap_Adhoc.xlsx";
+	@SuppressWarnings("deprecation")
+	public static void heatmapAdhoc() {
+
+		try {
+			FileInputStream excelFile = new FileInputStream(new File(FILE_NAME_HEATMAP));
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet datatypeSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = datatypeSheet.iterator();
+			int rowNum = 0;
+			while (iterator.hasNext()) {
+				rowNum = rowNum+1;
+				//System.out.println("Row Number: "+rowNum);
+				Row currentRow = iterator.next();
+				
+				for(int i=0;i<26;i++) {
+					String cell =  currentRow.getCell(i).getStringCellValue();
+					System.out.println("Cell Id: "+i+" Cell Value: "+cell);
+				}
+				
+				//System.out.println("markUp: "+markUp.setScale(5, RoundingMode.HALF_EVEN));
+			}
+						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 	public static void main(String args[]){
 		/*double number = 90909090.123456789;
 		DecimalFormat numberFormat = new DecimalFormat("#.00000");
 		System.out.println(numberFormat.format(number));*/
-		LoginController.SynchProductData1();
+		heatmapAdhoc();
 	}
 
 

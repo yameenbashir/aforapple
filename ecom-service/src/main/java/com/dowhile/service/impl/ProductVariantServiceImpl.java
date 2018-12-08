@@ -189,4 +189,10 @@ public class ProductVariantServiceImpl implements ProductVariantService{
 
 		return map;
 	}
+
+	@Override
+	public List<ProductVariant> getAllActiveProductVariants() {
+		// TODO Auto-generated method stub
+		return getProductVariantDAO().getAllActiveProductVariants();
+	}
 }

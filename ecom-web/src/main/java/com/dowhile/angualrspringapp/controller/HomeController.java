@@ -70,7 +70,10 @@ public class HomeController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			controllerBean.setOutletName(currentUser.getOutlet().getOutletName());
-			configuration = configurationService.getConfigurationByPropertyNameByCompanyId("HIDE_ORIGNAL_PRICE_INFO_REPORTS",currentUser.getCompany().getCompanyId());
+			Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
+			configuration = configurationMap.get("HIDE_ORIGNAL_PRICE_INFO_REPORTS");
+			setHomeControllerBeanGraphProperties(controllerBean, configurationMap,currentUser);
+			//configuration = configurationService.getConfigurationByPropertyNameByCompanyId("HIDE_ORIGNAL_PRICE_INFO_REPORTS",currentUser.getCompany().getCompanyId());
 
 			try {
 				boolean isHeadOffice = false;
@@ -146,6 +149,72 @@ public class HomeController {
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
 		}
 
+	}
+	
+	public void setHomeControllerBeanGraphProperties(HomeControllerBean controllerBean,Map<String ,Configuration> configurationMap,User currentUser){
+		try{
+			Configuration configurationRevenue = configurationMap.get("HOME_REVENUE");
+			if(configurationRevenue!=null && !configurationRevenue.getPropertyValue().equalsIgnoreCase("")){
+				String roleList[] = configurationRevenue.getPropertyValue().split(",");
+				//Admin
+				if(currentUser.getRole().getRoleId()==1){
+					if(roleList[0].equalsIgnoreCase("1")){
+						controllerBean.setRevenue(true);
+					}else{
+						controllerBean.setRevenue(false);
+					}
+				}//Manager
+				else if(currentUser.getRole().getRoleId()==2){
+					if(roleList[1].equalsIgnoreCase("1")){
+						controllerBean.setRevenue(true);
+					}else{
+						controllerBean.setRevenue(false);
+					}
+				}//Cashier
+				else {
+					if(roleList[2].equalsIgnoreCase("1")){
+						controllerBean.setRevenue(true);
+					}else{
+						controllerBean.setRevenue(false);
+					}
+				}
+			}else{
+				controllerBean.setRevenue(true);
+			}
+			Configuration configurationSaleCount = configurationMap.get("HOME_SALE_COUNT");
+			if(configurationSaleCount!=null && !configurationSaleCount.getPropertyValue().equalsIgnoreCase("")){
+				String roleList[] = configurationSaleCount.getPropertyValue().split(",");
+				//Admin
+				if(currentUser.getRole().getRoleId()==1){
+					if(roleList[0].equalsIgnoreCase("1")){
+						controllerBean.setSaleCount(true);
+					}else{
+						controllerBean.setSaleCount(false);
+					}
+				}//Manager
+				else if(currentUser.getRole().getRoleId()==2){
+					if(roleList[1].equalsIgnoreCase("1")){
+						controllerBean.setSaleCount(true);
+					}else{
+						controllerBean.setSaleCount(false);
+					}
+				}//Cashier
+				else {
+					if(roleList[2].equalsIgnoreCase("1")){
+						controllerBean.setSaleCount(true);
+					}else{
+						controllerBean.setSaleCount(false);
+					}
+				}
+			}else{
+				controllerBean.setSaleCount(true);
+			}
+		
+			
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 	
 	

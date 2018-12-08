@@ -302,13 +302,13 @@ public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId
 		double result = 0;
 		try{
 			List<Object[]> rows = getSessionFactory().getCurrentSession()
-					.createSQLQuery("SELECT DATE(INVOICE_GENERATION_DTE) as date, sum(((`invoice_detail`.`ITEM_SALE_PRICE` * `invoice_detail`.`PRODUCT_QUANTITY`) - (coalesce(`invoice_main`.`INVOICE_DISCOUNT_AMT`,0)) /" +
-"(select count(INVOICE_MAIN_ASSOCICATION_ID) from invoice_detail where invoice_detail.INVOICE_MAIN_ASSOCICATION_ID = invoice_main.INVOICE_MAIN_ID))) as bigDecimal FROM invoice_detail "
-							+"inner join invoice_main on INVOICE_MAIN_ID = INVOICE_MAIN_ASSOCICATION_ID "
-							+ "WHERE  DATE(INVOICE_GENERATION_DTE) = CURRENT_DATE()  "
-							+ "and invoice_main.COMPANY_ASSOCIATION_ID = ? and  invoice_main.DAILY_REGISTER_ASSOCICATION_ID = ? "
-							+ "and invoice_main.OUTLET_ASSOCICATION_ID = ? and invoice_main.STATUS_ASSOCICATION_ID NOT IN ( 11) "
-							+ "GROUP BY DATE(INVOICE_GENERATION_DTE) "
+					.createSQLQuery("SELECT DATE(CREATED_DATE) as date, "
+							+ "sum(SETTLED_AMT) as bigDecimal FROM invoice_main "
+							+ "WHERE  DATE(CREATED_DATE) = CURRENT_DATE()  "
+							+ "and COMPANY_ASSOCIATION_ID = ?  "
+							+ "and OUTLET_ASSOCICATION_ID = ? "
+							+ "and STATUS_ASSOCICATION_ID NOT IN ( 11) "
+							+ "GROUP BY DATE(CREATED_DATE) "
 							).
 					setParameter(0, companyId)
 					.setParameter(1, dailyRegisterId)
@@ -348,11 +348,13 @@ public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId
 	public List getRevenue(int outletId, int copmayId, Date startDate,Date endDate) {
 		try{
 			List<DashBoardGraphData> list = getSessionFactory().getCurrentSession()
-					.createSQLQuery("SELECT DATE(INVOICE_GENERATION_DTE), sum(((`invoice_detail`.`ITEM_SALE_PRICE` * `invoice_detail`.`PRODUCT_QUANTITY`) - (coalesce(`invoice_main`.`INVOICE_DISCOUNT_AMT`,0)) /" +
-"(select count(INVOICE_MAIN_ASSOCICATION_ID) from invoice_detail where invoice_detail.INVOICE_MAIN_ASSOCICATION_ID = invoice_main.INVOICE_MAIN_ID))) FROM invoice_detail "
-							+"inner join invoice_main on INVOICE_MAIN_ID = INVOICE_MAIN_ASSOCICATION_ID "
-							+ "WHERE  INVOICE_GENERATION_DTE between ? and ? and invoice_main.COMPANY_ASSOCIATION_ID = ? and invoice_main.OUTLET_ASSOCICATION_ID = ? and invoice_main.STATUS_ASSOCICATION_ID NOT IN ( 11) "
-							+ "GROUP BY DATE(INVOICE_GENERATION_DTE) "
+					.createSQLQuery("SELECT DATE(CREATED_DATE) as date, "
+							+ "sum(SETTLED_AMT) as bigDecimal FROM invoice_main "
+							+ "WHERE  INVOICE_GENERATION_DTE between ? and ? "
+							+ "and COMPANY_ASSOCIATION_ID = ?  "
+							+ "and OUTLET_ASSOCICATION_ID = ? "
+							+ "and STATUS_ASSOCICATION_ID NOT IN ( 11) "
+							+ "GROUP BY DATE(CREATED_DATE) "
 							)
 					.setParameter(0, startDate)
 					.setParameter(1, endDate)

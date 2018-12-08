@@ -214,4 +214,10 @@ public class ProductServiceImpl implements ProductService{
 		// TODO Auto-generated method stub
 		return getProductDAO().getTopProductsByCategory(compant, productType, count, pageNum);
 	}
+
+	@Override
+	public List<Product> getAllActiveProducts() {
+		// TODO Auto-generated method stub
+		return getProductDAO().getAllActiveProducts();
+	}
 }

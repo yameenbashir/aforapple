@@ -43,6 +43,8 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 //$scope.totalDiscount = parseFloat(0);
 	$scope.InvoiceMainBean.itemsCount = parseFloat(0);
 	$scope.isValidInvoice = true;
+	$scope.outletId = $cookieStore.get('_s_tk_oId');
+	console.log('$scope.outletId'+$scope.outletId);
 	Number.prototype.padLeft = function(base,chr){
 		var  len = (String(base || 10).length - String(this).length)+1;
 		return len > 0? new Array(len).join(chr || '0')+this : this;
@@ -331,7 +333,15 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 			$scope.invoiceDetail.itemNetPrice = $scope.invoiceDetail.itemSalePrice;
 			$scope.invoiceDetail.orignalPrice = productVarient.orignalPrice;
 
-			$scope.applyPriceBook($scope.invoiceDetail,productVarient );
+			/*if($scope.outletId==27){
+				console.log('50% flat sale is on outlet id: '+$scope.outletId);
+				$scope.invoiceDetail.itemDiscountPrct = parseFloat(50.00).toFixed(2);
+			}else{
+				$scope.applyPriceBook($scope.invoiceDetail,productVarient );
+			}*/
+			
+			$scope.applyPriceBook($scope.invoiceDetail,productVarient);
+			
 			//$scope.itemsCount = $scope.itemsCount + 1;
 			for (var i = 0; i < $scope.InvoiceMainBean.invoiceDetails.length; i++) {
 				if (productVarient.varientProducts == 'false' && 

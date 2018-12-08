@@ -5,7 +5,9 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -206,10 +208,22 @@ public class NewPriceBookController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
+				List<PriceBook> priceBookList = priceBookService.getActivePriceBooksByDateRangeCompanyId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()), DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId());
+				if(priceBookList!=null && priceBookList.size()>0){
+					List<OutletBean> outletBeans = priceBookBean.getOutletBeans();
+					Map<String,OutletBean> outletgroupsIdsMap = new HashMap<>();
+					for(OutletBean outletBean:outletBeans){
+						outletgroupsIdsMap.put(outletBean.getOutletId(), outletBean);
+					}
+				for(PriceBook priceBook:priceBookList){
+					String outletgroups = priceBook.getOuteletsGroup();
+				}
+			}
+				/*int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
 				
 				List<PriceBook> priceBookList= priceBookService.getPriceBooksByDateRangeCompanyIdOutletIdGroupId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()),
-						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));
+						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));*/
+				String outletGroups = "";
 				if(priceBookList==null){
 					PriceBook priceBook = new PriceBook();
 					
@@ -235,6 +249,7 @@ public class NewPriceBookController {
 						Outlet outlet = outletService.getOuletByOutletId(Integer.valueOf(priceBookBean.getOutletId()), currentUser.getCompany().getCompanyId());
 						priceBook.setOutlet(outlet);
 					}
+					priceBook.setOuteletsGroup(outletGroups);
 					priceBook.setPriceBookName(priceBookBean.getPriceBookName());
 					priceBook.setUserByUpdatedBy(currentUser);
 					priceBook.setValidFrom(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()));

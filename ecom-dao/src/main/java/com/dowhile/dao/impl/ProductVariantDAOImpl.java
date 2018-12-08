@@ -463,6 +463,23 @@ public class ProductVariantDAOImpl implements ProductVariantDAO {
 		return 0;
 	}
 
+	@Override
+	public List<ProductVariant> getAllActiveProductVariants() {
+		// TODO Auto-generated method stub
+		try {
+			@SuppressWarnings("unchecked")
+			List<ProductVariant> list = getSessionFactory()
+			.getCurrentSession()
+			.createQuery(
+					"from ProductVariant where ACTIVE_INDICATOR = 1")
+					.list();
+			return list;
+		} catch (HibernateException ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
 
 
 }

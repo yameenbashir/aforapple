@@ -500,4 +500,21 @@ public class ProductDAOImpl implements ProductDAO{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Product> getAllActiveProducts() {
+		try{
+			List<Product> list = getSessionFactory().getCurrentSession()
+					.createQuery("from Product where ACTIVE_INDICATOR = 1")
+					.list();
+			if(list!=null&& list.size()>0){
+
+				return list;
+			}
+		}catch(HibernateException ex){
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
 }

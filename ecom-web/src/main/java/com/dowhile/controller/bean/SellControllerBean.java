@@ -38,6 +38,7 @@ public class SellControllerBean implements Serializable{
 	private String companyImagePath;
 	private String autoCreateStandardVariant;
 	private String defaultVariantName;
+	private String termsAndConditions;
 	public List<ProductBean> getProductsBean() {
 		return productsBean;
 	}
@@ -147,6 +148,12 @@ public class SellControllerBean implements Serializable{
 	}
 	public void setDefaultVariantName(String defaultVariantName) {
 		this.defaultVariantName = defaultVariantName;
+	}
+	public String getTermsAndConditions() {
+		return termsAndConditions;
+	}
+	public void setTermsAndConditions(String termsAndConditions) {
+		this.termsAndConditions = termsAndConditions;
 	}
 
 }

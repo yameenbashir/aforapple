@@ -33,6 +33,7 @@ public interface ProductVariantDAO {
 	int getCountOfInventoryByProductVariantUuId(String productVariantUuId , int companyId);
 	int getCountOfInventoryByProductVariantUuIdOutletId(String productVariantUuId ,int outletId, int companyId);
 	int getCountOfMAXSKUForProductVariantByCompanyId(int companyId);
+	List<ProductVariant> getAllActiveProductVariants();
 	
 	
 }

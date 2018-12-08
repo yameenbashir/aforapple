@@ -36,4 +36,5 @@ public interface ProductVariantService {
 	int getCountOfMAXSKUForProductVariantByCompanyId(int companyId);
 	Map<Integer, ProductVariant> getProductsVariantMapByProductId(int companyId);
 	Map<String, List<ProductVariant>>  getAllProductsVariantMapByUuid(int companyId);
+	List<ProductVariant> getAllActiveProductVariants();
 }

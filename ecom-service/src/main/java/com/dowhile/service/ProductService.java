@@ -40,5 +40,6 @@ public interface ProductService {
 	public List<Product> getTopProductsByCategory(int compant, int productType,int count,int pageNum);
 	Map<Integer, Product> getProductsMapByProductId(int companyId);
 	Map<String, List<Product>>  getAllProductsMapByUuid(int companyId);
+	List<Product> getAllActiveProducts();
 }
  

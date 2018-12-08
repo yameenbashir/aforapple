@@ -14,6 +14,7 @@ var SalesHistoryController = ['$scope', '$http', '$window','$cookieStore','$root
 			if(SessionService.validate()){
 			$scope._s_tk_com =  $cookieStore.get('_s_tk_com') ;
 			$scope.companyImagePath = $cookieStore.get('companyImagePath');
+			$scope.termsAndConditions = $cookieStore.get('termsAndConditions');
 			SalesHistoryControllerPreLoad.loadControllerData();
 			$rootScope.globalPageLoader = false;
 			$scope.InvoiceMainBeans = localStorage.getItem('salesHistory');

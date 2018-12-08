@@ -84,10 +84,12 @@ public class RegisterDAOImpl implements RegisterDAO{
 
 		try{
 			List<Register> list = getSessionFactory().getCurrentSession()
-					.createQuery("from Register where OUTLET_ASSOCICATION_ID =? AND COMPANY_ASSOCIATION_ID = ? AND CREATED_BY = ?")
+					.createQuery("from Register where OUTLET_ASSOCICATION_ID =? AND COMPANY_ASSOCIATION_ID = ?")
 					.setParameter(0, outletId)
 					.setParameter(1, companyId)
-					.setParameter(2, userId).list();
+					.list();
+			//.setParameter(2, userId)
+			//from Register where OUTLET_ASSOCICATION_ID =? AND COMPANY_ASSOCIATION_ID = ? AND CREATED_BY = ?
 			if(list!=null&& list.size()>0){
 
 				return list;

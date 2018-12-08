@@ -223,6 +223,11 @@ public class SellController  {
 			User currentUser = (User) session.getAttribute("user");
 			Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
 			try {
+				Configuration configurationTermsAndContitions = configurationMap.get("TERMS_AND_CONDITIONS");
+				if(configurationTermsAndContitions!=null){
+					String termsAndContitions = configurationTermsAndContitions.getPropertyValue();
+					sellControllerBean.setTermsAndConditions(termsAndContitions);
+				}
 				DailyRegister dailyRegister = dailyRegisterService.getOpenDailyRegister(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(),currentUser.getUserId());
 				sellControllerBean.setRegisterStatus("false");
 				if (dailyRegister != null) {
@@ -288,6 +293,11 @@ public class SellController  {
 					String companyImagePath = "/app/resources/images/"+configurationImage.getPropertyValue();
 					sellControllerBean.setCompanyImagePath(companyImagePath);
 				}
+				Configuration configurationTermsAndContitions = configurationMap.get("TERMS_AND_CONDITIONS");
+				if(configurationTermsAndContitions!=null){
+					String termsAndContitions = configurationTermsAndContitions.getPropertyValue();
+					sellControllerBean.setTermsAndConditions(termsAndContitions);
+				}
 				
 				List<User> users =  resourceService.getAllEmployeesByCompanyId(company.getCompanyId());
 				if(users!=null){
@@ -337,7 +347,7 @@ public class SellController  {
 					sellControllerBean.setRegisterStatus("true");
 				}
 			sellControllerBean.setDisplayProductsBean(displayProductsBean);
-//			List<VariantAttributeValues> variantAttributeValues = new ArrayList<VariantAttributeValues>();
+			List<VariantAttributeValues> variantAttributeValues = new ArrayList<VariantAttributeValues>();
 				sellControllerBean.setCompanyName(company.getCompanyName());
 //				List<ContactsSummmary> customers = contactsSummmaryService.getActiveContactsSummmaryByCompanyId(currentUser.getCompany().getCompanyId());
 //			//	Map<String, Address> cutomerAddressMap = addressService.getALLAddressByCustomerId(currentUser.getCompany().getCompanyId());
@@ -354,7 +364,7 @@ public class SellController  {
 //					}
 //					sellControllerBean.setCustomersBean(customersBeans);
 //				}
-//				variantAttributeValues = variantAttributeValuesService.getAllVariantAttributeValues(company.getCompanyId());
+				variantAttributeValues = variantAttributeValuesService.getAllVariantAttributeValues(company.getCompanyId());
 				sellControllerBean.setUsers(usersBeans);
 				
 				if(currentUser.getOutlet().getAddress()!=null){
@@ -520,20 +530,21 @@ public class SellController  {
 						ProductVaraintDetailBean productVaraintDetailBean = new ProductVaraintDetailBean();
 						if(productVarients!=null && productVarients.size()>0){
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId1() != null) {
-							if (product.getAttribute1() != null) {
-								productVaraintDetailBean.setArrtibute1Values(product.getAttribute1().split(","));
+								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1()!=null){
+									productVaraintDetailBean.setArrtibute1Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1().getVariantAttributeId(), product.getProductUuid()));
 								}
 							}
 
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId2() != null) {
-								if (product.getAttribute2() != null) {
-									productVaraintDetailBean.setArrtibute2Values(product.getAttribute2().split(","));
-									}
+								if(productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2()!=null){
+									productVaraintDetailBean.setArrtibute2Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2().getVariantAttributeId(), product.getProductUuid()));
+									
+								}
 							}
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId3() != null) {
-								if (product.getAttribute3() != null) {
-									productVaraintDetailBean.setArrtibute3Values(product.getAttribute3().split(","));
-									}
+								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3()!=null){
+								productVaraintDetailBean.setArrtibute3Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3().getVariantAttributeId(), product.getProductUuid()));
+								}
 
 							}
 						}
