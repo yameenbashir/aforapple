@@ -417,13 +417,39 @@ var POCreateandReceiveEditController = ['$sce', '$filter', '$scope', '$http', '$
 	};
 
 	$scope.delStockOrderDetail = function(){
+		if (typeof $scope.delStockOrderDetailBean.stockOrderDetailId != 'undefined') {
+			$scope.error = false;
+			$scope.loading = true;
+			$http.post('purchaseOrderDetails/deleteStockOrderDetail/'+$scope._s_tk_com, $scope.delStockOrderDetailBean)
+			.success(function(Response) {
+				$scope.loading = false;					
+				$scope.responseStatus = Response.status;
+				if ($scope.responseStatus == 'SUCCESSFUL') {		
+					$scope.loading = false;
+				}
+				else if($scope.responseStatus == 'SYSTEMBUSY'
+					||$scope.responseStatus=='INVALIDUSER'
+						||$scope.responseStatus =='ERROR'
+							||$scope.responseStatus =='INVALIDSESSION'){
+					$scope.error = true;
+					$scope.errorMessage = Response.data;
+					$window.location = Response.layOutPath;
+				} else {
+					$scope.error = true;
+					$scope.errorMessage = Response.data;
+				}
+			}).error(function() {
+				$rootScope.emergencyInfoLoadedFully = false;
+				$scope.error = true;
+				$scope.errorMessage  = $scope.systemBusy;
+			});
+		}
 		angular.forEach($scope.stockOrderDetailBeansList, function(value,key){
 			if(value.productVariantId == $scope.delStockOrderDetailBean.productVariantId && value.isProduct == $scope.delStockOrderDetailBean.isProduct){
 				var index = $scope.stockOrderDetailBeansList.indexOf(value);
 				$scope.stockOrderDetailBeansList.splice(index, 1);
 			}
-		});	
-
+		});
 		$scope.showConfirmDeletePopup = false; 
 		$scope.delStockOrderDetailBean = {};
 		$scope.arrangeOrder();
@@ -712,14 +738,14 @@ var POCreateandReceiveEditController = ['$sce', '$filter', '$scope', '$http', '$
 			renderItem : function(item) {
 				var result = [];
 				if($scope.hideRefValues == false){
-				result = {
-						value : item.variantAttributeName,
-						label : $sce.trustAsHtml("<table class='auto-complete'>"
-								+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
-								+ item.variantAttributeName + "</td>"
-								+ "<td style='width: 10%'>" + "</td>"
-								+ "</tr>" + "</tbody>" + "</table>")
-				};
+					result = {
+							value : item.variantAttributeName,
+							label : $sce.trustAsHtml("<table class='auto-complete'>"
+									+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
+									+ item.variantAttributeName + "</td>"
+									+ "<td style='width: 10%'>" + "</td>"
+									+ "</tr>" + "</tbody>" + "</table>")
+					};
 				}
 				else{
 
@@ -734,7 +760,7 @@ var POCreateandReceiveEditController = ['$sce', '$filter', '$scope', '$http', '$
 
 			}
 	};
-	
+
 	$scope.skuinput = function(){
 		if($scope.productSKU.includes('-')||$scope.productSKU.length>6){
 			if($scope.productVariantMap[$scope.productSKU.toLowerCase()] != null){

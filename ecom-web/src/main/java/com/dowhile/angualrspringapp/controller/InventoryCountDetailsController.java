@@ -444,7 +444,7 @@ public class InventoryCountDetailsController {
 						inventoryCount.setLastUpdated(new Date());
 						inventoryCount.setUpdatedBy(currentUser.getUserId());				
 						inventoryCountService.updateInventoryCount(inventoryCount,currentUser.getCompany().getCompanyId());					
-						return new Response(MessageConstants.REQUREST_PROCESSED,StatusConstants.SUCCESS,LayOutPageConstants.STOCKCONTROL);
+						return new Response(MessageConstants.REQUREST_PROCESSED,StatusConstants.SUCCESS,LayOutPageConstants.INVENTORY_COUNT_EDIT_DETAILS);
 					}else{
 
 						util.AuditTrail(request, currentUser, "InventoryCountDetails.addInventoryCountDetail", "User "+ 

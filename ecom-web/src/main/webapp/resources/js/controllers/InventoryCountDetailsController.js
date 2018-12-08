@@ -567,18 +567,44 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 	};
 
 	$scope.delInventoryCountDetail = function(){
+		if (typeof $scope.delInventoryCountDetailBean.inventoryCountDetailId != 'undefined') {
+			$scope.error = false;
+			$scope.loading = true;
+			$http.post('inventoryCountDetails/deleteInventoryCountDetail/'+$scope._s_tk_com, $scope.delInventoryCountDetailBean)
+			.success(function(Response) {
+				$scope.loading = false;					
+				$scope.responseStatus = Response.status;
+				if ($scope.responseStatus == 'SUCCESSFUL') {		
+					$scope.loading = false;
+				}
+				else if($scope.responseStatus == 'SYSTEMBUSY'
+					||$scope.responseStatus=='INVALIDUSER'
+						||$scope.responseStatus =='ERROR'
+							||$scope.responseStatus =='INVALIDSESSION'){
+					$scope.error = true;
+					$scope.errorMessage = Response.data;
+					$window.location = Response.layOutPath;
+				} else {
+					$scope.error = true;
+					$scope.errorMessage = Response.data;
+				}
+			}).error(function() {
+				$rootScope.emergencyInfoLoadedFully = false;
+				$scope.error = true;
+				$scope.errorMessage  = $scope.systemBusy;
+			});
+		}
 		angular.forEach($scope.inventoryCountDetailBeansList, function(value,key){
 			if(value.productVariantId == $scope.delInventoryCountDetailBean.productVariantId && value.isProduct == $scope.delInventoryCountDetailBean.isProduct){
 				var index = $scope.inventoryCountDetailBeansList.indexOf(value);
 				$scope.inventoryCountDetailBeansList.splice(index, 1);
 			}
 		});	
-
 		$scope.showConfirmDeletePopup = false; 
 		$scope.delInventoryCountDetailBean = {};
-		$scope.arrangeOrder();	
+		$scope.arrangeOrder();
 	};
-
+	
 	$scope.arrangeOrder = function(){
 		$scope.counter = 1;
 		if ($scope.inventoryCountDetailBeansList.length > 0) {
@@ -621,10 +647,10 @@ var InventoryCountDetailsController = ['$sce', '$scope', '$http', '$timeout', '$
 				if ($scope.responseStatus == 'SUCCESSFUL') {
 					$scope.success = true;
 					$scope.successMessage = Response.data;
-					$cookieStore.put('_ct_sc_ost',"") ;
+					//$cookieStore.put('_ct_sc_ost',"") ;
 					$timeout(function(){
 						$scope.success = false;
-						//$window.location = Response.layOutPath;
+						$window.location = Response.layOutPath;
 					}, 2000);
 				}
 				else if($scope.responseStatus == 'SYSTEMBUSY'
