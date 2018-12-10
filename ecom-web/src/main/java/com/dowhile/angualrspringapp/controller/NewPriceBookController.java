@@ -208,7 +208,7 @@ public class NewPriceBookController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				List<PriceBook> priceBookList = priceBookService.getActivePriceBooksByDateRangeCompanyId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()), DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId());
+				/*List<PriceBook> priceBookList = priceBookService.getActivePriceBooksByDateRangeCompanyId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()), DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId());
 				if(priceBookList!=null && priceBookList.size()>0){
 					List<OutletBean> outletBeans = priceBookBean.getOutletBeans();
 					Map<String,OutletBean> outletgroupsIdsMap = new HashMap<>();
@@ -218,11 +218,11 @@ public class NewPriceBookController {
 				for(PriceBook priceBook:priceBookList){
 					String outletgroups = priceBook.getOuteletsGroup();
 				}
-			}
-				/*int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
+			}*/
+				int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
 				
 				List<PriceBook> priceBookList= priceBookService.getPriceBooksByDateRangeCompanyIdOutletIdGroupId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()),
-						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));*/
+						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));
 				String outletGroups = "";
 				if(priceBookList==null){
 					PriceBook priceBook = new PriceBook();

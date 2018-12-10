@@ -1,7 +1,0 @@
-DELIMITER $$
-
-DROP VIEW IF EXISTS `ecom`.`register_report`$$
-
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `register_report` AS select `daily_register`.`OUTLET_ASSOCICATION_ID` AS `OUTLET_ASSOCICATION_ID`,(select `outlet`.`OUTLET_NAME` from `outlet` where (`daily_register`.`OUTLET_ASSOCICATION_ID` = `outlet`.`OUTLET_ID`)) AS `OUTLET_NAME`,ifnull(`daily_register`.`CASH_AMT_ACTUAL`,0) AS `CASH_AMT_ACTUAL`,ifnull(`daily_register`.`CREDIT_CARD_AMT_ACTUAL`,0) AS `CREDIT_CARD_AMT_ACTUAL`,date_format(`daily_register`.`CREATED_DATE`,'%b %d %Y %h:%i %p') AS `OPENING_DATE`,date_format(`daily_register`.`CLOSED_DATE`,'%b %d %Y %h:%i %p') AS `CLOSING_DATE`,(select concat(`user`.`FIRST_NAME`,' ',`user`.`LAST_NAME`) from `user` where (`user`.`USER_ID` = `daily_register`.`CREATED_BY`)) AS `Open_By`,coalesce((select concat(`user`.`FIRST_NAME`,' ',`user`.`LAST_NAME`) from `user` where (`user`.`USER_ID` = `daily_register`.`UPDATED_BY`)),`daily_register`.`CREATED_BY`) AS `Close_By`,(select `status`.`STATUS_DESC` from `status` where (`status`.`STATUS_ID` = `daily_register`.`STATUS_ASSOCICATION_ID`)) AS `Status`,`daily_register`.`COMPANY_ASSOCIATION_ID` AS `COMPANY_ASSOCIATION_ID`,`daily_register`.`DAILY_REGISTER_ID` AS `DAILY_REGISTER_ID`,coalesce(`daily_register`.`REGISTER_CLOSING_NOTES`,'-') AS `REGISTER_CLOSING_NOTES`,coalesce(`daily_register`.`REGISTER_OPENING_NOTES`,'-') AS `REGISTER_OPENING_NOTES` from `daily_register` order by cast(`daily_register`.`CREATED_DATE` as date)$$
-
-DELIMITER ;

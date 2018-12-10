@@ -75,7 +75,7 @@
 												</div>
 												<div class="form-group">
 													<label for="inputEmail3" class="col-sm-4 control-label">Outlet</label>
-													<div class="col-sm-6">
+													<div class="col-sm-8">
 														<select class="form-control select2" style="width: 100%;"
 															data-ng-model="priceBookBean.outletId"
 															ng-init="priceBookBean.outletId=outletsList[0].outletId">
@@ -85,11 +85,11 @@
 														</select>
 														 <span ng-show="!priceBookBean.outletId" style="color:red;">* Select Outlet</span>
 													</div>
-													<div class="col-sm-2">
+													<!-- <div class="col-sm-2">
 												 <a href="" ng-click="addOutletToDisplayOutletList(priceBookBean.outletId)" data-toggle="tooltip" data-placement="top" title="Add Outlet"><i class="fa fa-plus-circle btn-success btn-sm" ></i></a>&nbsp;&nbsp;&nbsp;
-											</div>
+											</div> -->
 												</div>
-												<div class="form-group">
+												<!-- <div class="form-group">
 													<label for="inputEmail3" class="col-sm-4 control-label">Selected Outlets</label>
 													<div class="col-sm-6">
 														<div  ng-show="!loading" ng-repeat="outlet in displayOutletsList"><a href="" data-toggle="tooltip" data-placement="top" title="Remove Outlet" ng-click="removeOutletFromDisplayOutletList(outlet)">{{outlet.outletName}}
@@ -98,7 +98,7 @@
 																></i></a></div>
 													</div>
 													
-												</div>
+												</div> -->
 												
 												
 											</div>

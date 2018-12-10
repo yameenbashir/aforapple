@@ -530,21 +530,20 @@ public class SellController  {
 						ProductVaraintDetailBean productVaraintDetailBean = new ProductVaraintDetailBean();
 						if(productVarients!=null && productVarients.size()>0){
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId1() != null) {
-								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1()!=null){
-									productVaraintDetailBean.setArrtibute1Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId1().getVariantAttributeId(), product.getProductUuid()));
+							if (product.getAttribute1() != null) {
+								productVaraintDetailBean.setArrtibute1Values(product.getAttribute1().split(","));
 								}
 							}
 
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId2() != null) {
-								if(productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2()!=null){
-									productVaraintDetailBean.setArrtibute2Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId2().getVariantAttributeId(), product.getProductUuid()));
-									
-								}
+								if (product.getAttribute2() != null) {
+									productVaraintDetailBean.setArrtibute2Values(product.getAttribute2().split(","));
+									}
 							}
 							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId3() != null) {
-								if( productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3()!=null){
-								productVaraintDetailBean.setArrtibute3Values(findUniqeVariant(variantAttributeValues, productVarients.get(productVarients.size()-1).getVariantAttributeByVariantAttributeAssocicationId3().getVariantAttributeId(), product.getProductUuid()));
-								}
+								if (product.getAttribute3() != null) {
+									productVaraintDetailBean.setArrtibute3Values(product.getAttribute3().split(","));
+									}
 
 							}
 						}

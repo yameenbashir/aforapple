@@ -179,9 +179,9 @@ public class SaleServiceImpl implements SaleService {
 	}
 
 	@Override
-	public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId, int limit, String invoiceRefNum, String status, Date fromDate, Date toDate  )
+	public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId, int limit, String invoiceRefNum, String status, Date fromDate, Date toDate,Integer customerId  )
 	{
-		return getSaleDAO().getAllInvoicesMainById( outletId,  copmayId,  limit,  invoiceRefNum,  status,  fromDate,  toDate  );
+		return getSaleDAO().getAllInvoicesMainById( outletId,  copmayId,  limit,  invoiceRefNum,  status,  fromDate,  toDate ,customerId );
 		
 	}
 	@Override

@@ -1,0 +1,52 @@
+
+DELIMITER $$
+
+DROP VIEW IF EXISTS `ecom`.`credit_sale`$$
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `credit_sale` AS
+
+SELECT 
+         ( 
+                SELECT `product`.`product_name` AS `product_name` 
+                FROM   `product` 
+                WHERE  ( 
+                              `invoice_detail`.`product_association_id` = `product`.`product_id`)) AS `product`,
+         ( 
+                SELECT `outlet`.`outlet_name` AS `outlet_name` 
+                FROM   `outlet` 
+                WHERE  ( 
+                              `invoice_main`.`outlet_assocication_id` = `outlet`.`outlet_id`)) AS `outlet`,
+         cast(`invoice_main`.`created_date` AS date)                                           AS `created_date`,
+         sum(((`invoice_detail`.`item_sale_price` * `invoice_detail`.`product_quantity`) - (COALESCE(`invoice_main`.`invoice_discount_amt`,0) /
+         ( 
+                SELECT count(`invoice_detail`.`invoice_main_assocication_id`) AS `count(``invoice_detail``.``invoice_main_assocication_id``)`
+                FROM   `invoice_detail` 
+                WHERE  ( 
+                              `invoice_detail`.`invoice_main_assocication_id` = `invoice_main`.`invoice_main_id`))))) AS `revenue`,
+         (sum(((`invoice_detail`.`item_sale_price` * `invoice_detail`.`product_quantity`) - (COALESCE(`invoice_main`.`invoice_discount_amt`,0) /
+         ( 
+                SELECT count(`invoice_detail`.`invoice_main_assocication_id`) AS `count(``invoice_detail``.``invoice_main_assocication_id``)`
+                FROM   `invoice_detail` 
+                WHERE  ( 
+                              `invoice_detail`.`invoice_main_assocication_id` = `invoice_main`.`invoice_main_id`))))) + sum((`invoice_detail`.`item_tax_amount` * `invoice_detail`.`product_quantity`))) AS `revenue_tax_incl`,
+         sum((`invoice_detail`.`item_orignal_amt` * `invoice_detail`.`product_quantity`))                                                                                                                AS `cost_of_goods`,
+         (sum((`invoice_detail`.`item_sale_price` * `invoice_detail`.`product_quantity`)) - sum((`invoice_detail`.`item_orignal_amt` * `invoice_detail`.`product_quantity`)))                            AS `gross_profit`,
+         COALESCE((100 - ((sum(`invoice_detail`.`item_orignal_amt`) / sum(`invoice_detail`.`item_sale_price`)) * 100)),0)                                                                                AS `margin`,
+         sum(`invoice_detail`.`product_quantity`)                                                                                                                                                        AS `items_sold`,
+         sum(`invoice_detail`.`item_tax_amount`)                                                                                                                                                         AS `tax`,
+         `invoice_main`.`company_association_id`                                                                                                                                                         AS `company_association_id`,
+         `invoice_main`.`outlet_assocication_id` AS `outlet_assocication_id` 
+      ,receipt.PAYMENT_TYPE_ASSOCICATION_ID                                                                                                                                                        
+FROM     `invoice_detail` 
+JOIN     `invoice_main` 
+ON      
+                           `invoice_main`.`invoice_main_id` = `invoice_detail`.`invoice_main_assocication_id`
+
+inner  join receipt on receipt.INVOICE_MAIN_ASSOCICATION_ID = invoice_main.INVOICE_MAIN_ID and  receipt.PAYMENT_TYPE_ASSOCICATION_ID = 2
+WHERE     `invoice_main`.`status_assocication_id` <> 11 
+GROUP BY `invoice_detail`.`product_association_id`, 
+         cast(`invoice_main`.`created_date` AS date) 
+ORDER BY cast(`invoice_main`.`created_date` AS date)$$
+DELIMITER ;
+
+

@@ -16,6 +16,7 @@ CACHE:
 	bower_components/fullcalendar/dist/fullcalendar.js
 	bower_components/fullcalendar/dist/gcal.js
 
+
 	js/controllers/merged/output.js
 	js/OrgHierarchyController.js
 
@@ -65,7 +66,6 @@ CACHE:
 	
 
 	html/login/layout.html
-	html/home/layout.html
 	html/sell/layout.html
 	html/status/layout.html
 NETWORK:

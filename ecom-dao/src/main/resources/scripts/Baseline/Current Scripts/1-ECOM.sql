@@ -3229,3 +3229,18 @@ ALTER TABLE `web_activity_detail`
 
 ALTER TABLE `ecom`.`message_detail` 
 CHANGE COLUMN `DELIVERY_ID` `DELIVERY_ID` TEXT NULL DEFAULT NULL ;
+
+ALTER TABLE stock_order 
+ADD COLUMN TOTAL_ITEMS decimal(20,2) Default 0,
+ADD COLUMN TOTAL_AMOUNT decimal(20,2) Default 0;
+
+ALTER TABLE product 
+ADD COLUMN attribute1 varchar(500),
+ADD COLUMN attribute2 varchar(500),
+ADD COLUMN attribute3 varchar(500);
+
+ALTER TABLE price_book 
+ADD COLUMN OUTELETS_GROUP varchar(200);
+
+ALTER TABLE `ecom`.`message_detail` 
+CHANGE COLUMN `DELIVERY_ID` `DELIVERY_ID` MEDIUMBLOB NULL DEFAULT NULL ;

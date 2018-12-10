@@ -183,7 +183,7 @@ public class  SaleDAOImpl implements SaleDAO  {
 
 	@SuppressWarnings("unchecked")
 	@Override
-public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId, int limit, String invoiceRefNum, String status, Date fromDate, Date toDate  ) {
+public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId, int limit, String invoiceRefNum, String status, Date fromDate, Date toDate,Integer customerId  ) {
 		
 		List<InvoiceMainCustom> list = null;
 		try{
@@ -191,13 +191,14 @@ public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId
 			if(limit == 0) // Get all
 			{
 			list= getSessionFactory().getCurrentSession()
-			.createSQLQuery("CALL GetAllInvoiceByOutletId(?,?,?,?,?,?)" )
+			.createSQLQuery("CALL GetAllInvoiceByOutletId(?,?,?,?,?,?,?)" )
 			.setParameter(1, outletId)
 			.setParameter(0, copmayId)
 			.setParameter(2, invoiceRefNum)
 			.setParameter(3, status)
 			.setParameter(4, fromDate)
 			.setParameter(5, toDate)
+			.setParameter(6, customerId)
 			.setResultTransformer(Transformers.aliasToBean(InvoiceMainCustom.class))
 			.list();
 			}

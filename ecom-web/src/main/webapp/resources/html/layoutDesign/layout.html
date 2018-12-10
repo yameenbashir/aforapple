@@ -65,7 +65,8 @@
 										style="overflow-y: auto; height: 532px;">
 										<!--  ng-repeat = "layoutProduct in layoutProducts" -->
 										<div ng-if = "layoutProduct.productName!=''" class="test" style="background: #acc3c5; margin-left: 5px;" ng-repeat = "layoutProduct in layoutProducts">
-											<a href="" ng-click="addProduct(layoutProduct)">
+											<i  class="glyphicon glyphicon-remove" ng-click="removeProduct(layoutProduct)"></i>
+											<a href="" >
 												<h4 ng-bind="layoutProduct.productName"></h4>
 											</a>
 

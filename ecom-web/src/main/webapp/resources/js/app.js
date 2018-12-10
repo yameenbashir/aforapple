@@ -2263,6 +2263,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 					$rootScope.customerGroupLoadedFully = true;
 					controllerData = $http.post('customerDetails/loadCustomerDetails/'+$cookieStore.get('_s_tk_com')+'/'+$cookieStore.get('_cD_cDt_gra')).success(function(Response) {
 						controllerData = Response.data;
+						localStorage.setItem("salesHistory", JSON.stringify(controllerData.salesHistory));
 						$timeout(function(){
 							myDefer.resolve({
 								loadControllerData: function() {
@@ -3862,6 +3863,94 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["salesDetailReport"]==true){
 					$rootScope.purchaseOrderLoadedFully = true;
 					controllerData = $http.post('salesDetailReport/getSalesDetailReportByDateRange/'+$cookieStore.get('_s_tk_com')+'/'+$rootScope.salesReportStartDate+"/"+$rootScope.salesReportEndDate + "/"+$rootScope.salesReportType+"/"+$rootScope.salesReportDateType+"/"+$rootScope.inventoryReportOutletName)
+					.success(function(Response) {
+						controllerData = Response.data;
+						$rootScope.salesReportStartDate = "undefined";
+						$rootScope.salesReportEndDate = "undefined";
+						$timeout(function(){
+							myDefer.resolve({
+								loadControllerData: function() {
+									return 	controllerData;  
+								}
+							});
+						},10);
+					}).error(function() {
+						$window.location = '/app/#/login';
+					});
+
+				}else{
+					if(typeof ($rootScope.menuMap) != "undefined"){
+						$window.location = '/app/#/login';
+						$rootScope.showErrorLoginModal = true;
+						$timeout(function(){
+							$rootScope.showErrorLoginModal = false;
+						}, 2000);	
+					}else{
+						$window.location = '/app/#/login';
+
+					}	    						
+				}
+				return myDefer.promise;
+			}
+		}
+	}); 
+	
+	$routeProvider.when('/creditCardSalesReport', {
+		templateUrl: 'resources/html/creditCardSalesReport/layout.html',
+		controller: CreditCardSalesReportController,
+		resolve: {
+			"CreditCardSalesReportControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
+				var myDefer = $q.defer();
+				var controllerData ='';
+				$rootScope.globalPageLoader = true;
+
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["salesDetailReport"]==true){
+					$rootScope.purchaseOrderLoadedFully = true;
+					controllerData = $http.post('creditCardSalesReport/getCreditCardSalesReportByDateRange/'+$cookieStore.get('_s_tk_com')+'/'+$rootScope.salesReportStartDate+"/"+$rootScope.salesReportEndDate + "/"+$rootScope.salesReportType+"/"+$rootScope.salesReportDateType+"/"+$rootScope.inventoryReportOutletName)
+					.success(function(Response) {
+						controllerData = Response.data;
+						$rootScope.salesReportStartDate = "undefined";
+						$rootScope.salesReportEndDate = "undefined";
+						$timeout(function(){
+							myDefer.resolve({
+								loadControllerData: function() {
+									return 	controllerData;  
+								}
+							});
+						},10);
+					}).error(function() {
+						$window.location = '/app/#/login';
+					});
+
+				}else{
+					if(typeof ($rootScope.menuMap) != "undefined"){
+						$window.location = '/app/#/login';
+						$rootScope.showErrorLoginModal = true;
+						$timeout(function(){
+							$rootScope.showErrorLoginModal = false;
+						}, 2000);	
+					}else{
+						$window.location = '/app/#/login';
+
+					}	    						
+				}
+				return myDefer.promise;
+			}
+		}
+	}); 
+	
+	$routeProvider.when('/cashSalesReport', {
+		templateUrl: 'resources/html/cashSalesReport/layout.html',
+		controller: CashSalesReportController,
+		resolve: {
+			"CashSalesReportControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
+				var myDefer = $q.defer();
+				var controllerData ='';
+				$rootScope.globalPageLoader = true;
+
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["salesDetailReport"]==true){
+					$rootScope.purchaseOrderLoadedFully = true;
+					controllerData = $http.post('cashSalesReport/getCashSalesReportByDateRange/'+$cookieStore.get('_s_tk_com')+'/'+$rootScope.salesReportStartDate+"/"+$rootScope.salesReportEndDate + "/"+$rootScope.salesReportType+"/"+$rootScope.salesReportDateType+"/"+$rootScope.inventoryReportOutletName)
 					.success(function(Response) {
 						controllerData = Response.data;
 						$rootScope.salesReportStartDate = "undefined";

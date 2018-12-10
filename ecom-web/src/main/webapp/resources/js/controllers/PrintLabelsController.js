@@ -47,57 +47,65 @@ var PrintLabelsController = ['$scope', '$http', '$window','$cookieStore','$rootS
 			data : function(term) {
 				term = term.toLowerCase();
 				$scope.productVariantsBeans = [];
-				var productResults = _.filter($scope.allProducts, function(val) {
-					return val.productName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term);
-
-				});
-		
 				var productVariantResults = _.filter($scope.productVaraintDetailBeanList, function(val) {
-					var skuLowercase =  val.sku.toLowerCase();
-					return skuLowercase == term;
+						var skuLowercase =  val.sku.toLowerCase();
+						if(skuLowercase == term.toLowerCase()){
+							$scope.variantSkuFound =  true;
+						}
+						
+						return skuLowercase == term.toLowerCase();
+						
+					});
+				var productResults = _.filter($scope.allProducts, function(val) {
+					return val.productName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term.toLowerCase());
 
 				});
-				if(productVariantResults && productVariantResults.length>0){
-					$scope.printLabelsFunc(productVariantResults[0]);
-					$scope.selectedItem = {};
-					$scope.selectedItem.item = productVariantResults[0];
-//					$scope.variantSkuFound =  true;
-//					$scope.airportName = [];
+				if(!$scope.variantSkuFound){
+					productVariantResults = _.filter($scope.productVaraintDetailBeanList, function(val) {
+						return val.variantAttributeName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term.toLowerCase());
+
+						});
 				}
-				return productResults;
+				var list = [];
+				if($scope.variantSkuFound){
+					$scope.selectedItem = {};
+					$scope.printLabelsFunc(productVariantResults[0]);
+					$scope.selectedItem.item = productVariantResults[0];
+					list = productResults;
+					$scope.variantSkuFound =  false;
+					$scope.airportName = [];
+					
+				}else{
+					list = productResults.concat(productVariantResults);
+				}
+				
+			
+				
+				return list;
 			},
 			renderItem : function(item) {
-				if (typeof item.firstName == 'undefined') {
+					var name = "";
+					if(item.variantAttributeName){
+						 name = item.variantAttributeName;
+					}
 					if(!$scope.variantSkuFound){
 					var result = {
 							value : item.productName,
 							label : $sce.trustAsHtml("<table class='auto-complete'>"
 									+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
-									+ item.productName + "</td>"
+									+ item.productName +' '+ name + "</td>"
 									+ "<td style='width: 10%'>"
 									+ item.retailPriceExclTax + "</td>" + "</tr>"
 									+ "</tbody>" + "</table>")
-					};}
-					else{
-						
-						$scope.variantSkuFound = false;
-						return;
-					}
-				} else  {
-					var result = {
-							value : item.firstName,
-							label : $sce.trustAsHtml("<table class='auto-complete'>"
-									+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
-									+ item.firstName + "</td>"
-									+ "<td style='width: 10%'>" + 'Customer' + "</td>"
-									+ "</tr>" + "</tbody>" + "</table>")
 					};
-				}
-
-				return result;
+					return result;
+					}
+				
+					return;
 			},
 			itemSelected : function(item) {
-				$scope.selectedItem = {};
+				$scope.airportName = [];
+				$scope.selectedItem ={};
 				$scope.selectedItem = item;
 				$scope.selectProduct = true;
 				$scope.printLabelsFunc( $scope.selectedItem.item);

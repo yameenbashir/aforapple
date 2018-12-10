@@ -1712,5 +1712,12 @@ $scope.ValidateInvoiceItems = function() {
 		}
 		
 	};
+	
+	$scope.deleteCustomerOrCreate = function() {
+		//$scope.selectCustomer = true;
+		$scope.selectCustomer = false;
+		$scope.CustomerName = [];
+		$scope.selectCustomerName = "";
+	};
 
 }];

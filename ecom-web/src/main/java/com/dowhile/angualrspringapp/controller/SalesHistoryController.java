@@ -275,8 +275,9 @@ public class SalesHistoryController {
 			String status = null;
 			Date fromDate = null;
 			Date toDate = null;
+			Integer customerId = null;
 			
-			invoiceMains  = saleService.getAllInvoicesMainById(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId(), limit,invoiceRefNo, status, fromDate,toDate);
+			invoiceMains  = saleService.getAllInvoicesMainById(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId(), limit,invoiceRefNo, status, fromDate,toDate,customerId);
 			Map<Integer, Contact> customerMap = customerService.getContactsByOutletIDMap(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId());
 			Map<Integer, User> userMap = resourceService.getAllUsersMap( currentUser.getCompany().getCompanyId());
 			int fromInvoiceId =1;
