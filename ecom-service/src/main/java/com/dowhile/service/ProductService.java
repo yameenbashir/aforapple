@@ -41,5 +41,6 @@ public interface ProductService {
 	Map<Integer, Product> getProductsMapByProductId(int companyId);
 	Map<String, List<Product>>  getAllProductsMapByUuid(int companyId);
 	List<Product> getAllActiveProducts();
+	Map<Integer, Product> getAllActiveProductsMapByOutletIdCompanyId(int outletId,int companyId);
 }
  

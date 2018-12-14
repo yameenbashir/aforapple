@@ -299,14 +299,14 @@ public class ProductVariantDAOImpl implements ProductVariantDAO {
 	}
 
 	@Override
-	public List<ProductVariant> getAllProductVariantsByOutletId(int OutletId , int companyId) {
+	public List<ProductVariant> getAllActiveProductVariantsByOutletIdCompanyId(int OutletId , int companyId) {
 		// TODO Auto-generated method stub
 		try {
 			@SuppressWarnings("unchecked")
 			List<ProductVariant> list = getSessionFactory()
 			.getCurrentSession()
 			.createQuery(
-					"from ProductVariant where OUTLET_ASSOCICATION_ID=? AND COMPANY_ASSOCIATION_ID = ? ORDER BY PRODUCT_VARIANT_ID")
+					"from ProductVariant where OUTLET_ASSOCICATION_ID=? AND COMPANY_ASSOCIATION_ID = ? AND ACTIVE_INDICATOR = 1 ORDER BY PRODUCT_VARIANT_ID")
 					.setParameter(0, OutletId)
 					.setParameter(1, companyId).list();
 			return list;

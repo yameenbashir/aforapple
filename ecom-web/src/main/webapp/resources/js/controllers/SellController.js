@@ -388,7 +388,18 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 		if($scope.pricebook != null && $scope.pricebook.priceBookDetailBeans !=null && $scope.pricebook.priceBookDetailBeans.length > 0)
 		{	
 			$scope.productBookDetail = {};
-			$scope.productBookDetail = getBookDetailsByProduct($scope.pricebook.priceBookDetailBeans, paramProductVarient);
+			$scope.productBookDetail = null;
+			for(var i=0;i<$scope.pricebook.priceBookDetailBeans.length;i++){
+				if($scope.pricebook.priceBookDetailBeans[i].productVariantId!=null && $scope.pricebook.priceBookDetailBeans[i].productVariantId!=''
+					&& $scope.pricebook.priceBookDetailBeans[i].uuId==paramProductVarient.productVariantUuid){
+					$scope.productBookDetail = $scope.pricebook.priceBookDetailBeans[i];
+					break;
+				}else if($scope.pricebook.priceBookDetailBeans[i].uuId==paramProductVarient.productUuid){
+					$scope.productBookDetail = $scope.pricebook.priceBookDetailBeans[i];
+					break;
+				}
+			}
+			//$scope.productBookDetail = getBookDetailsByProduct($scope.pricebook.priceBookDetailBeans, paramProductVarient);
 			if($scope.productBookDetail != null)
 			{
 				$scope.invoiceDetail.itemDiscountPrct = parseFloat($scope.productBookDetail.discount).toFixed(2);

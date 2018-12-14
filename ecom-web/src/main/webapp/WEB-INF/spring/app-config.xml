@@ -45,7 +45,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	<bean id="ServiceUtil" class="com.dowhile.service.util.ServiceUtil">
 		<property name="activityDetailDAO" ref="ActivityDetailDAO" />
 		<property name="severityDAO" ref="SeverityDAO" />
-
+		<property name="webActivityDetailDAO" ref="WebActivityDetailDAO" />
 	</bean>
 	<bean id="ResourceService" class="com.dowhile.service.impl.ResourceServiceImpl">
 		<property name="resourceDAO" ref="ResourceDAO" />

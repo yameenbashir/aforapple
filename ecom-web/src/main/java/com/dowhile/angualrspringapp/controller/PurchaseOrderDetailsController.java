@@ -694,6 +694,9 @@ public class PurchaseOrderDetailsController {
 										newProduct.setUserByUpdatedBy(currentUser);
 										newProduct.setCompany(currentUser.getCompany());
 										newProduct.setContact(contact);
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getRecvProdQty(),currentUser.getCompany());
 										outletProductList.add(newProduct);
 									}
@@ -744,6 +747,9 @@ public class PurchaseOrderDetailsController {
 									newProduct.setUserByUpdatedBy(currentUser);
 									newProduct.setCompany(currentUser.getCompany());
 									newProduct.setContact(contact);
+									newProduct.setAttribute1(product.getAttribute1());
+									newProduct.setAttribute2(product.getAttribute2());
+									newProduct.setAttribute3(product.getAttribute3());
 									newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getRecvProdQty(),currentUser.getCompany());
 									outletProductList.add(newProduct);
 									stockOrderDetail.setProduct(newProduct);
@@ -821,6 +827,9 @@ public class PurchaseOrderDetailsController {
 										newProduct.setUserByUpdatedBy(currentUser);
 										newProduct.setCompany(currentUser.getCompany());
 										newProduct.setContact(contact);
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getRecvProdQty(),currentUser.getCompany());
 										outletProductList.add(newProduct);
 									}
@@ -871,6 +880,9 @@ public class PurchaseOrderDetailsController {
 									newProduct.setUserByUpdatedBy(currentUser);
 									newProduct.setCompany(currentUser.getCompany());
 									newProduct.setContact(contact);
+									newProduct.setAttribute1(product.getAttribute1());
+									newProduct.setAttribute2(product.getAttribute2());
+									newProduct.setAttribute3(product.getAttribute3());
 									newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getRecvProdQty(),currentUser.getCompany());
 									outletProductList.add(newProduct);
 									stockOrderDetail.setProduct(newProduct);
@@ -1357,6 +1369,9 @@ public class PurchaseOrderDetailsController {
 										newProduct.setUserByUpdatedBy(currentUser);
 										newProduct.setCompany(currentUser.getCompany());
 										newProduct.setActiveIndicator(parentProduct.isActiveIndicator());
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										if(parentProduct.getBrand() != null){
 											newProduct.setBrand(parentProduct.getBrand());
 										}
@@ -1423,6 +1438,9 @@ public class PurchaseOrderDetailsController {
 										if(parentProduct.getVariantProducts() != null){
 											newProduct.setVariantProducts(parentProduct.getVariantProducts());
 										}
+										newProduct.setAttribute1(product.getAttribute1());
+										newProduct.setAttribute2(product.getAttribute2());
+										newProduct.setAttribute3(product.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 										recvProductList.put(newProduct.getProductUuid(), newProduct);
 										productsMap.put(newProduct.getProductId(), newProduct);
@@ -1523,6 +1541,9 @@ public class PurchaseOrderDetailsController {
 									recvProduct.setUserByCreatedBy(currentUser);
 									recvProduct.setUserByUpdatedBy(currentUser);
 									recvProduct.setCompany(currentUser.getCompany());
+									recvProduct.setAttribute1(product.getAttribute1());
+									recvProduct.setAttribute2(product.getAttribute2());
+									recvProduct.setAttribute3(product.getAttribute3());
 									recvProduct = productService.addProduct(recvProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 									recvProductList.put(recvProduct.getProductUuid(), recvProduct);
 									productsMap.put(recvProduct.getProductId(), recProduct);
@@ -1703,6 +1724,9 @@ public class PurchaseOrderDetailsController {
 										if(parentProduct.getVariantProducts() != null){
 											newProduct.setVariantProducts(parentProduct.getVariantProducts());
 										}
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 										recvProductList.put(newProduct.getProductUuid(), newProduct);
 										productsMap.put(newProduct.getProductId(), newProduct);
@@ -1871,6 +1895,9 @@ public class PurchaseOrderDetailsController {
 									if(product.getVariantProducts() != null){
 										recvProduct.setVariantProducts(product.getVariantProducts());
 									}
+									recvProduct.setAttribute1(product.getAttribute1());
+									recvProduct.setAttribute2(product.getAttribute2());
+									recvProduct.setAttribute3(product.getAttribute3());
 									recvProduct = productService.addProduct(recvProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 									recvProductList.put(recvProduct.getProductUuid(), recvProduct);
 									productsMap.put(recvProduct.getProductId(), recvProduct);
@@ -2671,6 +2698,9 @@ public class PurchaseOrderDetailsController {
 										if(parentProduct.getVariantProducts() != null){
 											newProduct.setVariantProducts(parentProduct.getVariantProducts());
 										}
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 										recvProductList.put(newProduct.getProductUuid(), newProduct);
 										productsMap.put(newProduct.getProductId(), newProduct);
@@ -2771,6 +2801,9 @@ public class PurchaseOrderDetailsController {
 									recvProduct.setUserByCreatedBy(currentUser);
 									recvProduct.setUserByUpdatedBy(currentUser);
 									recvProduct.setCompany(currentUser.getCompany());
+									recvProduct.setAttribute1(product.getAttribute1());
+									recvProduct.setAttribute2(product.getAttribute2());
+									recvProduct.setAttribute3(product.getAttribute3());
 									recvProduct = productService.addProduct(recvProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 									recvProductList.put(recvProduct.getProductUuid(), recvProduct);
 									productsMap.put(recvProduct.getProductId(), recProduct);
@@ -2956,6 +2989,9 @@ public class PurchaseOrderDetailsController {
 										if(parentProduct.getVariantProducts() != null){
 											newProduct.setVariantProducts(parentProduct.getVariantProducts());
 										}
+										newProduct.setAttribute1(parentProduct.getAttribute1());
+										newProduct.setAttribute2(parentProduct.getAttribute2());
+										newProduct.setAttribute3(parentProduct.getAttribute3());
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 										recvProductList.put(newProduct.getProductUuid(), newProduct);
 										productsMap.put(newProduct.getProductId(), newProduct);
@@ -3124,6 +3160,9 @@ public class PurchaseOrderDetailsController {
 									if(product.getVariantProducts() != null){
 										recvProduct.setVariantProducts(product.getVariantProducts());
 									}
+									recvProduct.setAttribute1(product.getAttribute1());
+									recvProduct.setAttribute2(product.getAttribute2());
+									recvProduct.setAttribute3(product.getAttribute3());
 									recvProduct = productService.addProduct(recvProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 									recvProductList.put(recvProduct.getProductUuid(), recvProduct);
 									productsMap.put(recvProduct.getProductId(), recvProduct);

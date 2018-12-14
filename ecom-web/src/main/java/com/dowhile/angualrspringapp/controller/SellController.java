@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.mapping.Array;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -286,7 +287,7 @@ public class SellController  {
 			try {
 				Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
 				
-				Company company = companyService.getCompanyDetailsByCompanyID(currentUser.getCompany().getCompanyId());
+				Company company = currentUser.getCompany();
 				sellControllerBean.setCompanyName(company.getCompanyName());
 				Configuration configurationImage = configurationMap.get("COMPANY_RECEIPT_IMAGE");
 				if(configurationImage!=null){
@@ -408,7 +409,7 @@ public class SellController  {
 						count = count + 1;
 
 						ProductBean productBean = new ProductBean();
-
+						productBean.setProductUuid(product.getProductUuid());
 						BigDecimal supplyPrice = product
 								.getSupplyPriceExclTax();
 
@@ -470,6 +471,8 @@ public class SellController  {
 								if(product.getProductDesc()!=null){
 									productVarientBean.setProductDesc(product.getProductDesc());
 								}
+								productVarientBean.setProductUuid(product.getProductUuid());
+								productVarientBean.setProductVariantUuid(item.getProductVariantUuid());
 								productVarientBean.setSku(item.getSku());
 								productVarientBean.setVarientProducts(product.getVariantProducts());
 								productVarientBean.setProductVariantId(item
@@ -1825,15 +1828,27 @@ public class SellController  {
 		try {
 
 			List<PriceBookBean> listPriceBooksBean = new ArrayList<>();
-			List<PriceBook> priceBooks = null;
+			List<PriceBook> priceBooks = new ArrayList<>();
+			List<PriceBook> priceBookList = null;
 
-			priceBooks = priceBookService.getAllValidPriceBooks(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(), contactgroupId);
-			//Company company = companyService.getCompanyDetailsByCompanyID(currentUser.getCompany().getCompanyId());
-			//Outlet outlet = outletService.getOuletByOutletId(currentUser.getOutlet().getOutletId(), currentUser.getCompany().getCompanyId());
+			priceBookList = priceBookService.getAllValidPriceBooks(currentUser.getCompany().getCompanyId(), currentUser.getOutlet().getOutletId(), contactgroupId);
+			if(priceBookList!=null && priceBookList.size()>0){
+				for(PriceBook priceBook:priceBookList){
+					String [] outletgroups = priceBook.getOuteletsGroup().split(",");
+					for(String outletId:outletgroups){
+						if(currentUser.getOutlet().getOutletId()==Integer.valueOf(outletId)){
+							priceBooks.add(priceBook);
+							break;
+						}
+					}
+					
+				}
+			}
 			
-			if(priceBooks != null)
+			if(priceBooks != null && priceBooks.size()>0)
 			{
-				Map<Integer, List<PriceBookDetail>> priceBookDetailMap =  priceBookDetailService.getPriceBookDetailMapByPriceBookIdCompanyId(currentUser.getCompany().getCompanyId());
+				Map<Integer, PriceBookDetail> priceBookDetailMap =	priceBookDetailService.getAllActivePriceBookDetailsMapByPriceBookIdCompanyId(priceBooks.get(0).getPriceBookId(), currentUser.getCompany().getCompanyId());
+				//Map<Integer, List<PriceBookDetail>> priceBookDetailMap =  priceBookDetailService.getPriceBookDetailMapByPriceBookIdCompanyId(currentUser.getCompany().getCompanyId());
 				for (PriceBook book : priceBooks) {
 					PriceBookBean bookBean = new PriceBookBean();
 					List<PriceBookDetailBean> listProceBookDetailBean = new ArrayList<>();
@@ -1866,19 +1881,23 @@ public class SellController  {
 					bookBean.setFlatSale(book.getFlatSale());
 					bookBean.setFlatDiscount(book.getFlatDiscount().toString());
 
-					List<PriceBookDetail> list = priceBookDetailMap.get(book.getPriceBookId());
-					if(list != null)
+					/*List<PriceBookDetail> pricebookDetailList = new ArrayList<>();
+					pricebookDetailList.add(priceBookDetailMap.get(book.getPriceBookId()));
+					List<PriceBookDetail> list = pricebookDetailList;*/
+					if(priceBookDetailMap != null && priceBookDetailMap.size()>0)
 					{
 						//for (PriceBookDetail priceBookDetail : list) {
 						//	book.getPriceBookDetails().add(priceBookDetail);
 						//}
 
-						book.setPriceBookDetails(new HashSet<PriceBookDetail>(list));
+						//book.setPriceBookDetails(new HashSet<PriceBookDetail>(list));
 
-						for (PriceBookDetail bookDetail : book.getPriceBookDetails()) {
+						for (Map.Entry<Integer, PriceBookDetail> entry : priceBookDetailMap.entrySet()) {
+							PriceBookDetail bookDetail = entry.getValue();
 							PriceBookDetailBean bookDetailBean = new PriceBookDetailBean();
 
 							bookDetailBean.setCompanyId(bookDetail.getCompany().getCompanyId().toString());
+							bookDetailBean.setUuId(bookDetail.getUuid());
 //							if(company != null)
 //							{
 //								bookDetailBean.setCompanyName(company.getCompanyName());

@@ -21,7 +21,13 @@
 
 <link rel="stylesheet" type="text/css" href="resources/css/loader.css">
 
-<link rel="shortcut icon" href="resources/images/favicon.png">
+
+<link rel="shortcut icon"
+	href="resources/images/favicon.ico?v=2"
+	type="image/x-icon">
+<link rel="icon"
+	href="resources/images/favicon.ico?v=2"
+	type="image/x-icon">
 <script src="resources/js/jquery-2.1.4.js"></script> 
 <script src="resources/js/bootstrap.min.js"></script>
 
@@ -1066,7 +1072,7 @@ src="https://www.googletagmanager.com/gtag/js?id=UA-122495182-1"></script>
            <li><a href="#partners" class="page-scroll">Partners</a></li>
           <li><a href="#contact" class="page-scroll">Contact Us</a></li>
         </ul>
-        <p>Copyright &copy; 2017 ShopVitals. all rights reserved.</p>
+        <p>Copyright &copy; 2018 ShopVitals. all rights reserved.</p>
       </div>
     </div>
   </div>
@@ -1119,7 +1125,7 @@ src="https://www.googletagmanager.com/gtag/js?id=UA-122495182-1"></script>
               <input type="email" class="form-control" ng-model="contactUsPopupBean.email"  placeholder="E-mail Address" name="email" id="email" required>
             </div>
             <div class="col-xs-12 col-md-12">
-              <textarea style="margin:0 0 20px; min-height:100px;" ng-model="contactUsBean.message" placeholder="Message..." class="form-control" name="message" id="message"></textarea>
+              <textarea style="margin:0 0 20px; min-height:100px;" ng-maxlength="240" ng-model="contactUsBean.message" placeholder="Message..." class="form-control" name="message" id="message"></textarea>
               <button type="submit" ng-show="!sendMessage" class="btn-black btn-blue bounce-green" id="btn_submit" ng-click="contactUsOnPopup()" ng-disabled="!contactUsPopupBean.name||!contactUsPopupBean.email"> Send Message </button>
                <button ng-show="sendMessage" class="btn-black btn-blue bounce-green" ng-disabled="true" ng-cloak>Send Message Processing
                      		<i class="fa fa-arrow-right fa-spinner fa-spin "></i>
@@ -1149,6 +1155,7 @@ src="https://www.googletagmanager.com/gtag/js?id=UA-122495182-1"></script>
 
 
 <script src="resources/js/controllers/HomeController.js"></script>
+<script src="resources/js/controllers/ContactUsController.js"></script>
 <script src="resources/js/filters.js"></script>
 <script src="resources/js/directives.js"></script> 
 <script src="resources/js/ng-google-chart.js"></script>
@@ -1172,6 +1179,9 @@ src="https://www.googletagmanager.com/gtag/js?id=UA-122495182-1"></script>
 <script src="resources/js/jquery.fancybox-media.js"></script>
 <script src="resources/js/jPushMenu.js"></script>
 <script src="resources/js/functions.js"></script>	
+
+
+
  
 
 </body>

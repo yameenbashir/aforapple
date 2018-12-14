@@ -208,25 +208,45 @@ public class NewPriceBookController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				/*List<PriceBook> priceBookList = priceBookService.getActivePriceBooksByDateRangeCompanyId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()), DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId());
-				if(priceBookList!=null && priceBookList.size()>0){
-					List<OutletBean> outletBeans = priceBookBean.getOutletBeans();
-					Map<String,OutletBean> outletgroupsIdsMap = new HashMap<>();
-					for(OutletBean outletBean:outletBeans){
-						outletgroupsIdsMap.put(outletBean.getOutletId(), outletBean);
-					}
-				for(PriceBook priceBook:priceBookList){
-					String outletgroups = priceBook.getOuteletsGroup();
-				}
-			}*/
-				int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
-				
-				List<PriceBook> priceBookList= priceBookService.getPriceBooksByDateRangeCompanyIdOutletIdGroupId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()),
-						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));
 				String outletGroups = "";
-				if(priceBookList==null){
+				List<OutletBean> outletBeans = priceBookBean.getOutletBeans();
+				Map<String,OutletBean> outletgroupsIdsMap = new HashMap<>();
+				for(OutletBean outletBean:outletBeans){
+					if(outletGroups.equalsIgnoreCase("")){
+						outletGroups = outletBean.getOutletId();
+						outletgroupsIdsMap.put(outletBean.getOutletId(), outletBean);
+					}else{
+						outletgroupsIdsMap.put(outletBean.getOutletId(), outletBean);
+						outletGroups = outletGroups+","+outletBean.getOutletId();
+					}
+				}
+				List<PriceBook> priceBookList = priceBookService.getActivePriceBooksByDateRangeCompanyId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()), DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId());
+				boolean duplicateOutletsExist = false;
+				if(priceBookList!=null && priceBookList.size()>0){
+					for(PriceBook priceBook:priceBookList){
+						String [] outletgroups = priceBook.getOuteletsGroup().split(",");
+						String  outletgroupsName = "";
+						for(String outletId:outletgroups){
+							if(outletgroupsIdsMap.get(outletId)!=null){
+								duplicateOutletsExist = true;
+								outletgroupsName = outletgroupsName+","+outletgroupsIdsMap.get(outletId).getOutletName();
+							}
+						}
+						if(duplicateOutletsExist){
+							util.AuditTrail(request, currentUser, "NewPriceBookController.addPriceBook", 
+									"User "+ currentUser.getUserEmail()+MessageConstants.PRICEBOOK_ALREADY_EXIST+outletgroupsName,false);
+							return new Response(MessageConstants.PRICEBOOK_ALREADY_EXIST+outletgroupsName, StatusConstants.ADD_RESTRICTED,LayOutPageConstants.STAY_ON_PAGE);
+						}
+					}
+				}
+				/*int outletId = !priceBookBean.getOutletId().equalsIgnoreCase("-1") && priceBookBean.getOutletId().equalsIgnoreCase("") ?Integer.valueOf(priceBookBean.getOutletId()): currentUser.getOutlet().getOutletId();
+
+				List<PriceBook> priceBookList= priceBookService.getPriceBooksByDateRangeCompanyIdOutletIdGroupId(DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidFrom()),
+						DateTimeUtil.convertGuiDateFormatYYYYMMDDToDBDateFormat(priceBookBean.getValidTo()), currentUser.getCompany().getCompanyId(), outletId, Integer.valueOf(priceBookBean.getContactGroupId()));*/
+
+				if(!duplicateOutletsExist){
 					PriceBook priceBook = new PriceBook();
-					
+
 					priceBook.setCompany(currentUser.getCompany());
 					ContactGroup contactGroup = customerGroupService.getContactGroupByContactGroupId(Integer.valueOf(priceBookBean.getContactGroupId()), currentUser.getCompany().getCompanyId());
 					priceBook.setContactGroup(contactGroup);
@@ -245,10 +265,10 @@ public class NewPriceBookController {
 						priceBook.setActiveIndicator(false);
 					}
 					priceBook.setLastUpdated(new Date());
-					if(priceBookBean.getOutletId()!=null && !priceBookBean.getOutletId().equalsIgnoreCase("-1")){
+					/*if(priceBookBean.getOutletId()!=null && !priceBookBean.getOutletId().equalsIgnoreCase("-1")){
 						Outlet outlet = outletService.getOuletByOutletId(Integer.valueOf(priceBookBean.getOutletId()), currentUser.getCompany().getCompanyId());
 						priceBook.setOutlet(outlet);
-					}
+					}*/
 					priceBook.setOuteletsGroup(outletGroups);
 					priceBook.setPriceBookName(priceBookBean.getPriceBookName());
 					priceBook.setUserByUpdatedBy(currentUser);
@@ -264,7 +284,7 @@ public class NewPriceBookController {
 					}else{
 						priceBook.setFlatSale("false");
 					}
-					
+
 					PriceBook prceBook = priceBookService.addPriceBook(priceBook);
 					util.AuditTrail(request, currentUser, "NewPriceBookController.addPriceBook", 
 							"User "+ currentUser.getUserEmail()+" added PriceBook successfully ",false);
@@ -274,9 +294,9 @@ public class NewPriceBookController {
 							"User "+ currentUser.getUserEmail()+" unable to add price book because pricebook already exist with date range. ",false);
 					return new Response(MessageConstants.PRICEBOOK_ALREADY_EXIST, StatusConstants.ADD_RESTRICTED,LayOutPageConstants.STAY_ON_PAGE);
 				}
-				
 
-				
+
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				StringWriter errors = new StringWriter();

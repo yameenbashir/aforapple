@@ -220,4 +220,20 @@ public class ProductServiceImpl implements ProductService{
 		// TODO Auto-generated method stub
 		return getProductDAO().getAllActiveProducts();
 	}
+
+	@Override
+	public Map<Integer, Product> getAllActiveProductsMapByOutletIdCompanyId(
+			int outletId, int companyId) {
+		// TODO Auto-generated method stub
+		List<Product> products = getProductDAO().getAllActiveProductsByOutletIdCompanyId(outletId, companyId);
+		Map<Integer, Product> map = new HashMap<Integer, Product>();
+		if(products!=null){
+			for(Product product : products){
+				if(map.get(product.getProductId())==null){
+					map.put(product.getProductId(), product);
+				}
+			}
+		}
+		return map;
+	}
 }

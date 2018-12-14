@@ -38,4 +38,5 @@ public interface ProductDAO {
 	public List<Product> getAllProductsByCategory(int compant, int productType);
 	public List<Product> getTopProductsByCategory(int compant, int productType,int count,int pageNum);
 	List<Product> getAllActiveProducts();
+	List<Product> getAllActiveProductsByOutletIdCompanyId(int outletId,int companyId);
 }

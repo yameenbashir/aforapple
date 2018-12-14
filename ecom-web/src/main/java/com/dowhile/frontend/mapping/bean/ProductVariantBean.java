@@ -49,6 +49,8 @@ public class ProductVariantBean {
     private String productUuid;
     private String auditTransfer;
     private String productDesc;
+    private boolean indivisualUpdate;
+    private boolean allUpdate;
 	
 	/**
 	 * 
@@ -102,6 +104,8 @@ public class ProductVariantBean {
 	 * @param productUuid
 	 * @param auditTransfer
 	 * @param productDesc
+	 * @param indivisualUpdate
+	 * @param allUpdate
 	 */
 	public ProductVariantBean(String iata, String isProduct, String isVariant,
 			String name, String productVariantId, String variantAttributeName,
@@ -120,7 +124,7 @@ public class ProductVariantBean {
 			String retailPrice, String printCount, String discount,
 			String minUnits, String maxUnits, String priceBookDetailId,
 			String priceBookId, String productUuid, String auditTransfer,
-			String productDesc) {
+			String productDesc, boolean indivisualUpdate, boolean allUpdate) {
 		this.iata = iata;
 		this.isProduct = isProduct;
 		this.isVariant = isVariant;
@@ -166,6 +170,8 @@ public class ProductVariantBean {
 		this.productUuid = productUuid;
 		this.auditTransfer = auditTransfer;
 		this.productDesc = productDesc;
+		this.indivisualUpdate = indivisualUpdate;
+		this.allUpdate = allUpdate;
 	}
 
 	/**
@@ -796,5 +802,33 @@ public class ProductVariantBean {
 	 */
 	public void setProductDesc(String productDesc) {
 		this.productDesc = productDesc;
+	}
+
+	/**
+	 * @return the indivisualUpdate
+	 */
+	public boolean isIndivisualUpdate() {
+		return indivisualUpdate;
+	}
+
+	/**
+	 * @param indivisualUpdate the indivisualUpdate to set
+	 */
+	public void setIndivisualUpdate(boolean indivisualUpdate) {
+		this.indivisualUpdate = indivisualUpdate;
+	}
+
+	/**
+	 * @return the allUpdate
+	 */
+	public boolean isAllUpdate() {
+		return allUpdate;
+	}
+
+	/**
+	 * @param allUpdate the allUpdate to set
+	 */
+	public void setAllUpdate(boolean allUpdate) {
+		this.allUpdate = allUpdate;
 	}
 }
