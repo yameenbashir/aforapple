@@ -29,7 +29,7 @@ var ContactUsController = function($scope, $http, $window,$cookieStore,$rootScop
 			
 			if ($scope.responseStatus== 'SUCCESSFUL') {
 				
-				$rootScope.homeContactSuccess = true;
+				//$rootScope.homeContactSuccess = true;
 				$scope.contactUsBeanList = Response.data;
 				setTimeout(
 						function() 

@@ -48,6 +48,12 @@ var PrintLabelsController = ['$scope', '$http', '$window','$cookieStore','$rootS
 				term = term.toLowerCase();
 				$scope.productVariantsBeans = [];
 				var productVariantResults = _.filter($scope.productVaraintDetailBeanList, function(val) {
+					
+					
+					return val.variantAttributeName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term.toLowerCase());
+
+					});
+				/* productVariantResults = _.filter($scope.productVaraintDetailBeanList, function(val) {
 						var skuLowercase =  val.sku.toLowerCase();
 						if(skuLowercase == term.toLowerCase()){
 							$scope.variantSkuFound =  true;
@@ -56,18 +62,14 @@ var PrintLabelsController = ['$scope', '$http', '$window','$cookieStore','$rootS
 						return skuLowercase == term.toLowerCase();
 						
 					});
+				
 				var productResults = _.filter($scope.allProducts, function(val) {
 					return val.productName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term.toLowerCase());
 
-				});
-				if(!$scope.variantSkuFound){
-					productVariantResults = _.filter($scope.productVaraintDetailBeanList, function(val) {
-						return val.variantAttributeName.toLowerCase().includes(term) || val.sku.toLowerCase().includes(term.toLowerCase());
-
-						});
-				}
+				});*/
+				
 				var list = [];
-				if($scope.variantSkuFound){
+				if(false){
 					$scope.selectedItem = {};
 					$scope.printLabelsFunc(productVariantResults[0]);
 					$scope.selectedItem.item = productVariantResults[0];
@@ -84,24 +86,16 @@ var PrintLabelsController = ['$scope', '$http', '$window','$cookieStore','$rootS
 				return list;
 			},
 			renderItem : function(item) {
-					var name = "";
-					if(item.variantAttributeName){
-						 name = item.variantAttributeName;
-					}
-					if(!$scope.variantSkuFound){
-					var result = {
-							value : item.productName,
-							label : $sce.trustAsHtml("<table class='auto-complete'>"
-									+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
-									+ item.productName +' '+ name + "</td>"
-									+ "<td style='width: 10%'>"
-									+ item.retailPriceExclTax + "</td>" + "</tr>"
-									+ "</tbody>" + "</table>")
-					};
-					return result;
-					}
-				
-					return;
+				var result = {
+						value : item.variantAttributeName,
+						label : $sce.trustAsHtml("<table class='auto-complete'>"
+								+ "<tbody>" + "<tr>" + "<td style='width: 90%'>"
+								+ item.variantAttributeName +' '+ name + "</td>"
+								+ "<td style='width: 10%'>"
+								+ item.retailPriceExclTax + "</td>" + "</tr>"
+								+ "</tbody>" + "</table>")
+				};
+				return result;
 			},
 			itemSelected : function(item) {
 				$scope.airportName = [];
@@ -224,38 +218,56 @@ var PrintLabelsController = ['$scope', '$http', '$window','$cookieStore','$rootS
 			$scope.printOptionsContinous = false;
 			$scope.printOptionsContinousLarge = false;
 			$scope.printOptionsContinousNew = false;
+			$scope.printOptionsContinousNewZebra = false;
 			$scope.printThisElementA4 = "printThisElement";
 			$scope.printThisElementContinous = "";
 			$scope.printThisElementContinousLarge = "";
 			$scope.printThisElementContinousNew = "";
+			$scope.printThisElementContinousNewZebra = "";
 		}else if($scope.printOptions=="Continous"){
 			$scope.printOptionsA4 = false;
 			$scope.printOptionsContinous = true;
 			$scope.printOptionsContinousLarge = false;
 			$scope.printOptionsContinousNew = false;
+			$scope.printOptionsContinousNewZebra = false;
 			$scope.printThisElementA4 = "";
 			$scope.printThisElementContinous = "printThisElement";
 			$scope.printThisElementContinousLarge = "";
 			$scope.printThisElementContinousNew = "";
+			$scope.printThisElementContinousNewZebra = "";
 		}else if($scope.printOptions=="ContinousNew"){
 			$scope.printOptionsA4 = false;
 			$scope.printOptionsContinous = false;
 			$scope.printOptionsContinousLarge = false;
 			$scope.printOptionsContinousNew = true;
+			$scope.printOptionsContinousNewZebra = false;
 			$scope.printThisElementA4 = "";
 			$scope.printThisElementContinousNew = "printThisElement";
 			$scope.printThisElementContinousLarge = "";
 			$scope.printThisElementContinous = "";
+			$scope.printThisElementContinousNewZebra = "";
 		}else if($scope.printOptions=="ContinousLarge"){
 			$scope.printOptionsA4 = false;
 			$scope.printOptionsContinous = false;
 			$scope.printOptionsContinousLarge = true;
 			$scope.printOptionsContinousNew = false;
+			$scope.printOptionsContinousNewZebra = false;
 			$scope.printThisElementA4 = "";
 			$scope.printThisElementContinous = "";
 			$scope.printThisElementContinousLarge = "printThisElement";
 			$scope.printThisElementContinousNew = "";
-			
+			$scope.printThisElementContinousNewZebra = "";
+		}else if($scope.printOptions=="ContinousNewZebra"){
+			$scope.printOptionsA4 = false;
+			$scope.printOptionsContinous = false;
+			$scope.printOptionsContinousLarge = false;
+			$scope.printOptionsContinousNew = false;
+			$scope.printOptionsContinousNewZebra = true;
+			$scope.printThisElementA4 = "";
+			$scope.printThisElementContinousNew = "";
+			$scope.printThisElementContinousLarge = "";
+			$scope.printThisElementContinous = "";
+			$scope.printThisElementContinousNewZebra = "printThisElement";
 		}
 		
 		
