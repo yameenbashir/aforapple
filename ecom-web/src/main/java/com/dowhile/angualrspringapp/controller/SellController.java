@@ -300,7 +300,7 @@ public class SellController  {
 					sellControllerBean.setTermsAndConditions(termsAndContitions);
 				}
 				
-				List<User> users =  resourceService.getAllEmployeesByCompanyId(company.getCompanyId());
+				List<User> users =  resourceService.getAllUsersByCompanyIdOutletId(company.getCompanyId(),currentUser.getOutlet().getOutletId());
 				if(users!=null){
 					for(User user : users){
 						UserBean userBean = new UserBean();
@@ -606,6 +606,249 @@ public class SellController  {
 				}else{
 					sellControllerBean.setAutoCreateStandardVariant(ControllersConstants.FALSE);
 				}
+				return sellControllerBean;
+			} catch (Exception e) {
+				e.printStackTrace();
+				StringWriter errors = new StringWriter();
+				e.printStackTrace(new PrintWriter(errors));
+				util.AuditTrail(request, currentUser,
+						"SellController.getAllProducts", "Error Occured "
+								+ errors.toString(), true);
+				return sellControllerBean;
+
+			}
+		}
+
+		else {
+
+			return sellControllerBean;
+		}
+	
+		
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getAllProductsPrintLableOnly/{sessionId}", method = RequestMethod.GET)
+	public @ResponseBody
+	SellControllerBean getAllProductsPrintLableOnly(
+			@PathVariable("sessionId") String sessionId,
+			HttpServletRequest request) {
+		
+
+		SellControllerBean sellControllerBean = new SellControllerBean();
+		List<ProductBean> productsBean = new ArrayList<>();
+		List<Product> products = new ArrayList<>();
+		List<ProductBean> displayProductsBean = new ArrayList<>();
+		if (SessionValidator.isSessionValid(sessionId, request)) {
+			HttpSession session = request.getSession(false);
+			User currentUser = (User) session.getAttribute("user");
+			
+			try {
+				
+				Company company = currentUser.getCompany();
+				sellControllerBean.setCompanyName(company.getCompanyName());
+				
+				
+			sellControllerBean.setDisplayProductsBean(displayProductsBean);
+			sellControllerBean.setCompanyName(company.getCompanyName());
+				
+				List<ProductVariant> productsProductVariants = new ArrayList<>();
+				Map<Integer, List<ProductVariant>> productVariantsMap = new HashMap<>();
+				productsProductVariants = productVariantService.getAllProductVariantsByOutletId(currentUser.getOutlet().getOutletId(), company.getCompanyId());
+				if(productsProductVariants!=null){
+					for(ProductVariant productVariant:productsProductVariants){
+						List<ProductVariant> productVariants = productVariantsMap.get(productVariant.getProduct().getProductId());
+						if(productVariants!=null){
+							productVariants.add(productVariant);
+							productVariantsMap.put(productVariant.getProduct().getProductId(), productVariants);
+						}else{
+							productVariants = new ArrayList<>();
+							productVariants.add(productVariant);
+							productVariantsMap.put(productVariant.getProduct().getProductId(), productVariants);
+						}
+
+					}
+				}
+				List<SalesTax> salesTaxs = new ArrayList<>();
+				Map<Integer, SalesTax> salesTaxMap = new HashMap<>();
+				salesTaxs = salesTaxService.GetAllSalesTax(company.getCompanyId());
+				if(salesTaxs!=null){
+					for(SalesTax salesTax:salesTaxs){
+						salesTaxMap.put(salesTax.getSalesTaxId(), salesTax);
+					}
+				}
+				
+				products = productService.getAllProductsByOutletId(currentUser.getOutlet().getOutletId());
+				int count = 0;
+				if (products != null) {
+					for (Product product : products) {
+						count = count + 1;
+
+						ProductBean productBean = new ProductBean();
+						productBean.setProductUuid(product.getProductUuid());
+						BigDecimal supplyPrice = product
+								.getSupplyPriceExclTax();
+
+						BigDecimal markupPrct = product.getMarkupPrct();
+						SalesTax tax = salesTaxMap.get(product.getSalesTax().getSalesTaxId());
+						BigDecimal retailPriceExclusiveTax = supplyPrice.add(
+								supplyPrice.multiply(markupPrct).divide(
+										new BigDecimal(100))).setScale(2,
+												RoundingMode.HALF_EVEN);
+
+						BigDecimal taxAmount = retailPriceExclusiveTax
+								.multiply(
+										new BigDecimal(tax
+												.getSalesTaxPercentage()))
+												.divide(new BigDecimal(100))
+												.setScale(2, RoundingMode.HALF_EVEN);
+
+						BigDecimal retailPriceInclusiveTax = retailPriceExclusiveTax
+								.add(taxAmount);
+
+
+						productBean.setTaxAmount(taxAmount.toString());						
+
+						productBean
+						.setRetailPriceInclTax(retailPriceInclusiveTax
+								.toString());
+						productBean
+						.setRetailPriceExclTax(retailPriceExclusiveTax
+								.toString());
+						productBean.setProductName(product.getProductName());
+						productBean.setSku(product.getSku());
+						productBean.setProductDesc(product.getProductDesc());
+						productBean.setProductHandler(product
+								.getProductHandler());
+						productBean.setProductId(product.getProductId()
+								.toString());
+						productBean.setVarientProducts(product.getVariantProducts());
+
+						productBean.setProductId(product.getProductId().toString());
+						
+						if(product.getCurrentInventory() != null)
+						{
+							productBean.setCurrentInventory(product.getCurrentInventory().toString());
+						}
+
+						productBean.setOrignalPrice(product.getSupplyPriceExclTax()
+								.setScale(2, RoundingMode.HALF_EVEN).toString());
+						BigDecimal netPrice = (product.getSupplyPriceExclTax()).multiply(product.getMarkupPrct().divide(new BigDecimal(100))).add(product.getSupplyPriceExclTax()).setScale(5,RoundingMode.HALF_EVEN);
+						BigDecimal newNetPrice =netPrice.setScale(2,RoundingMode.HALF_EVEN);
+
+						productBean.setNetPrice(newNetPrice.toString());
+
+
+						List<ProductVariant> productVarients = productVariantsMap.get(product.getProductId()) ;
+						List<ProductVariantBean> productVariantsBeans = new ArrayList<>();
+						if(productVarients!=null){
+							for (ProductVariant item : productVarients) {
+								ProductVariantBean productVarientBean = new ProductVariantBean();
+								if(product.getProductDesc()!=null){
+									productVarientBean.setProductDesc(product.getProductDesc());
+								}
+								productVarientBean.setProductUuid(product.getProductUuid());
+								productVarientBean.setProductVariantUuid(item.getProductVariantUuid());
+								productVarientBean.setSku(item.getSku());
+								productVarientBean.setVarientProducts(product.getVariantProducts());
+								productVarientBean.setProductVariantId(item
+										.getProductVariantId().toString());
+								productVarientBean.setVariantAttributeName(product.getProductName()+"/"+item
+										.getVariantAttributeName().toString());
+								if (item.getCurrentInventory() != null) {
+									productVarientBean.setCurrentInventory(item
+											.getCurrentInventory().toString());
+
+								}
+								productVarientBean.setProductId(product.getProductId()
+										.toString());
+								productVarientBean.setProductName(product
+										.getProductName());
+								productVarientBean.setMarkupPrct(item
+										.getMarkupPrct().toString());
+
+								BigDecimal productVarientmarkupPrct = item
+										.getMarkupPrct();
+								SalesTax varientTax = salesTaxMap.get(product.getSalesTax().getSalesTaxId());;
+
+								BigDecimal retailVarPriceExclusiveTax = item
+										.getSupplyPriceExclTax()
+										.add( item.getSupplyPriceExclTax().multiply(
+												productVarientmarkupPrct).divide(
+														new BigDecimal(100)))
+														.setScale(2, RoundingMode.HALF_EVEN);
+
+								BigDecimal varientTaxAmount = retailPriceExclusiveTax
+										.multiply(
+												new BigDecimal(varientTax
+														.getSalesTaxPercentage()))
+														.divide(new BigDecimal(100))
+														.setScale(2, RoundingMode.HALF_EVEN);
+
+								productVarientBean
+								.setRetailPriceExclTax(retailVarPriceExclusiveTax
+										.toString());
+								productVarientBean.setTax(varientTaxAmount
+										.toString());
+
+								productVarientBean.setOrignalPrice(item.getSupplyPriceExclTax()
+										.setScale(2, RoundingMode.HALF_EVEN).toString());
+
+								BigDecimal netPriceVar = (item.getSupplyPriceExclTax()).multiply(item.getMarkupPrct().divide(new BigDecimal(100))).add(item.getSupplyPriceExclTax()).setScale(5,RoundingMode.HALF_EVEN);
+								BigDecimal newNetPriceVar =netPriceVar.setScale(2,RoundingMode.HALF_EVEN);
+
+								productVarientBean.setNetPrice(newNetPriceVar.toString());
+
+
+								productVariantsBeans.add(productVarientBean);
+								productBean.setProductVariantsBeans(productVariantsBeans);
+
+							}
+						}
+
+						ProductVaraintDetailBean productVaraintDetailBean = new ProductVaraintDetailBean();
+						if(productVarients!=null && productVarients.size()>0){
+							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId1() != null) {
+							if (product.getAttribute1() != null) {
+								productVaraintDetailBean.setArrtibute1Values(product.getAttribute1().split(","));
+								}
+							}
+
+							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId2() != null) {
+								if (product.getAttribute2() != null) {
+									productVaraintDetailBean.setArrtibute2Values(product.getAttribute2().split(","));
+									}
+							}
+							if (productVarients.get(0).getVariantAttributeByVariantAttributeAssocicationId3() != null) {
+								if (product.getAttribute3() != null) {
+									productVaraintDetailBean.setArrtibute3Values(product.getAttribute3().split(","));
+									}
+
+							}
+						}
+						productBean
+						.setProductVaraintDetailBean(productVaraintDetailBean);
+
+						productsBean.add(productBean);
+						
+
+					}
+					util.AuditTrail(request, currentUser,
+							"SellController.getAllProducts", "User "
+									+ currentUser.getUserEmail()
+									+ " retrived all products successfully ",
+									false);
+					sellControllerBean.setProductsBean(productsBean);
+				} else {
+					util.AuditTrail(request, currentUser,
+							"SellController.getAllProducts",
+							" products are not found requested by User "
+									+ currentUser.getUserEmail(), false);
+				}
+				sellControllerBean.setDisplayProductsBean(displayProductsBean);
+				
+				
 				return sellControllerBean;
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -782,7 +782,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 
 				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["printLabels"]==true){
 					$rootScope.roleDetailsLoadedFully = true;
-					controllerData = $http.get('sell/getAllProductsOnly/'+$cookieStore.get('_s_tk_com')).success(function(Response) {
+					controllerData = $http.get('sell/getAllProductsPrintLableOnly/'+$cookieStore.get('_s_tk_com')).success(function(Response) {
 						controllerData = Response;
 						$timeout(function(){
 							myDefer.resolve({

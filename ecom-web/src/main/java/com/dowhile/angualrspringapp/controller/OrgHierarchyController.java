@@ -61,7 +61,7 @@ public class OrgHierarchyController {
 		if(SessionValidator.isSessionValid(sessionId, request)){
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
-			System.out.println("Old outlet id: "+outletId);
+			System.out.println("Old outlet id: "+currentUser.getOutlet().getOutletId());
 			Outlet outlet =  outletService.getOuletByOutletId(Integer.parseInt(outletId), currentUser.getCompany().getCompanyId());
 			if(outlet.getIsHeadOffice() != null && String.valueOf(outlet.getIsHeadOffice()) != "" && outlet.getIsHeadOffice()){
 				outlet.setIsHeadOffice(true);
