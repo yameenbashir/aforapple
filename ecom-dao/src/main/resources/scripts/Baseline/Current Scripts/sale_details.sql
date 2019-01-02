@@ -1,0 +1,10 @@
+DELIMITER $$
+
+DROP VIEW IF EXISTS `ecom`.`sale_details`$$
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `sale_details` AS select `product`.`PRODUCT_NAME` AS `Product`,coalesce(`product_variant`.`VARIANT_ATTRIBUTE_NAME`,`product`.`PRODUCT_NAME`) AS `Variant`,coalesce(`product_variant`.`SKU`,`product`.`PRODUCT_NAME`) AS `SKU`,(select `outlet`.`OUTLET_NAME` AS `OUTLET_NAME` from `outlet` where (`invoice_detail`.`OUTLET_ASSOCICATION_ID` = `outlet`.`OUTLET_ID`)) AS `Outlet`,cast(`invoice_detail`.`CREATED_DATE` as date) AS `CREATED_DATE`,sum((`invoice_detail`.`ITEM_SALE_PRICE` * `invoice_detail`.`PRODUCT_QUANTITY`)) AS `Revenue`,(sum((`invoice_detail`.`ITEM_SALE_PRICE` * `invoice_detail`.`PRODUCT_QUANTITY`)) + sum((`invoice_detail`.`ITEM_TAX_AMOUNT` * `invoice_detail`.`PRODUCT_QUANTITY`))) AS `Revenue_tax_incl`,sum((`invoice_detail`.`ITEM_ORIGNAL_AMT` * `invoice_detail`.`PRODUCT_QUANTITY`)) AS `Cost_of_Goods`,(sum((`invoice_detail`.`ITEM_SALE_PRICE` * `invoice_detail`.`PRODUCT_QUANTITY`)) - sum((`invoice_detail`.`ITEM_ORIGNAL_AMT` * `invoice_detail`.`PRODUCT_QUANTITY`))) AS `Gross_Profit`,(100 - ((sum(`invoice_detail`.`ITEM_ORIGNAL_AMT`) / sum(`invoice_detail`.`ITEM_SALE_PRICE`)) * 100)) AS `Margin`,sum(CASE  
+            WHEN `invoice_detail`.`ITEM_SALE_PRICE` < 0 THEN `invoice_detail`.`product_quantity` * -1
+		ELSE `invoice_detail`.`product_quantity`
+        END) AS `Items_Sold`,sum(`invoice_detail`.`ITEM_TAX_AMOUNT`) AS `Tax`,`invoice_detail`.`COMPANY_ASSOCIATION_ID` AS `COMPANY_ASSOCIATION_ID`,`invoice_detail`.`OUTLET_ASSOCICATION_ID` AS `OUTLET_ASSOCICATION_ID` from ((`invoice_detail` left join `product_variant` on((`product_variant`.`PRODUCT_VARIANT_ID` = `invoice_detail`.`PRODUCT_VARIENT_ASSOCIATION_ID`))) left join `product` on((`product`.`PRODUCT_ID` = `invoice_detail`.`PRODUCT_ASSOCIATION_ID`))) group by `invoice_detail`.`PRODUCT_ASSOCIATION_ID`,`invoice_detail`.`PRODUCT_VARIENT_ASSOCIATION_ID`,cast(`invoice_detail`.`CREATED_DATE` as date) order by cast(`invoice_detail`.`CREATED_DATE` as date)$$
+
+DELIMITER ;

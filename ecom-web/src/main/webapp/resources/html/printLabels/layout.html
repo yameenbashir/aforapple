@@ -252,17 +252,17 @@
 								<b>Print Labels for products</b>
 								 <div style=" margin-top:25px; display: block !important; ">
 									<div id="left_Cont"></div>
-										<div style="display: table-cell !important;" id={{printThisElementContinousNew}}>
+										<div style="display: table-cell !important;" id={{printThisElementContinousNewZebra}}>
 										  <div style=" margin-top:25px; display: block !important; "></div>
 											<div ng-if="layoutProduct.productName!=''" 
 												ng-repeat="productIn in layoutproducts"  style="display: block !important; ">
 												
 												<span style="margin-top:-20px ; margin-left: 10px !important; display: block !important;  font-size: 7px; font-family: sans-serif; font-weight: bolder; position: absolute;"
-													class="text-center" ng-bind="product.productName"></span>
+													class="text-center" ng-bind="productIn.productNameOnly"></span>
 													<span style="margin-top:-20px ; margin-left: 120px !important; display: block !important;  font-size: 7px; font-family: sans-serif; font-weight: bolder; position: absolute;"
 													class="text-center" ng-bind="'Rs. '+ productIn.price"></span>
 													<span style=" margin-top:-5px ; margin-left: 50px !important; display: block !important;  font-size: 7px; font-family: sans-serif; font-weight: bolder; position: absolute;"
-													class="text-center" ng-bind="product.productDesc"></span>
+													class="text-center" ng-bind="productIn.productDesc"></span>
 													<img class="barcode"  style="margin-top:0px; display: block !important; margin-left: 1px; "
 														jsbarcode-format="CODE128" jsbarcode-value={{productIn.sku}}
 														jsbarcode-fontSize="10" jsbarcode-height="25" jsbarcode-marginRight="10px"
