@@ -1438,9 +1438,7 @@ public class PurchaseOrderDetailsController {
 										if(parentProduct.getVariantProducts() != null){
 											newProduct.setVariantProducts(parentProduct.getVariantProducts());
 										}
-										newProduct.setAttribute1(product.getAttribute1());
-										newProduct.setAttribute2(product.getAttribute2());
-										newProduct.setAttribute3(product.getAttribute3());
+										
 										newProduct = productService.addProduct(newProduct, Actions.CREATE, stockOrderDetail.getOrderProdQty(),currentUser.getCompany());
 										recvProductList.put(newProduct.getProductUuid(), newProduct);
 										productsMap.put(newProduct.getProductId(), newProduct);
