@@ -43,7 +43,7 @@ var StockControlController = ['$scope', '$http', '$window','$cookieStore','$root
 		if(stockOrderBean.stockOrderTypeId == "1"){ //supplier Order
 			$window.location = "/app/#/purchaseOrderActions";
 		}
-		else if(stockOrderBean.stockOrderTypeId == "2"){ //Return Order
+		else if(stockOrderBean.stockOrderTypeId == "2"||stockOrderBean.stockOrderTypeId == "7"){ //Return Order
 			if($scope.roleId != 1){
 				var supplierName = stockOrderBean.outletName;
 				stockOrderBean.outletName = stockOrderBean.supplierName;					
@@ -87,7 +87,7 @@ var StockControlController = ['$scope', '$http', '$window','$cookieStore','$root
 				$cookieStore.put('_ct_bl_ost',stockOrderBean);
 				$window.location = "/app/#/stockReturnEditDetails";
 			}		
-			else if(stockOrderBean.stockOrderTypeId == "3"){  //Transfer Order
+			else if(stockOrderBean.stockOrderTypeId == "3" ){  //Transfer Order
 				$cookieStore.put('_ct_bl_ost',stockOrderBean);
 				$window.location = "/app/#/stockTransferEditDetails";
 			}

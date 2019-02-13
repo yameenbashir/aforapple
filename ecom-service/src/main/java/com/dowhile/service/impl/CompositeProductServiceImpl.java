@@ -95,4 +95,11 @@ public class CompositeProductServiceImpl implements CompositeProductService{
 		return getCompositeProductDAO().getCountOfInventoryByCompositeProductUuId(compositeProductUuId, companyId);
 	}
 
+	@Override
+	public boolean addCompositeProductList(
+			List<CompositeProduct> compositeProductList) {
+		// TODO Auto-generated method stub
+		return getCompositeProductDAO().addCompositeProductList(compositeProductList);
+	}
+
 }

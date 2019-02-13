@@ -307,6 +307,7 @@ public List<InvoiceMainCustom> getAllInvoicesMainById(int outletId, int copmayId
 							+ "sum(SETTLED_AMT) as bigDecimal FROM invoice_main "
 							+ "WHERE  DATE(CREATED_DATE) = CURRENT_DATE()  "
 							+ "and COMPANY_ASSOCIATION_ID = ?  "
+							+"and DAILY_REGISTER_ASSOCICATION_ID = ? "
 							+ "and OUTLET_ASSOCICATION_ID = ? "
 							+ "and STATUS_ASSOCICATION_ID NOT IN ( 11) "
 							+ "GROUP BY DATE(CREATED_DATE) "

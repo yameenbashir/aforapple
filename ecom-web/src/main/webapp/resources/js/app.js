@@ -1523,6 +1523,49 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 			}
 		}
 	}); 
+	
+	$routeProvider.when('/newCompositeProduct', {
+		templateUrl: 'resources/html/newCompositeProduct/layout.html',
+		controller: NewCompositeProductController,
+		resolve: {
+			"NewCompositeProductControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
+				var productId = "DEFAULT";//Handle edit product scenario, because in case of edit we are sending productId for same method
+				var myDefer = $q.defer();
+				var controllerData ='';
+				var success =false;
+				$rootScope.globalPageLoader = true;
+				$rootScope.newProductLoadedFully = true;
+
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["newProduct"]==true){
+					controllerData = $http.post('newCompositeProduct/getNewCompositeProductControllerData/'+$cookieStore.get('_s_tk_com')+'/'+productId+'/'+productId).success(function(Response) {
+						controllerData = Response.data;
+						$timeout(function(){
+							myDefer.resolve({
+								loadControllerData: function() {
+									return 	controllerData;  
+								}
+							});
+						},10);
+					}).error(function() {
+						$window.location = '/app/#/login';
+					});
+
+				}else{
+					if(typeof ($rootScope.menuMap) != "undefined"){
+						$window.location = '/app/#/login';
+						$rootScope.showErrorLoginModal = true;
+						$timeout(function(){
+							$rootScope.showErrorLoginModal = false;
+						}, 2000);	
+					}else{
+						$window.location = '/app/#/login';
+
+					}	    	  					
+				}
+				return myDefer.promise;
+			}
+		}
+	}); 
 
 	$routeProvider.when('/productDetails', {
 		templateUrl: 'resources/html/productDetails/layout.html',

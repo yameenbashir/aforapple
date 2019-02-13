@@ -51,6 +51,7 @@ public class ProductVariantBean {
     private String productDesc;
     private boolean indivisualUpdate;
     private boolean allUpdate;
+    private String compositeQunatity;
 	
 	/**
 	 * 
@@ -106,6 +107,7 @@ public class ProductVariantBean {
 	 * @param productDesc
 	 * @param indivisualUpdate
 	 * @param allUpdate
+	 * @param compositeQunatity
 	 */
 	public ProductVariantBean(String iata, String isProduct, String isVariant,
 			String name, String productVariantId, String variantAttributeName,
@@ -124,7 +126,8 @@ public class ProductVariantBean {
 			String retailPrice, String printCount, String discount,
 			String minUnits, String maxUnits, String priceBookDetailId,
 			String priceBookId, String productUuid, String auditTransfer,
-			String productDesc, boolean indivisualUpdate, boolean allUpdate) {
+			String productDesc, boolean indivisualUpdate, boolean allUpdate,
+			String compositeQunatity) {
 		this.iata = iata;
 		this.isProduct = isProduct;
 		this.isVariant = isVariant;
@@ -172,6 +175,7 @@ public class ProductVariantBean {
 		this.productDesc = productDesc;
 		this.indivisualUpdate = indivisualUpdate;
 		this.allUpdate = allUpdate;
+		this.compositeQunatity = compositeQunatity;
 	}
 
 	/**
@@ -831,4 +835,19 @@ public class ProductVariantBean {
 	public void setAllUpdate(boolean allUpdate) {
 		this.allUpdate = allUpdate;
 	}
+
+	/**
+	 * @return the compositeQunatity
+	 */
+	public String getCompositeQunatity() {
+		return compositeQunatity;
+	}
+
+	/**
+	 * @param compositeQunatity the compositeQunatity to set
+	 */
+	public void setCompositeQunatity(String compositeQunatity) {
+		this.compositeQunatity = compositeQunatity;
+	}
+
 }

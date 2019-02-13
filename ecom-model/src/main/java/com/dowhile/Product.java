@@ -64,17 +64,20 @@ public class Product  implements java.io.Serializable {
     private String attribute1;
     private String attribute2;
     private String attribute3;
-    private Set<ProductTag> productTags = new HashSet<ProductTag>(0);
-    private Set<ProductVariant> productVariants = new HashSet<ProductVariant>(0);
+    private String isComposite;
+    private Set<CompositeProductHistory> compositeProductHistoriesForSelectiveProductAssociationId = new HashSet<CompositeProductHistory>(0);
+    private Set<CompositeProductHistory> compositeProductHistoriesForProductAssocicationId = new HashSet<CompositeProductHistory>(0);
     private Set<PriceBookDetail> priceBookDetails = new HashSet<PriceBookDetail>(0);
-    private Set<VariantAttributeValues> variantAttributeValueses = new HashSet<VariantAttributeValues>(0);
-    private Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId = new HashSet<CompositeProduct>(0);
-    private Set<OrderDetail> orderDetails = new HashSet<OrderDetail>(0);
     private Set<StockOrderDetail> stockOrderDetails = new HashSet<StockOrderDetail>(0);
     private Set<InventoryCountDetail> inventoryCountDetails = new HashSet<InventoryCountDetail>(0);
     private Set<InvoiceDetail> invoiceDetails = new HashSet<InvoiceDetail>(0);
     private Set<CompositeProduct> compositeProductsForProductAssocicationId = new HashSet<CompositeProduct>(0);
     private Set<ProductHistory> productHistories = new HashSet<ProductHistory>(0);
+    private Set<ProductTag> productTags = new HashSet<ProductTag>(0);
+    private Set<ProductVariant> productVariants = new HashSet<ProductVariant>(0);
+    private Set<VariantAttributeValues> variantAttributeValueses = new HashSet<VariantAttributeValues>(0);
+    private Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId = new HashSet<CompositeProduct>(0);
+    private Set<OrderDetail> orderDetails = new HashSet<OrderDetail>(0);
 
    public Product() {
    }
@@ -103,7 +106,7 @@ public class Product  implements java.io.Serializable {
        this.createdDate = createdDate;
        this.lastUpdated = lastUpdated;
    }
-   public Product(Outlet outlet, ProductType productType, User userByCreatedBy, User userByUpdatedBy, Company company, Brand brand, SalesTax salesTax, Contact contact, String productName, String productUuid, String productDesc, String productHandler, String salesAccountCode, String purchaseAccountCode, String productCanBeSold, String standardProduct, String trackingProduct, String variantProducts, Integer currentInventory, Integer reorderPoint, BigDecimal reorderAmount, BigDecimal supplyPriceExclTax, BigDecimal markupPrct, String sku, String imagePath, Boolean display, boolean activeIndicator, Date createdDate, Date lastUpdated, String attribute1, String attribute2, String attribute3, Set<ProductTag> productTags, Set<ProductVariant> productVariants, Set<PriceBookDetail> priceBookDetails, Set<VariantAttributeValues> variantAttributeValueses, Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId, Set<OrderDetail> orderDetails, Set<StockOrderDetail> stockOrderDetails, Set<InventoryCountDetail> inventoryCountDetails, Set<InvoiceDetail> invoiceDetails, Set<CompositeProduct> compositeProductsForProductAssocicationId, Set<ProductHistory> productHistories) {
+   public Product(Outlet outlet, ProductType productType, User userByCreatedBy, User userByUpdatedBy, Company company, Brand brand, SalesTax salesTax, Contact contact, String productName, String productUuid, String productDesc, String productHandler, String salesAccountCode, String purchaseAccountCode, String productCanBeSold, String standardProduct, String trackingProduct, String variantProducts, Integer currentInventory, Integer reorderPoint, BigDecimal reorderAmount, BigDecimal supplyPriceExclTax, BigDecimal markupPrct, String sku, String imagePath, Boolean display, boolean activeIndicator, Date createdDate, Date lastUpdated, String attribute1, String attribute2, String attribute3, String isComposite, Set<CompositeProductHistory> compositeProductHistoriesForSelectiveProductAssociationId, Set<CompositeProductHistory> compositeProductHistoriesForProductAssocicationId, Set<PriceBookDetail> priceBookDetails, Set<StockOrderDetail> stockOrderDetails, Set<InventoryCountDetail> inventoryCountDetails, Set<InvoiceDetail> invoiceDetails, Set<CompositeProduct> compositeProductsForProductAssocicationId, Set<ProductHistory> productHistories, Set<ProductTag> productTags, Set<ProductVariant> productVariants, Set<VariantAttributeValues> variantAttributeValueses, Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId, Set<OrderDetail> orderDetails) {
       this.outlet = outlet;
       this.productType = productType;
       this.userByCreatedBy = userByCreatedBy;
@@ -136,17 +139,20 @@ public class Product  implements java.io.Serializable {
       this.attribute1 = attribute1;
       this.attribute2 = attribute2;
       this.attribute3 = attribute3;
-      this.productTags = productTags;
-      this.productVariants = productVariants;
+      this.isComposite = isComposite;
+      this.compositeProductHistoriesForSelectiveProductAssociationId = compositeProductHistoriesForSelectiveProductAssociationId;
+      this.compositeProductHistoriesForProductAssocicationId = compositeProductHistoriesForProductAssocicationId;
       this.priceBookDetails = priceBookDetails;
-      this.variantAttributeValueses = variantAttributeValueses;
-      this.compositeProductsForSelectiveProductAssociationId = compositeProductsForSelectiveProductAssociationId;
-      this.orderDetails = orderDetails;
       this.stockOrderDetails = stockOrderDetails;
       this.inventoryCountDetails = inventoryCountDetails;
       this.invoiceDetails = invoiceDetails;
       this.compositeProductsForProductAssocicationId = compositeProductsForProductAssocicationId;
       this.productHistories = productHistories;
+      this.productTags = productTags;
+      this.productVariants = productVariants;
+      this.variantAttributeValueses = variantAttributeValueses;
+      this.compositeProductsForSelectiveProductAssociationId = compositeProductsForSelectiveProductAssociationId;
+      this.orderDetails = orderDetails;
    }
   
     @Id @GeneratedValue(strategy=IDENTITY)
@@ -481,22 +487,32 @@ public class Product  implements java.io.Serializable {
        this.attribute3 = attribute3;
    }
 
-@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
-   public Set<ProductTag> getProductTags() {
-       return this.productTags;
+   
+   @Column(name="IS_COMPOSITE", length=10)
+   public String getIsComposite() {
+       return this.isComposite;
    }
    
-   public void setProductTags(Set<ProductTag> productTags) {
-       this.productTags = productTags;
+   public void setIsComposite(String isComposite) {
+       this.isComposite = isComposite;
    }
 
-@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
-   public Set<ProductVariant> getProductVariants() {
-       return this.productVariants;
+@OneToMany(fetch=FetchType.LAZY, mappedBy="productBySelectiveProductAssociationId")
+   public Set<CompositeProductHistory> getCompositeProductHistoriesForSelectiveProductAssociationId() {
+       return this.compositeProductHistoriesForSelectiveProductAssociationId;
    }
    
-   public void setProductVariants(Set<ProductVariant> productVariants) {
-       this.productVariants = productVariants;
+   public void setCompositeProductHistoriesForSelectiveProductAssociationId(Set<CompositeProductHistory> compositeProductHistoriesForSelectiveProductAssociationId) {
+       this.compositeProductHistoriesForSelectiveProductAssociationId = compositeProductHistoriesForSelectiveProductAssociationId;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="productByProductAssocicationId")
+   public Set<CompositeProductHistory> getCompositeProductHistoriesForProductAssocicationId() {
+       return this.compositeProductHistoriesForProductAssocicationId;
+   }
+   
+   public void setCompositeProductHistoriesForProductAssocicationId(Set<CompositeProductHistory> compositeProductHistoriesForProductAssocicationId) {
+       this.compositeProductHistoriesForProductAssocicationId = compositeProductHistoriesForProductAssocicationId;
    }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="product")
@@ -506,33 +522,6 @@ public class Product  implements java.io.Serializable {
    
    public void setPriceBookDetails(Set<PriceBookDetail> priceBookDetails) {
        this.priceBookDetails = priceBookDetails;
-   }
-
-@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
-   public Set<VariantAttributeValues> getVariantAttributeValueses() {
-       return this.variantAttributeValueses;
-   }
-   
-   public void setVariantAttributeValueses(Set<VariantAttributeValues> variantAttributeValueses) {
-       this.variantAttributeValueses = variantAttributeValueses;
-   }
-
-@OneToMany(fetch=FetchType.LAZY, mappedBy="productBySelectiveProductAssociationId")
-   public Set<CompositeProduct> getCompositeProductsForSelectiveProductAssociationId() {
-       return this.compositeProductsForSelectiveProductAssociationId;
-   }
-   
-   public void setCompositeProductsForSelectiveProductAssociationId(Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId) {
-       this.compositeProductsForSelectiveProductAssociationId = compositeProductsForSelectiveProductAssociationId;
-   }
-
-@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
-   public Set<OrderDetail> getOrderDetails() {
-       return this.orderDetails;
-   }
-   
-   public void setOrderDetails(Set<OrderDetail> orderDetails) {
-       this.orderDetails = orderDetails;
    }
 
 @OneToMany(fetch=FetchType.LAZY, mappedBy="product")
@@ -578,6 +567,51 @@ public class Product  implements java.io.Serializable {
    
    public void setProductHistories(Set<ProductHistory> productHistories) {
        this.productHistories = productHistories;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
+   public Set<ProductTag> getProductTags() {
+       return this.productTags;
+   }
+   
+   public void setProductTags(Set<ProductTag> productTags) {
+       this.productTags = productTags;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
+   public Set<ProductVariant> getProductVariants() {
+       return this.productVariants;
+   }
+   
+   public void setProductVariants(Set<ProductVariant> productVariants) {
+       this.productVariants = productVariants;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
+   public Set<VariantAttributeValues> getVariantAttributeValueses() {
+       return this.variantAttributeValueses;
+   }
+   
+   public void setVariantAttributeValueses(Set<VariantAttributeValues> variantAttributeValueses) {
+       this.variantAttributeValueses = variantAttributeValueses;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="productBySelectiveProductAssociationId")
+   public Set<CompositeProduct> getCompositeProductsForSelectiveProductAssociationId() {
+       return this.compositeProductsForSelectiveProductAssociationId;
+   }
+   
+   public void setCompositeProductsForSelectiveProductAssociationId(Set<CompositeProduct> compositeProductsForSelectiveProductAssociationId) {
+       this.compositeProductsForSelectiveProductAssociationId = compositeProductsForSelectiveProductAssociationId;
+   }
+
+@OneToMany(fetch=FetchType.LAZY, mappedBy="product")
+   public Set<OrderDetail> getOrderDetails() {
+       return this.orderDetails;
+   }
+   
+   public void setOrderDetails(Set<OrderDetail> orderDetails) {
+       this.orderDetails = orderDetails;
    }
 
 

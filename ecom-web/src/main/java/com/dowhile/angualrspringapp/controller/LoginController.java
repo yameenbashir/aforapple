@@ -121,6 +121,8 @@ public class LoginController {
 	private VariantAttributeValuesService variantAttributeValuesService;
 	@Resource
 	private ConfigurationService configurationService;
+	@Resource
+	private ContactService supplierService;
 	@RequestMapping("/layout")
 	public String getLoginControllerPartialPage(ModelMap modelMap) {
 		return "login/layout";
@@ -218,6 +220,7 @@ public class LoginController {
 				}
 				
 				//SynchProductMartInData(user);
+//				SynchProductDataLumenFashions(user);
 				if(domianConfiguration==null){
 					System.out.println("domain configuration is null ");
 					util.AuditTrail(request, user, "LoginController.doLogin", "domain configuration is null for user : "+
@@ -917,11 +920,316 @@ public class LoginController {
 		}
 
 	}
+	private static final String FILE_NAME_LUMEN_FASION = "C:\\finallumen.xlsx";
+	
+	@SuppressWarnings("deprecation")
+	public void SynchProductDataLumenFashions(User user) {
+
+		try {
+			String defaultColour = "Colour";
+			String defaultSize = "Size";
+			
+			Map<String, Product> productMap = new HashMap<String, Product>();
+			Map<Integer, ProductVariant> productVariantMap = new HashMap<Integer, ProductVariant>();
+			Map<String, ProductType> productTypeMap = new HashMap<String, ProductType>();
+			Map<String, Brand> brandMap = new HashMap<String, Brand>();
+			
+			SalesTax salesTax = new SalesTax();
+			salesTax.setSalesTaxId(1);
+			Brand defaultBrand = new Brand();
+			defaultBrand.setBrandId(1);
+			/*ProductType productType = new ProductType();
+			productType.setProductTypeId(1);*/
+			Contact supplier = new Contact();
+			supplier.setContactName("LUMEN");
+			supplier.setCompanyName("LUMEN");
+			supplier.setDescription("LUMEN");
+			supplier.setActiveIndicator(true);
+			supplier.setDefaultMarkup(new BigDecimal("0"));
+			supplier.setCompany(user.getCompany());
+			supplier.setContactType("SUPPLIER");
+			supplier.setOutlet(user.getOutlet());
+			Contact contact = supplierService.addContact(supplier,user.getCompany().getCompanyId());
+			
+			
+			
+			VariantAttribute variantAttributeByVariantAttributeAssocicationId1 = variantAttributeService.getVariantAttributeByVariantAttributeId(1, user.getCompany().getCompanyId());
+			VariantAttribute variantAttributeByVariantAttributeAssocicationId2 = variantAttributeService.getVariantAttributeByVariantAttributeId(2, user.getCompany().getCompanyId());
+			
+			FileInputStream excelFile = new FileInputStream(new File(FILE_NAME_LUMEN_FASION));
+			@SuppressWarnings("resource")
+			Workbook workbook = new XSSFWorkbook(excelFile);
+			Sheet datatypeSheet = workbook.getSheetAt(0);
+			Iterator<Row> iterator = datatypeSheet.iterator();
+			int rowNum = 0;
+			while (iterator.hasNext()) {
+				rowNum = rowNum+1;
+				Row currentRow = iterator.next();
+				String productName =  currentRow.getCell(0).getStringCellValue();
+				String productTypeName =  currentRow.getCell(1).getStringCellValue();
+				/*if(productTypeName.toLowerCase().trim().equalsIgnoreCase("Jacket")||
+						productTypeName.equalsIgnoreCase("JERSEY")||productTypeName.toLowerCase().trim().equalsIgnoreCase("jersey")
+						||productTypeName.equalsIgnoreCase("Sweat Shirt")||productTypeName.equalsIgnoreCase("SWEAT SHIRT")||productTypeName.toLowerCase().trim().equalsIgnoreCase("sweat shirt")
+						||productTypeName.equalsIgnoreCase("Top")||productTypeName.toLowerCase().trim().equalsIgnoreCase("top")
+						||productTypeName.equalsIgnoreCase("TracK Suit")||productTypeName.toLowerCase().trim().equalsIgnoreCase("track suit")){
+					continue;
+				}*/
+				String brandName =  currentRow.getCell(2).getStringCellValue();
+				String description =  currentRow.getCell(3).getStringCellValue();
+				//String supplier =  currentRow.getCell(4).getStringCellValue();
+				currentRow.getCell(5).setCellType(CellType.STRING);
+				String supplierPrice = "";
+				if (currentRow.getCell(5).getCellTypeEnum() == CellType.STRING) {
+					supplierPrice = currentRow.getCell(5).getStringCellValue();
+				} else if (currentRow.getCell(5).getCellTypeEnum() == CellType.NUMERIC) {
+					supplierPrice = String.valueOf(currentRow.getCell(5).getNumericCellValue());
+				}
+				String retailPrice = "";
+				currentRow.getCell(6).setCellType(CellType.STRING);
+				if (currentRow.getCell(6).getCellTypeEnum() == CellType.STRING) {
+					retailPrice = currentRow.getCell(6).getStringCellValue();
+				} else if (currentRow.getCell(6).getCellTypeEnum() == CellType.NUMERIC) {
+					retailPrice = String.valueOf(currentRow.getCell(6).getNumericCellValue());
+				}
+				
+				if(supplierPrice==null || supplierPrice.equalsIgnoreCase("")){
+					supplierPrice = "1.00";
+					retailPrice = "1.00";
+				}
+			//	String rp =  currentRow.getCell(6).getStringCellValue();
+				String colour =  currentRow.getCell(7).getStringCellValue();
+				if(colour==null || colour.equalsIgnoreCase("")){
+					colour = defaultColour;
+				}
+				colour = colour.replaceAll("/", " ");
+								
+				currentRow.getCell(8).setCellType(CellType.STRING);
+				String size = "";
+				if (currentRow.getCell(8).getCellTypeEnum() == CellType.STRING) {
+					size = currentRow.getCell(8).getStringCellValue();
+				} else if (currentRow.getCell(8).getCellTypeEnum() == CellType.NUMERIC) {
+					size = String.valueOf(currentRow.getCell(8).getNumericCellValue());
+				}
+				if(size==null || size.equalsIgnoreCase("")){
+					size = defaultSize;
+				}
+				size = size.replaceAll("/", " ");
+				
+//				String size =  currentRow.getCell(8).getStringCellValue();
+				currentRow.getCell(9).setCellType(CellType.STRING);
+				String quantity = "";
+				if (currentRow.getCell(9).getCellTypeEnum() == CellType.STRING) {
+					quantity = currentRow.getCell(9).getStringCellValue();
+				} else if (currentRow.getCell(9).getCellTypeEnum() == CellType.NUMERIC) {
+					quantity = String.valueOf(currentRow.getCell(9).getNumericCellValue());
+				}
+				
+				//String quantity =  currentRow.getCell(9).getStringCellValue();
+				
+				
+				System.out.println("Product Name: "+productName);
+				
+//				String retailPrice = currentRow.getCell(2).getStringCellValue();
+//				String supplierPrice = currentRow.getCell(3).getStringCellValue();
+				
+				double retailPr = Double.parseDouble(retailPrice);
+				double supplierPr = Double.parseDouble(supplierPrice);
+				
+				double markUp = (retailPr-supplierPr)*100/supplierPr;
+				DecimalFormat numberFormat = new DecimalFormat("#.00000");
+				System.out.println("Markup: "+numberFormat.format(markUp));
+				BigDecimal mark = new BigDecimal(numberFormat.format(markUp));
+				System.out.println("Big Decimal mark: "+mark);
+				//System.out.println("Row Number: "+rowNum+" barCode: "+barCode+" Product Name: "+productName+" supplierPrice: "+supplierPrice+" retailPrice: "+retailPrice);
+				
+				//result = (supplyPrice*(markUp/100)+supplyPrice).toFixed(2);
+				double newRetailPrice = (supplierPr*(markUp/100)+supplierPr);
+				System.out.println("newRetailPrice: "+newRetailPrice+" oldRetailPrice: "+retailPr);
+				//System.out.println("markUp: "+markUp.setScale(5, RoundingMode.HALF_EVEN));
+				BigDecimal markUpPrct = new BigDecimal(numberFormat.format(markUp)).setScale(5, RoundingMode.HALF_EVEN);
+				System.out.println("Big Decimal markUpPrct: "+markUpPrct);
+				if(productMap.get(productName)==null){
+					Product newProduct = new Product();
+					newProduct.setProductName(productName);
+					String sku = "LUMENFP"+productMap.size()+1+"";
+					newProduct.setSku(sku);
+//					productMap.put(sku, productName);
+					if(productTypeMap.get(productTypeName)==null){
+						ProductType productType = new ProductType();
+						productType.setActiveIndicator(true);
+						productType.setProductTypeName(productTypeName);
+						productType.setCreatedBy(user.getUserId());
+						productType.setCreatedDate(new Date());
+						productType.setLastUpdated(new Date());
+						productType.setUpdatedBy(user.getUserId());
+						productType.setCompany(user.getCompany());
+						productType = productTypeService.addProductType(productType,user.getCompany().getCompanyId());
+						productTypeMap.put(productType.getProductTypeName(), productType);
+						newProduct.setProductType(productType);
+					}else{
+						newProduct.setProductType((productTypeMap.get(productTypeName)));
+					}
+					
+					UUID uuidProd = UUID.randomUUID();
+					//String randomUUIDProduct = uuidProd.toString();
+					newProduct.setProductUuid(productName);
+					newProduct.setProductHandler(productName);
+					
+					newProduct.setContact(contact);
+					
+					if(brandName==null || brandName.equalsIgnoreCase("")){
+						
+						newProduct.setBrand(defaultBrand);
+					}else{
+						if(brandMap.get(brandName)==null){
+							Brand brand = new Brand();
+							brand.setActiveIndicator(true);
+							brand.setBrandDescription(brandName);
+							brand.setBrandName(brandName);
+							brand.setCreatedBy(user.getUserId());
+							brand.setCreatedDate(new Date());
+							brand.setLastUpdated(new Date());
+							brand.setUpdatedBy(user.getUserId());
+							brand.setCompany(user.getCompany());
+							brand = brandService.addBrand(brand,0);
+							brandMap.put(brand.getBrandName(), brand);
+							newProduct.setBrand(brand);
+						}else{
+							newProduct.setBrand(brandMap.get(brandName));
+						}
+					}
+					
+					newProduct.setProductCanBeSold("true");
+					newProduct.setStandardProduct("true");
+					newProduct.setTrackingProduct("true");
+					newProduct.setVariantProducts("true");
+					newProduct.setIsComposite("false");
+					newProduct.setCurrentInventory(0);
+					newProduct.setReorderPoint(0);
+					newProduct.setReorderAmount(BigDecimal.ZERO);
+					newProduct.setSupplyPriceExclTax(new BigDecimal(supplierPrice));
+					newProduct.setMarkupPrct(markUpPrct);
+					newProduct.setOutlet(user.getOutlet());
+					newProduct.setSalesTax(salesTax);
+					newProduct.setActiveIndicator(true);
+					newProduct.setCreatedDate(new Date());
+					newProduct.setUserByCreatedBy(user);
+					newProduct.setUserByUpdatedBy(user);
+					newProduct.setCompany(user.getCompany());
+					newProduct.setLastUpdated(new Date());
+					newProduct.setImagePath("");
+					//newProduct.setAttribute1(colour);
+					newProduct.setProductDesc(description);
+					Product product = productService.addProduct(newProduct, Actions.CREATE, 0, user.getCompany());
+					productMap.put(product.getProductName(), product);
+					
+					ProductVariant productVariant = new ProductVariant();
+					productVariant.setProduct(product);
+					productVariant.setProductVariantUuid(UUID.randomUUID().toString());
+					
+					productVariant.setVariantAttributeName(colour+"/"+size);
+					productVariant.setVariantAttributeValue1(colour);
+					productVariant.setVariantAttributeValue2(size);
+
+					productVariant.setVariantAttributeByVariantAttributeAssocicationId1(variantAttributeByVariantAttributeAssocicationId1);
+					productVariant.setVariantAttributeByVariantAttributeAssocicationId2(variantAttributeByVariantAttributeAssocicationId2);
+					if(quantity==null || quantity.equalsIgnoreCase("")){
+						productVariant.setCurrentInventory(0);
+					}else{
+						try{
+							Integer currentInventory = Integer.valueOf(quantity);
+							productVariant.setCurrentInventory(currentInventory);
+						}catch(Exception ex){
+							ex.printStackTrace();
+							productVariant.setCurrentInventory(0);
+						}
+						
+					}
+					
+					productVariant.setReorderPoint(0);
+					productVariant.setReorderAmount(BigDecimal.ZERO);
+					productVariant.setProductUuid(product.getProductUuid());
+					productVariant.setSupplyPriceExclTax(new BigDecimal(supplierPrice));
+					productVariant.setMarkupPrct(markUpPrct);
+					productVariant.setSku("LUMENFPV"+productVariantMap.size()+1+"");
+					productVariant.setOutlet(user.getOutlet());
+					productVariant.setSalesTax(salesTax);
+					productVariant.setActiveIndicator(true);
+					productVariant.setCreatedDate(new Date());
+					productVariant.setLastUpdated(new Date());
+					productVariant.setUserByCreatedBy(user);
+					productVariant.setUserByUpdatedBy(user);
+					productVariant.setCompany(user.getCompany());
+					productVariant = productVariantService.addProductVariant(productVariant, Actions.CREATE, 0,  user.getCompany(), String.valueOf(product.getProductId()));
+					productVariantMap.put(productVariant.getProductVariantId(), productVariant);
+				}else{
+					Product product = productMap.get(productName);
+					ProductVariant productVariant = new ProductVariant();
+					productVariant.setProduct(product);
+					productVariant.setProductVariantUuid(UUID.randomUUID().toString());
+					
+					productVariant.setVariantAttributeName(colour+"/"+size);
+					productVariant.setVariantAttributeValue1(colour);
+					productVariant.setVariantAttributeValue2(size);
+
+					productVariant.setVariantAttributeByVariantAttributeAssocicationId1(variantAttributeByVariantAttributeAssocicationId1);
+					productVariant.setVariantAttributeByVariantAttributeAssocicationId2(variantAttributeByVariantAttributeAssocicationId2);
+					if(quantity==null || quantity.equalsIgnoreCase("")){
+						productVariant.setCurrentInventory(0);
+					}else{
+						Integer currentInventory = Integer.valueOf(quantity);
+						productVariant.setCurrentInventory(currentInventory);
+					}
+					
+					productVariant.setReorderPoint(0);
+					productVariant.setReorderAmount(BigDecimal.ZERO);
+					productVariant.setProductUuid(product.getProductUuid());
+					productVariant.setSupplyPriceExclTax(new BigDecimal(supplierPrice));
+					productVariant.setMarkupPrct(markUpPrct);
+					productVariant.setSku("LUMENFPV"+productVariantMap.size()+1+"");
+					productVariant.setOutlet(user.getOutlet());
+					productVariant.setSalesTax(salesTax);
+					productVariant.setActiveIndicator(true);
+					productVariant.setCreatedDate(new Date());
+					productVariant.setLastUpdated(new Date());
+					productVariant.setUserByCreatedBy(user);
+					productVariant.setUserByUpdatedBy(user);
+					productVariant.setCompany(user.getCompany());
+					productVariant = productVariantService.addProductVariant(productVariant, Actions.CREATE, 0,  user.getCompany(), String.valueOf(product.getProductId()));
+					productVariantMap.put(productVariant.getProductVariantId(), productVariant);
+				}
+				
+			}
+						
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	
 	public static void main(String args[]){
+		double retailPr = Double.parseDouble("2450");
+		double supplierPr = Double.parseDouble("1100");
+		
+		double markUp = (retailPr-supplierPr)*100/supplierPr;
+		DecimalFormat numberFormat = new DecimalFormat("#.00000");
+		System.out.println("Markup: "+numberFormat.format(markUp));
+		BigDecimal mark = new BigDecimal(numberFormat.format(markUp));
+		System.out.println("Big Decimal mark: "+mark);
+		//System.out.println("Row Number: "+rowNum+" barCode: "+barCode+" Product Name: "+productName+" supplierPrice: "+supplierPrice+" retailPrice: "+retailPrice);
+		
+		//result = (supplyPrice*(markUp/100)+supplyPrice).toFixed(2);
+		double newRetailPrice = (supplierPr*(markUp/100)+supplierPr);
+		System.out.println("newRetailPrice: "+newRetailPrice+" oldRetailPrice: "+retailPr);
+		//System.out.println("markUp: "+markUp.setScale(5, RoundingMode.HALF_EVEN));
+		BigDecimal markUpPrct = new BigDecimal(numberFormat.format(markUp)).setScale(5, RoundingMode.HALF_EVEN);
+		System.out.println("Big Decimal markUpPrct: "+markUpPrct);
 		/*double number = 90909090.123456789;
 		DecimalFormat numberFormat = new DecimalFormat("#.00000");
 		System.out.println(numberFormat.format(number));*/
-		heatmapAdhoc();
+		
+		User user  = new User();
+//		SynchProductDataLumenFashions(user);
 	}
 
 

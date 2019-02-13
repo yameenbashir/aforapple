@@ -236,4 +236,11 @@ public class ProductServiceImpl implements ProductService{
 		}
 		return map;
 	}
+
+	@Override
+	public List<Product> getAllActiveProductsByOutletIdCompanyId(int outletId,
+			int companyId) {
+		// TODO Auto-generated method stub
+		return getProductDAO().getAllActiveProductsByOutletIdCompanyId(outletId, companyId);
+	}
 }

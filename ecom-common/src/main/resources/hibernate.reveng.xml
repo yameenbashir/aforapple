@@ -10,9 +10,11 @@
   <table-filter match-catalog="ecom" match-name="brand"/>
   <table-filter match-catalog="ecom" match-name="brand_sales_report"/>
   <table-filter match-catalog="ecom" match-name="cash_managment"/>
+  <table-filter match-catalog="ecom" match-name="cash_sale"/>
   <table-filter match-catalog="ecom" match-name="chart_of_account"/>
   <table-filter match-catalog="ecom" match-name="company"/>
   <table-filter match-catalog="ecom" match-name="composite_product"/>
+  <table-filter match-catalog="ecom" match-name="composite_product_history"/>
   <table-filter match-catalog="ecom" match-name="configuration"/>
   <table-filter match-catalog="ecom" match-name="contact"/>
   <table-filter match-catalog="ecom" match-name="contact_group"/>
@@ -21,6 +23,7 @@
   <table-filter match-catalog="ecom" match-name="contact_us"/>
   <table-filter match-catalog="ecom" match-name="contacts_summmary"/>
   <table-filter match-catalog="ecom" match-name="country"/>
+  <table-filter match-catalog="ecom" match-name="credit_sale"/>
   <table-filter match-catalog="ecom" match-name="currency"/>
   <table-filter match-catalog="ecom" match-name="customer_group_sales_report"/>
   <table-filter match-catalog="ecom" match-name="customer_sales_report"/>

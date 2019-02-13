@@ -23,5 +23,6 @@ public interface CompositeProductService {
 	List<CompositeProduct> getAllCompositeProductsByUuid(String uUid, int companyId);
 	int getCountOfInventoryByProductUuId(String productUuId , int companyId);
 	int getCountOfInventoryByCompositeProductUuId(String compositeProductUuId , int companyId);
+	boolean addCompositeProductList(List<CompositeProduct> compositeProductList);
 	
 }

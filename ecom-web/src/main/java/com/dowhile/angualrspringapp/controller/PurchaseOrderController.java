@@ -360,7 +360,12 @@ public class PurchaseOrderController {
 					stockOrder.setTotalItems(new BigDecimal(0));
 					//stockOrder.setOrdrRecvDate(dateFormat.parse(stockOrderBean.getOrdrRecvDate()));
 
-					//stockOrder.setRemarks(stockOrderBean.getRemarks());
+					//Added by Yameen
+					//In case of self process order we are setting remarks
+					if(stockOrderBean.getRemarks()!=null && !stockOrderBean.getRemarks().equalsIgnoreCase("")){
+						stockOrder.setRemarks(stockOrderBean.getRemarks());
+							
+					}
 					//stockOrder.setReturnNo(stockOrderBean.getReturnNo());
 					stockOrder.setStatus(statusService.getStatusByStatusId(Integer.parseInt(stockOrderBean.getStatusId().trim()))); 				
 					//stockOrder.setStockOrderDate(dateFormat.parse(stockOrderBean.getStockOrderDate()));

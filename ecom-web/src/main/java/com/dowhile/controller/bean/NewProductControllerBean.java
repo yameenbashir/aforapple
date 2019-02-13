@@ -39,6 +39,7 @@ public class NewProductControllerBean {
 	private String showProductTag;
 	private ProductConfigurationBean productConfigurationBean;
 	private String showDutyCalculator;
+	List<ProductVariantBean> productBeansList;
 	
 	/**
 	 * 
@@ -64,6 +65,7 @@ public class NewProductControllerBean {
 	 * @param showProductTag
 	 * @param productConfigurationBean
 	 * @param showDutyCalculator
+	 * @param productBeansList
 	 */
 	public NewProductControllerBean(List<SupplierBean> supplierBeans,
 			List<ProductTypeBean> productTypeBeanList,
@@ -76,7 +78,7 @@ public class NewProductControllerBean {
 			Map<String, Boolean> productVariantBarCodeMap,
 			List<TagBean> tagBeanList, String showProductTag,
 			ProductConfigurationBean productConfigurationBean,
-			String showDutyCalculator) {
+			String showDutyCalculator, List<ProductVariantBean> productBeansList) {
 		this.supplierBeans = supplierBeans;
 		this.productTypeBeanList = productTypeBeanList;
 		this.brandBeanList = brandBeanList;
@@ -94,6 +96,7 @@ public class NewProductControllerBean {
 		this.showProductTag = showProductTag;
 		this.productConfigurationBean = productConfigurationBean;
 		this.showDutyCalculator = showDutyCalculator;
+		this.productBeansList = productBeansList;
 	}
 
 	/**
@@ -336,5 +339,19 @@ public class NewProductControllerBean {
 	 */
 	public void setShowDutyCalculator(String showDutyCalculator) {
 		this.showDutyCalculator = showDutyCalculator;
+	}
+
+	/**
+	 * @return the productBeansList
+	 */
+	public List<ProductVariantBean> getProductBeansList() {
+		return productBeansList;
+	}
+
+	/**
+	 * @param productBeansList the productBeansList to set
+	 */
+	public void setProductBeansList(List<ProductVariantBean> productBeansList) {
+		this.productBeansList = productBeansList;
 	}
 }

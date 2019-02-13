@@ -238,6 +238,9 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	<bean id="NotificationService" class="com.dowhile.service.impl.NotificationServiceImpl">
 		<property name="notificationDAO" ref="NotificationDAO" />
 	</bean>
+	<bean id="CompositeProductHistoryService" class="com.dowhile.service.impl.CompositeProductHistoryServiceImpl">
+		<property name="compositeProductHistoryDAO" ref="CompositeProductHistoryDAO" />
+	</bean>
 	
 	<!-- <bean id="ContactUsService" class="com.dowhile.service.impl.ContactUsServiceImpl">
 		<property name="contactUsDAO" ref="ContactUsDAO" />
@@ -447,6 +450,10 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	<bean id="NotificationDAO" class="com.dowhile.dao.impl.NotificationDAOImpl">
 		<property name="sessionFactory" ref="SessionFactory" />
 	</bean>
+	<bean id="CompositeProductHistoryDAO" class="com.dowhile.dao.impl.CompositeProductHistoryDAOImpl">
+		<property name="sessionFactory" ref="SessionFactory" />
+	</bean>
+	
 		
 	<!-- <bean id="ContactUsDAO" class="com.dowhile.dao.impl.ContactUsDAOImpl">
 		<property name="sessionFactory" ref="SessionFactory" />
@@ -536,6 +543,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 				<value>com.dowhile.ExpenseType</value>
 				<value>com.dowhile.ContactsSummmary</value>
 				<value>com.dowhile.ProductPriceHistory</value>
+				<value>com.dowhile.CompositeProductHistory</value>
 
 			</list>
 		</property>

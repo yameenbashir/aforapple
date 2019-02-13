@@ -16,6 +16,9 @@ var ProductsController = ['$scope', '$http','$sce', '$window','$cookieStore','$r
 	$scope.addProduct = function() {
 		$window.location = "/app/#/newProduct";
 	};
+	$scope.addCompositeProduct = function() {
+		$window.location = "/app/#/newCompositeProduct";
+	};
 	$scope.showProduct = function(product) {
 		
 		$cookieStore.put('_d_cPi_gra',product.productId) ;

@@ -43,8 +43,6 @@ import com.dowhile.ProductTag;
 import com.dowhile.ProductType;
 import com.dowhile.ProductVariant;
 import com.dowhile.SalesTax;
-import com.dowhile.StockOrder;
-import com.dowhile.StockOrderDetail;
 import com.dowhile.Tag;
 import com.dowhile.User;
 import com.dowhile.VariantAttribute;
@@ -1246,13 +1244,13 @@ public class NewProductController {
 					productBean.setProductTagBeanList(productTagBeanList);
 					productBean.setCreatedDate(DateTimeUtil.convertDBDateTimeToGuiFormat(product.getCreatedDate()));
 
-					util.AuditTrail(request, currentUser, "NewProductController.getAllProductsDetail", 
-							"User "+ currentUser.getUserEmail()+" retrived all Products successfully ",false);
+					util.AuditTrail(request, currentUser, "NewProductController.getProductDetailByProductId", 
+							"User "+ currentUser.getUserEmail()+" retrived Product detail successfully ",false);
 					return new Response(productBean, StatusConstants.SUCCESS,
 							LayOutPageConstants.STAY_ON_PAGE);
 				} else {
-					util.AuditTrail(request, currentUser, "NewProductController.getAllProductsDetail", 
-							" Products are not found requested by User "+currentUser.getUserEmail(),false);
+					util.AuditTrail(request, currentUser, "NewProductController.getProductDetailByProductId", 
+							" Products detail not found requested by User "+currentUser.getUserEmail(),false);
 					return new Response(MessageConstants.RECORD_NOT_FOUND,
 							StatusConstants.RECORD_NOT_FOUND,
 							LayOutPageConstants.STAY_ON_PAGE);
@@ -1261,7 +1259,7 @@ public class NewProductController {
 				e.printStackTrace();
 				StringWriter errors = new StringWriter();
 				e.printStackTrace(new PrintWriter(errors));
-				util.AuditTrail(request, currentUser, "NewProductController.getAllProductsDetail",
+				util.AuditTrail(request, currentUser, "NewProductController.getProductDetailByProductId",
 						"Error Occured " + errors.toString(),true);
 				return new Response(MessageConstants.SYSTEM_BUSY,
 						StatusConstants.RECORD_NOT_FOUND,
