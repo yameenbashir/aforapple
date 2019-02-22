@@ -139,6 +139,8 @@ var LoginController = ['$scope', '$http', '$window', '$cookieStore','$rootScope'
 
 	};
 
+	
+	
 	$scope.loginSUccessFUll = function(Response) {
 //		window.location.reload(true);
 //		var appCache = window.applicationCache;

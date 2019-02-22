@@ -16,6 +16,8 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 	$scope.productVariantMap = [];
 	$scope.productMap = [];
 	$scope.productMap = [];
+	$scope.allProductMap = [];
+	$scope.allProductVariantMap = [];
 	$scope.productSKU = '';
 	$scope.skudisable = false;
 	$scope.inputTypeScan = true;
@@ -82,6 +84,12 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 				}
 				if($scope.data.productMap!=null){
 					$scope.productMap = $scope.data.productMap;
+				}
+				if($scope.data.allProductVariantMap!=null){
+					$scope.allProductVariantMap = $scope.data.allProductVariantMap;
+				}
+				if($scope.data.allProductMap!=null){
+					$scope.allPproductMap = $scope.data.allProductMap;
 				}
 				if($scope.data.allProductBeansList != null){
 					$scope.allProductBeansList = $scope.data.allProductBeansList;
@@ -209,7 +217,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 						else{
 							value.supplyPriceCounted = "0";
 						}
-						if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+						if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 							if(parseInt(value.countedProdQty) > parseInt(value.expProdQty)){
 								value.auditTransfer = true;
 							}
@@ -257,7 +265,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 					$scope.inventoryCountDetailBean.order = $scope.counter;
 					$scope.counter++;
 					$scope.inventoryCountDetailBean.inventoryCountId = $scope.inventoryCountBean.inventoryCountId;
-					if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+					if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 						if(parseInt($scope.inventoryCountDetailBean.countedProdQty) > parseInt($scope.inventoryCountDetailBean.expProdQty)){
 							$scope.inventoryCountDetailBean.auditTransfer = true;
 						}
@@ -296,7 +304,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 						else{
 							value.supplyPriceCounted = "0";
 						}
-						if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+						if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 							if(parseInt(value.countedProdQty) > parseInt(value.expProdQty)){
 								value.auditTransfer = true;
 							}
@@ -344,7 +352,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 					$scope.inventoryCountDetailBean.order = $scope.counter;
 					$scope.counter++;
 					$scope.inventoryCountDetailBean.inventoryCountId = $scope.inventoryCountBean.inventoryCountId;
-					if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+					if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 						if(parseInt($scope.inventoryCountDetailBean.countedProdQty) > parseInt($scope.inventoryCountDetailBean.expProdQty)){
 							$scope.inventoryCountDetailBean.auditTransfer = true;
 						}
@@ -389,7 +397,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 			$scope.inventoryCountDetailBean.order = $scope.counter;
 			$scope.counter++;
 			$scope.inventoryCountDetailBean.inventoryCountId = $scope.inventoryCountBean.inventoryCountId;
-			if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+			if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 				if(parseInt($scope.inventoryCountDetailBean.countedProdQty) > parseInt($scope.inventoryCountDetailBean.expProdQty)){
 					$scope.inventoryCountDetailBean.auditTransfer = true;
 				}
@@ -483,7 +491,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 						value.supplyPriceCounted = "0";
 					}
 				}
-				if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+				if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 					if(parseInt(value.countedProdQty) > parseInt(value.expProdQty)){
 						value.auditTransfer = true;
 					}
@@ -540,7 +548,7 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 				if(isNaN($scope.inventoryCountBean.supplyPriceCounted)){
 					$scope.inventoryCountBean.supplyPriceCounted = "0";
 				}
-				if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == "true"){
+				if($scope.inventoryCountBean.auditTransfer != null && $scope.inventoryCountBean.auditTransfer == true){
 					if(parseInt($scope.inventoryCountDetailBeansList[i].countedProdQty) > parseInt($scope.inventoryCountDetailBeansList[i].expProdQty)){
 						$scope.inventoryCountDetailBeansList[i].auditTransfer = true;
 					}
@@ -807,7 +815,17 @@ var InventoryCountEditDetailsController = ['$sce', '$scope', '$http', '$timeout'
 				$scope.checkProductStatus();
 				$scope.productSKU = '';
 				$scope.skudisable = false;
-			}else{
+			}
+			else if($scope.allProductVariantMap[$scope.productSKU.toLowerCase()] != null){
+				$scope.skudisable = true;
+				$scope.inventoryCountDetailBean.countedProdQty = 1;
+				$scope.productVariantBean = $scope.allProductVariantMap[$scope.productSKU.toLowerCase()];
+				//console.log($scope.productVariantMap[$scope.productSKU]);			
+				$scope.checkProductStatus();
+				$scope.productSKU = '';
+				$scope.skudisable = false;				
+			}
+			else{
 				if($scope.productSKU.length>15){
 					$scope.productSKU = '';
 					$scope.skudisable = false;

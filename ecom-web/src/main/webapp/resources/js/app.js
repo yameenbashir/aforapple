@@ -981,6 +981,51 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 		}
 
 	}); 
+	
+	$routeProvider.when('/manageCompositeProduct', {
+		templateUrl: 'resources/html/manageCompositeProduct/layout.html',
+		controller: ManageCompositeProductController,
+
+		resolve: {
+			"ManageCompositeProductControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
+				var myDefer = $q.defer();
+				var controllerData ='';
+				$rootScope.globalPageLoader = true;
+
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["manageCompositeProduct"]==true){
+					$rootScope.manageProductLoadedFully = true;
+
+					controllerData = $http.post('newCompositeProduct/getNewCompositeProductControllerData/'+$cookieStore.get('_s_tk_com')+'/'+$cookieStore.get('_e_cPi_gra')+'/'+$cookieStore.get('_e_cOi_gra')).success(function(Response) {
+						controllerData = Response.data;
+						$timeout(function(){
+							myDefer.resolve({
+								loadControllerData: function() {
+									return 	controllerData;  
+								}
+							});
+						},10);
+					}).error(function() {
+						$window.location = '/app/#/login';
+					});
+
+				}else{
+					if(typeof ($rootScope.menuMap) != "undefined"){
+						$window.location = '/app/#/login';
+						$rootScope.showErrorLoginModal = true;
+						$timeout(function(){
+							$rootScope.showErrorLoginModal = false;
+						}, 2000);	
+					}else{
+						$window.location = '/app/#/login';
+
+					}	    	 					
+				}
+				return myDefer.promise;
+			}
+		}
+
+	}); 
+
 
 	$routeProvider.when('/stockControl', {
 		templateUrl: 'resources/html/stockControl/layout.html',
@@ -1536,7 +1581,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 				$rootScope.globalPageLoader = true;
 				$rootScope.newProductLoadedFully = true;
 
-				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["newProduct"]==true){
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["newCompositeProduct"]==true){
 					controllerData = $http.post('newCompositeProduct/getNewCompositeProductControllerData/'+$cookieStore.get('_s_tk_com')+'/'+productId+'/'+productId).success(function(Response) {
 						controllerData = Response.data;
 						$timeout(function(){

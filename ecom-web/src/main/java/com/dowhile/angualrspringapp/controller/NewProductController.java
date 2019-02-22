@@ -1106,7 +1106,7 @@ public class NewProductController {
 					productBean.setImagePath(product.getImagePath());
 					productBean.setCurrentInventory(product.getCurrentInventory().toString());
 					productBean.setOldInventory(product.getCurrentInventory().toString());
-
+					
 					if(product.getStandardProduct().equalsIgnoreCase("true")){
 						List<Outlet> outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
 						Map outletMap = new HashMap<>();
@@ -1204,7 +1204,7 @@ public class NewProductController {
 
 
 					}else{
-						List<CompositeProduct> compositeProducts = compositeProductService.getAllCompositeProductsByProductIdOultetId(product.getProductId(),Integer.valueOf(outletId),currentUser.getCompany().getCompanyId());
+						List<CompositeProduct> compositeProducts = compositeProductService.getAllCompositeProductsByProductIdOultetIdCompanyId(product.getProductId(),Integer.valueOf(outletId),currentUser.getCompany().getCompanyId());
 						if(compositeProducts!=null){
 							//int id= 0;
 							for(CompositeProduct compositeProduct :compositeProducts){

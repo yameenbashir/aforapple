@@ -52,6 +52,8 @@ public class ProductVariantBean {
     private boolean indivisualUpdate;
     private boolean allUpdate;
     private String compositeQunatity;
+    private String compositeQunatityConsumed;
+    private int compositeProductId;
 	
 	/**
 	 * 
@@ -108,6 +110,8 @@ public class ProductVariantBean {
 	 * @param indivisualUpdate
 	 * @param allUpdate
 	 * @param compositeQunatity
+	 * @param compositeQunatityConsumed
+	 * @param compositeProductId
 	 */
 	public ProductVariantBean(String iata, String isProduct, String isVariant,
 			String name, String productVariantId, String variantAttributeName,
@@ -127,7 +131,8 @@ public class ProductVariantBean {
 			String minUnits, String maxUnits, String priceBookDetailId,
 			String priceBookId, String productUuid, String auditTransfer,
 			String productDesc, boolean indivisualUpdate, boolean allUpdate,
-			String compositeQunatity) {
+			String compositeQunatity, String compositeQunatityConsumed,
+			int compositeProductId) {
 		this.iata = iata;
 		this.isProduct = isProduct;
 		this.isVariant = isVariant;
@@ -176,6 +181,8 @@ public class ProductVariantBean {
 		this.indivisualUpdate = indivisualUpdate;
 		this.allUpdate = allUpdate;
 		this.compositeQunatity = compositeQunatity;
+		this.compositeQunatityConsumed = compositeQunatityConsumed;
+		this.compositeProductId = compositeProductId;
 	}
 
 	/**
@@ -850,4 +857,31 @@ public class ProductVariantBean {
 		this.compositeQunatity = compositeQunatity;
 	}
 
+	/**
+	 * @return the compositeQunatityConsumed
+	 */
+	public String getCompositeQunatityConsumed() {
+		return compositeQunatityConsumed;
+	}
+
+	/**
+	 * @param compositeQunatityConsumed the compositeQunatityConsumed to set
+	 */
+	public void setCompositeQunatityConsumed(String compositeQunatityConsumed) {
+		this.compositeQunatityConsumed = compositeQunatityConsumed;
+	}
+
+	/**
+	 * @return the compositeProductId
+	 */
+	public int getCompositeProductId() {
+		return compositeProductId;
+	}
+
+	/**
+	 * @param compositeProductId the compositeProductId to set
+	 */
+	public void setCompositeProductId(int compositeProductId) {
+		this.compositeProductId = compositeProductId;
+	}
 }

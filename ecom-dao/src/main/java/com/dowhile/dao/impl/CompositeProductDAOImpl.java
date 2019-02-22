@@ -164,7 +164,7 @@ public class CompositeProductDAOImpl implements CompositeProductDAO{
 	}
 
 	@Override
-	public List<CompositeProduct> getAllCompositeProductsByProductIdOultetId(
+	public List<CompositeProduct> getAllCompositeProductsByProductIdOultetIdCompanyId(
 			int productId,int outletId,int companyId) {
 		// TODO Auto-generated method stub
 		try{

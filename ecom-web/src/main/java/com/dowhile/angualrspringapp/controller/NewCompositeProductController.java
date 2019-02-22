@@ -172,6 +172,15 @@ public class NewCompositeProductController {
 	static Map variantAttributeMap = new HashMap<>();
 	@SuppressWarnings("rawtypes")
 	private Map productMap = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	private Map outletsMap = new HashMap<>();
+	private Map<Integer, ProductVariant> mapProductVariantsList = new HashMap<Integer, ProductVariant>();
+	/*@SuppressWarnings("rawtypes")
+	private Map suppliersMap = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	private Map productTypesMap = new HashMap<>();
+	@SuppressWarnings("rawtypes")
+	private Map brandsMap = new HashMap<>();*/
 	/**
 	 * @return the products
 	 */
@@ -669,12 +678,7 @@ public class NewCompositeProductController {
 		else{
 			newProduct =productService.addProduct(product,Actions.CREATE,totalQunatity,currentUser.getCompany());
 		}
-		if(newProduct!=null && productBean.getIsComposite()!=null && productBean.getIsComposite().equalsIgnoreCase("true")){
-			createCompositeProductAndCompositeProductHistory(newProduct,productBean,currentUser,productMap , productVariantMap);
-			if(newProduct.getCurrentInventory()>=0){
-				createSelfProcessOrder(newProduct,productBean,currentUser,productMap , productVariantMap,sessionId,request);
-			}
-		}
+		
 		if(newProduct!=null){
 			
 			HttpSession session =  request.getSession(false);
@@ -711,6 +715,7 @@ public class NewCompositeProductController {
 			List<StockOrderDetailBean> stockOrderDetialBeansList = new ArrayList<>();
 			Double grandTotal = 0.0;
 			Double itemCount = 0.0;
+			boolean isCcreateSelfProcessOrder = false;
 			if(productBean.getStandardProduct().equalsIgnoreCase("true")){
 				//Standard scenario
 				if(productBean.getVarientProducts().equalsIgnoreCase("true")){
@@ -732,6 +737,7 @@ public class NewCompositeProductController {
 										Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory())>0){
 									currInt = Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory());
 									varientValueBean.getVarientsOutletList().get(0).setCurrentInventory(String.valueOf(0));
+									isCcreateSelfProcessOrder = true;
 								}
 								variantId = addProductVariants(outletbean, productBean, currentUser, outletMap, outletsist, varientValueBean, newProduct);
 								varientValueBean.getVarientsOutletList().get(0).setCurrentInventory(String.valueOf(currInt));
@@ -750,6 +756,10 @@ public class NewCompositeProductController {
 								}
 							}
 							else{
+								if(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory()!=null && !varientValueBean.getVarientsOutletList().get(0).getCurrentInventory().equalsIgnoreCase("") && 
+										Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory())>0){
+									isCcreateSelfProcessOrder = true;
+								}
 								addProductVariants(outletbean, productBean, currentUser, outletMap, outletsist, varientValueBean, newProduct);
 							}
 						}
@@ -768,58 +778,31 @@ public class NewCompositeProductController {
 						}
 					}
 				}				
-
 				if(stockOrderDetialBeansList!=null && stockOrderDetialBeansList.size()>0){
 					StockOrderBean stockOrderBean = new StockOrderBean();
 					stockOrderBean.setOutlet(outletbean.getOutletId());
 					stockOrderBean.setSupplierId(productBean.getSupplierId());
 					AddStockOrder(sessionId, stockOrderBean, stockOrderDetialBeansList, grandTotal, itemCount, request);
 				}
-
 			}else{
-				//Composite scenario
-				for(OutletBean outletsForCompositeProduct:outletsist){
-					List<CompositVariantBean> compositProductBeans = productBean.getCompositProductCollection();
-
-					for(CompositVariantBean compositVariantBean:compositProductBeans){
-						addCompositieProductVariants(outletbean, compositVariantBean, currentUser, outletMap, outletsForCompositeProduct, newProduct);
+			}
+			if(newProduct!=null && productBean.getIsComposite()!=null && productBean.getIsComposite().equalsIgnoreCase("true")){
+				if(newProduct.getCurrentInventory()>0){
+					boolean isCreated = createCompositeProductAndCompositeProductHistory(newProduct,productBean,currentUser,productMap , productVariantMap);
+					if(isCreated){
+						createSelfProcessOrder(newProduct,productBean,currentUser,productMap , productVariantMap,sessionId,request);
+					}
+				}else if(productBean.getStandardProduct().equalsIgnoreCase("true") && productBean.getVarientProducts().equalsIgnoreCase("true") && isCcreateSelfProcessOrder){
+					boolean isCreated = createCompositeProductAndCompositeProductHistory(newProduct,productBean,currentUser,productMap , productVariantMap);
+					if(isCreated){
+						createSelfProcessOrder(newProduct,productBean,currentUser,productMap , productVariantMap,sessionId,request);
 					}
 				}
-
-
-
 			}
 		}
 
 	}
-	@SuppressWarnings("rawtypes")
-	private void addCompositieProductVariants(OutletBean outletbean,CompositVariantBean compositVariantBean,User currentUser,Map outletMap,OutletBean outletsForCompositeProduct,Product newProduct ){
-
-		if(outletsForCompositeProduct.getOutletId().equalsIgnoreCase(outletbean.getOutletId())){
-			CompositeProduct compositeProduct = new CompositeProduct();
-			compositeProduct.setActiveIndicator(true);
-			compositeProduct.setCompositeQuantity(Integer.valueOf(compositVariantBean.getCompositQunatity()));
-			if(compositVariantBean.getProductVariantId()!=null && compositVariantBean.getProductVariantId()!=""){
-				ProductVariant productVariant = productVariantService.getProductVariantByProductVariantId(Integer.valueOf(compositVariantBean.getProductVariantId()),currentUser.getCompany().getCompanyId());
-				compositeProduct.setProductVariant(productVariant);
-			}
-
-			compositeProduct.setCreatedDate(new Date());
-			compositeProduct.setLastUpdated(new Date());
-			compositeProduct.setCompositeProductUuid(compositVariantBean.getUuid());
-			compositeProduct.setOutlet((Outlet)outletMap.get(Integer.valueOf(outletsForCompositeProduct.getOutletId())));
-			compositeProduct.setProductByProductAssocicationId(newProduct);	
-			Product selectiveProduct = productService.getProductByProductId(Integer.valueOf(compositVariantBean.getProductId()),currentUser.getCompany().getCompanyId());
-			compositeProduct.setProductBySelectiveProductAssociationId(selectiveProduct);
-			compositeProduct.setUserByCreatedBy(currentUser);
-			compositeProduct.setUserByUpdatedBy(currentUser);
-			compositeProduct.setCompany(currentUser.getCompany());
-			compositeProductService.addCompositeProduct(compositeProduct,Actions.CREATE,0,currentUser.getCompany().getCompanyId(),newProduct.getProductUuid());
-		}
-
-
-	}
-
+	
 	@SuppressWarnings("rawtypes")
 	private int addProductVariants(OutletBean outletbean,ProductBean productBean,User currentUser,Map outletMap,List<OutletBean> outletsist,VarientValueBean varientValueBean,Product newProduct ){
 
@@ -1033,7 +1016,7 @@ public class NewCompositeProductController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				Map<Integer, ProductVariant> mapProductVariantsList = productVariantService.getAllActiveProductsVariantMapByOutletIdCompanyId(currentUser.getOutlet().getOutletId(),currentUser.getCompany().getCompanyId());
+				 mapProductVariantsList = productVariantService.getAllActiveProductsVariantMapByOutletIdCompanyId(currentUser.getOutlet().getOutletId(),currentUser.getCompany().getCompanyId());
 				if(mapProductVariantsList!=null){
 					/*Map productMap = new HashMap<>();
 					for(Product product:products){
@@ -1154,7 +1137,43 @@ public class NewCompositeProductController {
 					productBean.setImagePath(product.getImagePath());
 					productBean.setCurrentInventory(product.getCurrentInventory().toString());
 					productBean.setOldInventory(product.getCurrentInventory().toString());
-
+					if(product.getIsComposite()!=null && product.getIsComposite().equalsIgnoreCase("true")){
+						productBean.setIsComposite(product.getIsComposite());
+						List<CompositeProduct> compositeProductList = compositeProductService.getAllCompositeProductsByProductIdOultetIdCompanyId(product.getProductId(), product.getOutlet().getOutletId(),currentUser.getCompany().getCompanyId());
+						if(compositeProductList!=null){
+							List<ProductVariantBean> productList = new ArrayList<>();
+							for(CompositeProduct compositeProduct:compositeProductList){
+								ProductVariantBean productVariantBean  = new ProductVariantBean();
+								Product productTemp = (Product) productMap.get(compositeProduct.getProductBySelectiveProductAssociationId().getProductId());
+								productVariantBean.setProductId(productTemp.getProductId()+"");
+								if(compositeProduct.getProductVariant()!=null){
+									ProductVariant productVariant = mapProductVariantsList.get(compositeProduct.getProductVariant().getProductVariantId());
+									productVariantBean.setProductVariantId(productVariant.getProductVariantId()+"");
+									productVariantBean.setVariantAttributeName(productTemp.getProductName()+"-"+productVariant.getVariantAttributeName());
+									productVariantBean.setCurrentInventory(productVariant.getCurrentInventory()+"");
+									productVariantBean.setProductVariantId(productVariant.getProductVariantId()+"");
+									if(productVariant.getSupplyPriceExclTax() != null){
+										productVariantBean.setSupplyPriceExclTax(productVariant.getSupplyPriceExclTax().toString());
+										productVariantBean.setMarkupPrct(productVariant.getMarkupPrct().toString());
+									}
+								}else{
+									if(productTemp.getSupplyPriceExclTax() != null){
+										productVariantBean.setSupplyPriceExclTax(productTemp.getSupplyPriceExclTax().toString());
+										productVariantBean.setMarkupPrct(productTemp.getMarkupPrct().toString());
+									}
+									productVariantBean.setProductVariantId(productTemp.getProductId()+"");
+									productVariantBean.setVariantAttributeName(productTemp.getProductName());
+									productVariantBean.setCurrentInventory(productTemp.getCurrentInventory()+"");
+								}
+								productVariantBean.setCompositeQunatityConsumed(compositeProduct.getCompositeQuantity()+"");
+								productVariantBean.setCompositeProductId(compositeProduct.getCompositeProductId());
+								productList.add(productVariantBean);
+							}
+							productBean.setProductList(productList);
+						}
+					}else{
+						productBean.setIsComposite("false");
+					}
 					if(product.getStandardProduct().equalsIgnoreCase("true")){
 						List<Outlet> outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
 						Map outletMap = new HashMap<>();
@@ -1251,8 +1270,8 @@ public class NewCompositeProductController {
 						}
 
 
-					}else{
-						List<CompositeProduct> compositeProducts = compositeProductService.getAllCompositeProductsByProductIdOultetId(product.getProductId(),Integer.valueOf(outletId),currentUser.getCompany().getCompanyId());
+					}else{/*
+						List<CompositeProduct> compositeProducts = compositeProductService.getAllCompositeProductsByProductIdOultetIdCompanyId(product.getProductId(),Integer.valueOf(outletId),currentUser.getCompany().getCompanyId());
 						if(compositeProducts!=null){
 							//int id= 0;
 							for(CompositeProduct compositeProduct :compositeProducts){
@@ -1272,9 +1291,9 @@ public class NewCompositeProductController {
 							}
 						}
 
-					}
+					*/}
 
-					productBean.setCompositProductCollection(compositProductCollection);
+					//productBean.setCompositProductCollection(compositProductCollection);
 					productBean.setProductVariantsBeans(productVariantBeanList);
 
 					List<ProductTag> productTags = productTagService.getAllProductTagsByProductId(product.getProductId(),currentUser.getCompany().getCompanyId());
@@ -1647,17 +1666,27 @@ public class NewCompositeProductController {
 			HttpSession session =  request.getSession(false);
 			User currentUser = (User) session.getAttribute("user");
 			try {
+				Map salesTaxMap = new HashMap<>();
 				outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
 				if(outlets!=null){
 					for(Outlet outlet:outlets){
+						outletsMap.put(outlet.getOutletId(), outlet);
 						OutletBean outletBean = new OutletBean();
 						//	List<RegisterBean> registerBeanList = new ArrayList<>();
 						//	outletBean.setDefaultTax(outlet.getSelsTaxPercentage().toString());
 						//outletBean.setDetails("");
 						outletBean.setOutletId(outlet.getOutletId().toString());
 						outletBean.setOutletName(outlet.getOutletName());
-						SalesTax salesTax = salesTaxService.getSalesTaxBySalesTaxId(outlet.getSalesTax().getSalesTaxId(),currentUser.getCompany().getCompanyId());
-
+						SalesTax salesTax = null;
+						if(salesTaxMap.isEmpty()){
+							salesTax = salesTaxService.getSalesTaxBySalesTaxId(outlet.getSalesTax().getSalesTaxId(),currentUser.getCompany().getCompanyId());
+							salesTaxMap.put(salesTax.getSalesTaxId(), salesTax);
+						}else if(salesTaxMap.get(outlet.getSalesTax().getSalesTaxId())==null){
+							salesTax = salesTaxService.getSalesTaxBySalesTaxId(outlet.getSalesTax().getSalesTaxId(),currentUser.getCompany().getCompanyId());
+							salesTaxMap.put(salesTax.getSalesTaxId(), salesTax);
+						}
+						
+						salesTax = (SalesTax) salesTaxMap.get(outlet.getSalesTax().getSalesTaxId());
 						outletBean.setSalesTaxId(salesTax.getSalesTaxId().toString());
 						outletBean.setSalesTaxName(salesTax.getSalesTaxName()+"("+salesTax.getSalesTaxPercentage().toString()+")");
 						outletBean.setDefaultTax(salesTax.getSalesTaxPercentage().toString());
@@ -1990,7 +2019,7 @@ public class NewCompositeProductController {
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
 		}	
 	}
-	public void createCompositeProductAndCompositeProductHistory(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap){
+	public boolean createCompositeProductAndCompositeProductHistory(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap){
 		try{
 			List<CompositeProduct> compositeProductList =  new ArrayList<>();
 			List<ProductVariantBean> productList = productBean.getProductList();
@@ -1999,7 +2028,7 @@ public class NewCompositeProductController {
 					CompositeProduct compositeProduct = new CompositeProduct();
 					compositeProduct.setActiveIndicator(true);
 					if(productVariantBean.getCompositeQunatity()!=null && !productVariantBean.getCompositeQunatity().equalsIgnoreCase("")){
-						compositeProduct.setCompositeQuantity(Integer.valueOf(productVariantBean.getCompositeQunatity()));
+						compositeProduct.setCompositeQuantity(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 					}else{
 						compositeProduct.setCompositeQuantity(0);
 					}
@@ -2024,9 +2053,11 @@ public class NewCompositeProductController {
 			}
 			
 			compositeProductService.addCompositeProductList(compositeProductList);
+			return true;
 			
 		}catch(Exception ex){
 			ex.printStackTrace();
+			return false;
 		}
 	}
 	@SuppressWarnings("rawtypes")
@@ -2072,19 +2103,19 @@ public class NewCompositeProductController {
 						stockOrderDetail.setIsProduct(true);
 						Product product = productMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
 						stockOrderDetail.setProduct(product);
-						product.setCurrentInventory(product.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatity()));
+						product.setCurrentInventory(product.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 						updateProductList.add(product);
 						
 					}else{
 						stockOrderDetail.setIsProduct(false);
 						ProductVariant productVariant = productVariantMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
 						stockOrderDetail.setProductVariant(productVariant);
-						productVariant.setCurrentInventory(productVariant.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatity()));
+						productVariant.setCurrentInventory(productVariant.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 						updateProductVariantList.add(productVariant);
 					}
-					stockOrderDetail.setOrderProdQty(Integer.valueOf(productVariantBean.getCompositeQunatity()));
+					stockOrderDetail.setOrderProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 					stockOrderDetail.setOrdrSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
-					stockOrderDetail.setRecvProdQty(Integer.valueOf(productVariantBean.getCompositeQunatity()));
+					stockOrderDetail.setRecvProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 					stockOrderDetail.setRecvSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
 					stockOrderDetail.setRetailPrice(new BigDecimal(productVariantBean.getRetailPrice()));
 					StockOrder stockOrder = new StockOrder();

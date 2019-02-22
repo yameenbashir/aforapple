@@ -722,7 +722,7 @@
 											<td ng-show="productConfigurationBean.currentInventory"><input type="text" class="form-control"
 												id="inputstoreName" placeholder="Current Inventory..."
 												data-ng-model="outlet.currentInventory" maxlength="9"
-												ng-pattern='/^[0-9]+$/' ></td>
+												ng-pattern='/^[0-9]+$/' ng-change="calculateCompositeProductQuantity()"></td>
 											<td ng-show="productConfigurationBean.reOrderPoint"><input type="text" class="form-control"
 												id="inputstoreName" placeholder="Reorder Point..."
 												data-ng-model="outlet.reorderPoint" maxlength="9"
@@ -794,7 +794,7 @@
 									
 									<div class="col-md-2">
 										<button class="btn btn-success btn click-to-select unit "
-											ng-click="addCompositProductDynamically()"
+											ng-click="addCompositeProductDynamically()"
 											ng-disabled="!productVariantBean.productVariantId">Add
 											Product</button>
 									</div>
@@ -843,12 +843,13 @@
 														<div class="col-md-2">Product</div>
 														<div class="col-md-2">Supply Price</div>
 														<div class="col-md-1">Markup % </div>
-														<div class="col-md-2">Current Inventory</div>
+														<div class="col-md-1">Current Inventory</div>
 														<div class="col-md-2">Retail Price <small>(Exclusive Tax)</small></div>
-														<div class="col-md-2">Unit quantity Proposed</div>
+														<div class="col-md-1">Unit Quantity </div>
 														
 														
-														<div class="col-md-1">Quantity Consumed</div>
+														<div class="col-md-2">Quantity Consumed</div>
+														<div class="col-md-1">Action</div>
 
 													</div>
 													</br>
@@ -876,7 +877,7 @@
 																	ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
 																	required style="width: 100%;" ng-disabled="true">
 															</div>
-															<div class="col-md-2 input-container">
+															<div class="col-md-1 input-container">
 																<input type="text"
 																	data-ng-model="product.currentInventory"
 																	min="1" class="" id="Name" 
@@ -903,6 +904,17 @@
 
 															</div>
 															<div class="col-md-2 input-container">
+															<input type="text"
+																	data-ng-model="product.compositeQunatityConsumed"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+																	<!-- <span style="color: red;"><i
+																			class="btn fa fa-trash btn-danger btn-sm "
+																			aria-hidden="true" ng-click="removeProduct(product)"></i></span>  -->
+															</div>
+															<div class="col-md-1 input-container">
+															
 																	<span style="color: red;"><i
 																			class="btn fa fa-trash btn-danger btn-sm "
 																			aria-hidden="true" ng-click="removeProduct(product)"></i></span> 

@@ -1,0 +1,32 @@
+USE `ecom`;
+DELIMITER $$
+
+DROP VIEW IF EXISTS `ecom`.`product_summmary`$$
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `product_summmary` AS 
+select `product`.`PRODUCT_ID` AS `ID`,`product`.`PRODUCT_NAME` AS `PRODUCT_NAME`,`product`.`SKU` AS `SKU`,
+`product`.`SUPPLY_PRICE_EXCL_TAX` AS `SUPPLY_PRICE_EXCL_TAX`,`product`.`REORDER_POINT` AS `REORDER_POINT`,
+`product`.`REORDER_AMOUNT` AS `REORDER_AMOUNT`,
+`product`.`CURRENT_INVENTORY` AS `CURRENT_INVENTORY`,
+(((`product`.`SUPPLY_PRICE_EXCL_TAX` * `product`.`MARKUP_PRCT`) / 100) + `product`.`SUPPLY_PRICE_EXCL_TAX`) AS `NET_PRICE`,
+(select `outlet`.`OUTLET_NAME` AS `OUTLET_NAME` from `outlet` where (`product`.`OUTLET_ASSOCICATION_ID` = `outlet`.`OUTLET_ID`)) AS `OUTLET_NAME`,
+`product`.`OUTLET_ASSOCICATION_ID` AS `OUTLET_ASSOCICATION_ID`,`product`.`CREATED_DATE` AS `CREATED_DATE`,
+(select `brand`.`BRAND_NAME` AS `BRAND_NAME` from `brand` where (`product`.`BRAND_ASSOCICATION_ID` = `brand`.`BRAND_ID`)) AS `BRAND_NAME`,
+(select `product_type`.`PRODUCT_TYPE_NAME` AS `PRODUCT_TYPE_NAME` from `product_type` where 
+(`product`.`PRODUCT_TYPE_ASSOCICATION_ID` = `product_type`.`PRODUCT_TYPE_ID`)) AS `PRODUCT_TYPE`,
+(select `contact`.`CONTACT_NAME` AS `CONTACT_NAME` from `contact` where (`product`.`CONTACT_ASSOCICATION_ID` = `contact`.`CONTACT_ID`)) AS `CONTACT_NAME`,
+(select count(0) AS `count(0)` from `product_variant` where ((`product_variant`.`PRODUCT_ASSOCICATION_ID` = `product`.`PRODUCT_ID`) 
+and (`product_variant`.`ACTIVE_INDICATOR` = 1))) AS `VARIANT_COUNT`,`product`.`CURRENT_INVENTORY` AS `VARIANT_CURRENT_INVENTORY`,
+`product`.`SKU` AS `VARIANT_SKU`,`product`.`SUPPLY_PRICE_EXCL_TAX` AS `VARIANT_SUPPLY_PRICE_EXCL_TAX`,`product`.`REORDER_POINT` AS `VARIANT_REORDER_POINT`,
+`product`.`REORDER_AMOUNT` AS `VARIANT_REORDER_AMOUNT`,
+(((`product`.`SUPPLY_PRICE_EXCL_TAX` * `product`.`MARKUP_PRCT`) / 100) + `product`.`SUPPLY_PRICE_EXCL_TAX`) AS `VARIANT_NET_PRICE`,
+(select count(0) AS `count(0)` from `composite_product` where ((`composite_product`.`PRODUCT_ASSOCICATION_ID` = `product`.`PRODUCT_ID`) 
+and (`composite_product`.`ACTIVE_INDICATOR` = 1))) AS `VARIANT_COMP_COUNT`,`product`.`COMPANY_ASSOCIATION_ID` AS `COMPANY_ASSOCIATION_ID`,
+`product`.`IMAGE_PATH` AS `IMAGE_PATH`,`product`.`VARIANT_PRODUCTS` AS `VARIANT_PRODUCTS`,`product`.`STANDARD_PRODUCT` AS `STANDARD_PRODUCT`,
+coalesce(`product`.`IS_COMPOSITE`,"false") AS `IS_COMPOSITE`,
+(select coalesce(sum(`product_variant`.`CURRENT_INVENTORY`),0) AS `coalesce(sum(``product_variant``.``CURRENT_INVENTORY``),0)` from `product_variant` 
+where ((`product_variant`.`PRODUCT_ASSOCICATION_ID` = `product`.`PRODUCT_ID`) and (`product_variant`.`ACTIVE_INDICATOR` = 1)) 
+having (`product`.`CURRENT_INVENTORY` is not null)) AS `VARIANT_INVENTORY_COUNT` from `product` 
+group by `product`.`PRODUCT_UUID`,`product`.`OUTLET_ASSOCICATION_ID` order by `product`.`CREATED_DATE` desc$$
+
+DELIMITER ;
