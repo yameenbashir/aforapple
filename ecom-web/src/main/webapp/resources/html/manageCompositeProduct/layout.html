@@ -916,7 +916,7 @@
 										<div class="inner-addon right-addon">
 
 											<input type="text"
-												focus="true" ng-model="productVariantBean.compositeQunatity"
+												focus="true" ng-model="productVariantBean.uniteQunatity"
 												style="width: 100%; height: 50px; color: black" ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
 												placeholder="Start typing or scanning..."
 												 />
@@ -1024,13 +1024,13 @@
 															</div>
 															<div class="col-md-1 input-container">
 																<input type="text"
-																	data-ng-model="product.compositeQunatity"
+																	data-ng-model="product.uniteQunatity"
 																	min="1" class="" id="Name" 
 																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
 																	required style="width: 100%;" ng-change="calculateProductSupplierPrice()">
-																	<span ng-show="!product.compositeQunatity" style="color:red;">Invalid Quantity
+																	<span ng-show="!product.uniteQunatity" style="color:red;">Invalid Quantity
 																	</span>
-																	<span ng-show="product.compositeQunatity==0" style="color:red;">Quantity should be greater than 0
+																	<span ng-show="product.uniteQunatity==0" style="color:red;">Quantity should be greater than 0
 																	</span>
 
 															</div>
@@ -1057,7 +1057,96 @@
 												</div>
 												
 											</div>
-											
+											<div class="box-body">
+												<div class="items-table">
+													
+													<div class="row header" ng-show="productDisplayList.length>0">
+														<div class="col-md-2">Product</div>
+														<div class="col-md-2">Supply Price</div>
+														<div class="col-md-1">Markup % </div>
+														<div class="col-md-1">Current Inventory</div>
+														<div class="col-md-2">Retail Price <small>(Exclusive Tax)</small></div>
+														<div class="col-md-1">Unit Quantity </div>
+														
+														
+														<div class="col-md-2">Quantity Consumed</div>
+														<div class="col-md-1">Action</div>
+
+													</div>
+													</br>
+													
+												</br>
+												<div class="row invoice-item " ng-animate="'slide-down'"
+														style="font-size: 12px" ng-show="productDisplayList.length>0"
+														ng-repeat="product in productDisplayList">
+														<div class="row items-sub-noMargin" style="margin-left:-3px;">
+															
+															<div class="col-md-2 remove-item-container"
+																ng-bind="product.variantAttributeName">
+															</div>
+															<div class="col-md-2 input-container">
+																<input type="text"
+																	data-ng-model="product.supplyPriceExclTax"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+															</div>
+															<div class="col-md-1 input-container">
+																<input type="text"
+																	data-ng-model="product.markupPrct"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+															</div>
+															<div class="col-md-1 input-container">
+																<input type="text"
+																	data-ng-model="product.currentInventory"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+															</div>
+															<div class="col-md-2 input-container">
+																<input type="text"
+																	data-ng-model="product.retailPrice"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+															</div>
+															<div class="col-md-1 input-container">
+																<input type="text"
+																	data-ng-model="product.uniteQunatity"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
+																	required style="width: 100%;" ng-change="calculateProductSupplierPrice()" ng-disabled="true">
+																	<span ng-show="!product.uniteQunatity" style="color:red;">Invalid Quantity
+																	</span>
+																	<span ng-show="product.uniteQunatity==0" style="color:red;">Quantity should be greater than 0
+																	</span>
+
+															</div>
+															<div class="col-md-2 input-container">
+															<input type="text"
+																	data-ng-model="product.compositeQunatityConsumed"
+																	min="1" class="" id="Name" 
+																	ng-pattern='/^[0-9]+(\.[0-9]{1,2})?$/'
+																	required style="width: 100%;" ng-disabled="true">
+																	<!-- <span style="color: red;"><i
+																			class="btn fa fa-trash btn-danger btn-sm "
+																			aria-hidden="true" ng-click="removeProduct(product)"></i></span>  -->
+															</div>
+															<div class="col-md-1 input-container">
+															
+																	<span style="color: red;"><i
+																			class="btn fa fa-trash btn-danger btn-sm "
+																			aria-hidden="true" ng-click="removeCompositeProduct(product)"></i></span> 
+															</div>
+
+														</div>
+														<hr class="vd-hr">
+													</div>
+												</div>
+												
+											</div>
 										</div>
 									</div>
 								</div>

@@ -52,7 +52,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 	$scope.valueCollectionThree = [];
 	$scope.productList = [];
 	$scope.productVariantBean = {};
-	$scope.productVariantBean.compositeQunatity = "1";
+	$scope.productVariantBean.uniteQunatity = "1";
 
 	$scope.myObj = {};
 	$scope.myObj.id = "1";
@@ -99,14 +99,14 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 					}, 2000);
 					return;
 				}
-				if(parseInt($scope.temp.compositeQunatity)<=parseInt($scope.temp.currentInventory)
-						&& parseInt($scope.temp.compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
+				if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+						&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
 					var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 					var markUp = parseFloat($scope.temp.markupPrct);
 					var result = supplyPrice*(markUp/100)+supplyPrice;
 					$scope.temp.retailPrice = (result.toFixed(2)).toString();
 					$scope.temp.discount = "0.00";
-					$scope.temp.compositeQunatityConsumed = $scope.temp.compositeQunatity*$scope.gui.compositeQunatity;
+					$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
 					/*$scope.gui.standardProduct = true;
 					$scope.gui.varientProducts = true;
 					$scope.gui.trackingProduct = true;
@@ -148,14 +148,14 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 							}, 2000);
 							return;
 						}
-						if(parseInt($scope.temp.compositeQunatity)<=parseInt($scope.temp.currentInventory)
-								&& parseInt($scope.temp.compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
+						if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+								&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
 							var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 							var markUp = parseFloat($scope.temp.markupPrct);
 							var result = supplyPrice*(markUp/100)+supplyPrice;
 							$scope.temp.retailPrice = (result.toFixed(2)).toString();
 							$scope.temp.discount = "0.00";
-							$scope.temp.compositeQunatityConsumed = $scope.temp.compositeQunatity*$scope.gui.compositeQunatity;
+							$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
 							$scope.productList.push($scope.temp);
 						}else{
 							$scope.dynamicError = true;
@@ -177,7 +177,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 		}
 		$scope.airportName = [];
 		$scope.productVariantBean = {};
-		$scope.productVariantBean.compositeQunatity = "1";
+		$scope.productVariantBean.uniteQunatity = "1";
 		$scope.calculateProductSupplierPrice();
 	};
 	
@@ -213,11 +213,11 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 		}
 		if($scope.productList.length>0){
 			for(var i=0;i<$scope.productList.length;i++){
-				if(!isNaN($scope.productList[i].compositeQunatity)){
-					if(parseInt($scope.productList[i].compositeQunatity)<=parseInt($scope.productList[i].currentInventory)
-							&& parseInt($scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.productList[i].currentInventory)){
-						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity;
-						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity);
+				if(!isNaN($scope.productList[i].uniteQunatity)){
+					if(parseInt($scope.productList[i].uniteQunatity)<=parseInt($scope.productList[i].currentInventory)
+							&& parseInt($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.productList[i].currentInventory)){
+						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity;
+						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity);
 						retailPrice = retailPrice+retailPric;
 					}else{
 						$scope.dynamicError = true;
@@ -233,7 +233,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 				}
 			}
 		}
-		$scope.productBean.supplyPriceExclTax = retailPrice;
+		$scope.productBean.supplyPriceExclTax = retailPrice/$scope.gui.compositeQunatity;
 		$scope.evaluateRetailPrice()
 	};
 	
@@ -1812,7 +1812,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 				data : function(term) {
 					term = term.toLowerCase();
 					$scope.productVariantBean = {};
-					$scope.productVariantBean.compositeQunatity = "1";
+					$scope.productVariantBean.uniteQunatity = "1";
 
 					var productVariantResults = _.filter($scope.productVariantBeanList, function(val) {
 						return val.variantAttributeName.toLowerCase().includes(term) ;
@@ -1841,7 +1841,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 				itemSelected : function(item) {
 
 					$scope.productVariantBean = item.item;
-					$scope.productVariantBean.compositeQunatity = "1";
+					$scope.productVariantBean.uniteQunatity = "1";
 					
 					//	$scope.airportName = [];
 

@@ -51,9 +51,10 @@ public class ProductVariantBean {
     private String productDesc;
     private boolean indivisualUpdate;
     private boolean allUpdate;
-    private String compositeQunatity;
+    private String uniteQunatity;
     private String compositeQunatityConsumed;
     private int compositeProductId;
+    private int contactId;
 	
 	/**
 	 * 
@@ -109,9 +110,10 @@ public class ProductVariantBean {
 	 * @param productDesc
 	 * @param indivisualUpdate
 	 * @param allUpdate
-	 * @param compositeQunatity
+	 * @param uniteQunatity
 	 * @param compositeQunatityConsumed
 	 * @param compositeProductId
+	 * @param contactId
 	 */
 	public ProductVariantBean(String iata, String isProduct, String isVariant,
 			String name, String productVariantId, String variantAttributeName,
@@ -131,8 +133,8 @@ public class ProductVariantBean {
 			String minUnits, String maxUnits, String priceBookDetailId,
 			String priceBookId, String productUuid, String auditTransfer,
 			String productDesc, boolean indivisualUpdate, boolean allUpdate,
-			String compositeQunatity, String compositeQunatityConsumed,
-			int compositeProductId) {
+			String uniteQunatity, String compositeQunatityConsumed,
+			int compositeProductId, int contactId) {
 		this.iata = iata;
 		this.isProduct = isProduct;
 		this.isVariant = isVariant;
@@ -180,9 +182,10 @@ public class ProductVariantBean {
 		this.productDesc = productDesc;
 		this.indivisualUpdate = indivisualUpdate;
 		this.allUpdate = allUpdate;
-		this.compositeQunatity = compositeQunatity;
+		this.uniteQunatity = uniteQunatity;
 		this.compositeQunatityConsumed = compositeQunatityConsumed;
 		this.compositeProductId = compositeProductId;
+		this.contactId = contactId;
 	}
 
 	/**
@@ -844,17 +847,17 @@ public class ProductVariantBean {
 	}
 
 	/**
-	 * @return the compositeQunatity
+	 * @return the uniteQunatity
 	 */
-	public String getCompositeQunatity() {
-		return compositeQunatity;
+	public String getUniteQunatity() {
+		return uniteQunatity;
 	}
 
 	/**
-	 * @param compositeQunatity the compositeQunatity to set
+	 * @param uniteQunatity the uniteQunatity to set
 	 */
-	public void setCompositeQunatity(String compositeQunatity) {
-		this.compositeQunatity = compositeQunatity;
+	public void setUniteQunatity(String uniteQunatity) {
+		this.uniteQunatity = uniteQunatity;
 	}
 
 	/**
@@ -883,5 +886,19 @@ public class ProductVariantBean {
 	 */
 	public void setCompositeProductId(int compositeProductId) {
 		this.compositeProductId = compositeProductId;
+	}
+
+	/**
+	 * @return the contactId
+	 */
+	public int getContactId() {
+		return contactId;
+	}
+
+	/**
+	 * @param contactId the contactId to set
+	 */
+	public void setContactId(int contactId) {
+		this.contactId = contactId;
 	}
 }

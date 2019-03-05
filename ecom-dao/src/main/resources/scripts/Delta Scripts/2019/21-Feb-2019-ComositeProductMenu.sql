@@ -1,7 +1,5 @@
 USE `ecom`;
-
-USE `ecom`;
-SELECT @companyId := 1, @createdBy := 1;
+SELECT @companyId := 13, @createdBy := 46;
 
 insert into menu (MENU_NAME,ROLE_ASSOCIATION_ID,ACTION_TYPE,ACTIVE_INDICATOR,CREATED_DATE,LAST_UPDATED,CREATED_BY,UPDATED_BY,COMPANY_ASSOCIATION_ID)
 	values ('manageCompositeProduct',1,'Page',true,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,@createdBy,@createdBy,@companyId);

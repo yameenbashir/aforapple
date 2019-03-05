@@ -43,6 +43,8 @@ import com.dowhile.ProductPriceHistory;
 import com.dowhile.ProductType;
 import com.dowhile.ProductVariant;
 import com.dowhile.SalesTax;
+import com.dowhile.StockOrder;
+import com.dowhile.StockOrderDetail;
 import com.dowhile.User;
 import com.dowhile.VariantAttribute;
 import com.dowhile.VariantAttributeValues;
@@ -74,6 +76,7 @@ import com.dowhile.service.ProductTypeService;
 import com.dowhile.service.ProductVariantService;
 import com.dowhile.service.ResourceService;
 import com.dowhile.service.SalesTaxService;
+import com.dowhile.service.StockOrderDetailService;
 import com.dowhile.service.TagService;
 import com.dowhile.service.VariantAttributeService;
 import com.dowhile.service.VariantAttributeValuesService;
@@ -120,6 +123,8 @@ public class ManageCompositeProductController {
 	private ConfigurationService configurationService;
 	@Resource
 	private ProductPriceHistoryService productPriceHistoryService;
+	@Resource
+	private StockOrderDetailService stockOrderDetailService;
 	//Added by Zafar for auto StockOrder
 	@Autowired
 	private PurchaseOrderController purchaseOrderController;
@@ -166,16 +171,14 @@ public class ManageCompositeProductController {
 				configurationReturnStock = configurationService.getConfigurationByPropertyNameByCompanyId("AUTO_STOCK_RETURN_MANAGE_PRODUCT",currentUser.getCompany().getCompanyId());
 				//Finish 
 				
-				
-				
-				
-				
 				//To check duplicate bar code start
 				Map productBarCodeMap = new HashMap<>();
+				Map productMap = new HashMap<>();
 				List<Product>products = productService.getAllProducts(currentUser.getCompany().getCompanyId());
 				if(products!=null){
 					for(Product product:products){
 						productBarCodeMap.put(product.getSku(), product);
+						productMap.put(product.getProductId(), product);
 					}
 				}
 				Product duplicateProduct = (Product) productBarCodeMap.get(productBean.getSku());
@@ -188,10 +191,12 @@ public class ManageCompositeProductController {
 				
 				List<ProductVariant> productVariantsList = productVariantService.getAllProductVariants(currentUser.getCompany().getCompanyId());
 				Map productVariantMap = new HashMap<>();
+				Map productvariantMap = new HashMap<>();
 				if(productVariantsList!=null){
 					
 					for(ProductVariant productVariant:productVariantsList){
 						productVariantMap.put(productVariant.getSku(), productVariant);
+						productvariantMap.put(productVariant.getProductVariantId(), productVariant);
 					}
 				}
 				
@@ -218,10 +223,8 @@ public class ManageCompositeProductController {
 				
 				//To check duplicate bar code end
 				
-				
-				
-				
 				int totalQunatity = 0;
+				boolean isCcreateSelfProcessOrder = false;
 				productList = productService.getAllProductsByUuid(productBean.getProductUuid(),currentUser.getCompany().getCompanyId());
 				if(productList!=null){
 					List<Outlet> outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
@@ -344,7 +347,6 @@ public class ManageCompositeProductController {
 							product.setAttribute3(attribut3);
 						}
 						
-						
 						if(productBean.getVarientProducts().equalsIgnoreCase("false")){
 							if(productBean.getCurrentInventory() !=null){
 								if(productBean.getOldInventory() != null){
@@ -405,7 +407,7 @@ public class ManageCompositeProductController {
 						else{
 							productService.updateProduct(product,Actions.UPDATE,totalQunatity,currentUser.getCompany());
 						}
-						if(!productBean.getStandardProduct().equalsIgnoreCase("true")){
+						if(!productBean.getStandardProduct().equalsIgnoreCase("true")){/*
 							List<CompositVariantBean> compositeVariantBeans = productBean.getCompositProductCollection();
 							for(CompositVariantBean compositVariantBean:compositeVariantBeans){
 								if(compositVariantBean.getCompositeProductId()!=null && !compositVariantBean.getCompositeProductId().equalsIgnoreCase("")){
@@ -437,7 +439,7 @@ public class ManageCompositeProductController {
 									compositeProductService.addCompositeProduct(compositeProduct,Actions.CREATE,0,currentUser.getCompany().getCompanyId(),product.getProductUuid());
 								}
 							}
-						}
+						*/}
 						if(productBean.getVarientProducts().equalsIgnoreCase("true")){
 							//Variants scenario
 							/*//Check if variants exists then remove all variant attribute values  
@@ -448,6 +450,7 @@ public class ManageCompositeProductController {
 									productVariantIdList.add(Integer.valueOf(productVariantBean.getProductVariantId()));
 								}
 							}*/
+							
 							List<VarientValueBean> varientValuesBeanCollection = productBean.getProductVariantValuesCollection();
 							if(varientValuesBeanCollection!=null){
 								List<OutletBean> outletsist = productBean.getOutletList();
@@ -473,6 +476,7 @@ public class ManageCompositeProductController {
 																Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory())>0){
 															currInt = Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory());
 															varientValueBean.getVarientsOutletList().get(0).setCurrentInventory(String.valueOf(0));
+															isCcreateSelfProcessOrder = true;
 														}
 														variantId = addProductVariants(outletbean, productBean, currentUser, outletMap, outletsist, varientValueBean, product);
 														varientValueBean.getVarientsOutletList().get(0).setCurrentInventory(String.valueOf(currInt));
@@ -491,6 +495,10 @@ public class ManageCompositeProductController {
 														}
 													}
 													else{
+														if(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory()!=null && !varientValueBean.getVarientsOutletList().get(0).getCurrentInventory().equalsIgnoreCase("") && 
+																Integer.valueOf(varientValueBean.getVarientsOutletList().get(0).getCurrentInventory())>0){
+															isCcreateSelfProcessOrder = true;
+														}
 														addProductVariants(outletbean, productBean, currentUser, outletMap, outletsist, varientValueBean, product);
 													}
 												}
@@ -615,6 +623,22 @@ public class ManageCompositeProductController {
 						stockOrderBean.setSupplierId(productBean.getSupplierId());
 						AddStockReturn(sessionId, stockOrderBean, stockReturnDetialBeansList, grandTotalReturn, itemCountReturn, request);
 					}
+					if(productList.size()==1){
+						if(productList.get(0)!=null && productBean.getIsComposite()!=null && productBean.getIsComposite().equalsIgnoreCase("true")){
+							if(productList.get(0).getCurrentInventory()>0){
+								boolean isCreated = createCompositeProductAndCompositeProductHistory(productList.get(0),productBean,currentUser,productMap , productvariantMap);
+								if(isCreated){
+									createSelfProcessOrder(productList.get(0),productBean,currentUser,productMap , productvariantMap,sessionId,request);
+								}
+							}else if(productBean.getStandardProduct().equalsIgnoreCase("true") && productBean.getVarientProducts().equalsIgnoreCase("true") && isCcreateSelfProcessOrder){
+								boolean isCreated = createCompositeProductAndCompositeProductHistory(productList.get(0),productBean,currentUser,productMap , productvariantMap);
+								if(isCreated){
+									createSelfProcessOrder(productList.get(0),productBean,currentUser,productMap , productvariantMap,sessionId,request);
+								}
+							}
+						}
+					}
+					
 					util.AuditTrail(request, currentUser, "ManageProductController.updateProduct", 
 							"User "+ currentUser.getUserEmail()+"Product updated +"+productBean.getProductName()+" successfully ",false);
 					return new Response(MessageConstants.REQUREST_PROCESSED,StatusConstants.SUCCESS,LayOutPageConstants.PRODUCTS);
@@ -635,6 +659,100 @@ public class ManageCompositeProductController {
 			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
 		}
 	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@RequestMapping(value = "/removeCompositeProduct/{sessionId}", method = RequestMethod.POST)
+	public @ResponseBody
+	Response removeCompositeProduct(@PathVariable("sessionId") String sessionId,
+			@RequestBody ProductVariantBean productVariantBean, HttpServletRequest request) {
+
+		if(SessionValidator.isSessionValid(sessionId, request)){
+			HttpSession session =  request.getSession(false);
+			User currentUser = (User) session.getAttribute("user");
+			Product product = null;
+			ProductVariant productVariant = null;
+		try{
+			if(productVariantBean.getIsProduct().equalsIgnoreCase("true")){
+				 product = productService.getProductByProductId(Integer.valueOf(productVariantBean.getProductVariantId()), currentUser.getCompany().getCompanyId());
+				product.setCurrentInventory(product.getCurrentInventory()+Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+				productService.updateProduct(product, Actions.INVENTORY_ADD, product.getCurrentInventory(), currentUser.getCompany());
+			}else{
+				 productVariant = productVariantService.getProductVariantByProductVariantId(Integer.valueOf(productVariantBean.getProductVariantId()), currentUser.getCompany().getCompanyId());
+				productVariant.setCurrentInventory(productVariant.getCurrentInventory()+Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+				productVariantService.updateProductVariant(productVariant, Actions.INVENTORY_ADD, productVariant.getCurrentInventory(), currentUser.getCompany());
+			}
+			CompositeProduct compositeProduct = compositeProductService.getCompositeProductByCompositeProductId(productVariantBean.getCompositeProductId(), currentUser.getCompany().getCompanyId());
+			compositeProductService.deleteCompositeProduct(compositeProduct, Actions.DELETE, currentUser.getCompany().getCompanyId());
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			StockOrderBean stockOrderBean = new StockOrderBean();
+			stockOrderBean.setActiveIndicator("true");
+			stockOrderBean.setAutofillReorder("true");
+			stockOrderBean.setRetailPriceBill("false");
+			stockOrderBean.setSupplierId(productVariantBean.getContactId()+"");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
+			int min = cal.get(Calendar.MINUTE);
+			stockOrderBean.setDiliveryDueDate(dateFormat.format(new Date()));			
+			stockOrderBean.setOrderNo("SPOA-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOrdrRecvDate(dateFormat.format(new Date()));
+			stockOrderBean.setStatusId("3"); 	// Completed		
+			stockOrderBean.setStockOrderTypeId("6"); //Self Process Order Add
+			stockOrderBean.setStockRefNo("SPOA-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOutlet(currentUser.getOutlet().getOutletId()+"");
+			stockOrderBean.setRemarks("Self Process Order Created for Composite Product having id: "+productVariantBean.getProductId()+" with Product Name: "+productVariantBean.getVariantAttributeName());
+			Response response = purchaseOrderController.addStockOrder(sessionId, stockOrderBean, request);
+			stockOrderBean.setStockOrderId(response.data.toString());
+			List<StockOrderDetail> stockOrderDetailsAddList = new ArrayList<>();
+
+			StockOrderDetail stockOrderDetail = new StockOrderDetail();
+			stockOrderDetail.setActiveIndicator(true);
+			stockOrderDetail.setCompany(currentUser.getCompany());
+			stockOrderDetail.setCreatedBy(currentUser.getUserId());
+			if(productVariantBean.getIsProduct().equalsIgnoreCase("true")){
+				stockOrderDetail.setIsProduct(true);
+				stockOrderDetail.setProduct(product);
+				//product.setCurrentInventory(product.getCurrentInventory());
+				
+			}else{
+				stockOrderDetail.setIsProduct(false);
+				stockOrderDetail.setProductVariant(productVariant);
+				//productVariant.setCurrentInventory(productVariant.getCurrentInventory());
+			}
+			stockOrderDetail.setOrderProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+			stockOrderDetail.setOrdrSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+			stockOrderDetail.setRecvProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+			stockOrderDetail.setRecvSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+			stockOrderDetail.setRetailPrice(new BigDecimal(productVariantBean.getRetailPrice()));
+			StockOrder stockOrder = new StockOrder();
+			stockOrder.setStockOrderId(Integer.valueOf(stockOrderBean.getStockOrderId()));
+			stockOrderDetail.setStockOrder(stockOrder);
+			stockOrderDetailsAddList.add(stockOrderDetail);
+			stockOrderDetailService.addStockOrderDetailsList(stockOrderDetailsAddList, currentUser.getCompany().getCompanyId());
+		
+			
+				util.AuditTrail(request, currentUser, "ManageCompositeProductController.removeCompositeProduct", 
+						"User "+ currentUser.getUserEmail()+"Product updated +"+productVariantBean.getVariantAttributeName()+" successfully ",false);
+				return new Response(MessageConstants.REQUREST_PROCESSED,StatusConstants.SUCCESS,LayOutPageConstants.PRODUCTS);
+				
+				
+			}catch(Exception e){
+				e.printStackTrace();
+				StringWriter errors = new StringWriter();
+				e.printStackTrace(new PrintWriter(errors));
+				util.AuditTrail(request, currentUser, "ManageProductController.updateProduct",
+						"Error Occured " + errors.toString(),true);
+				return new Response(MessageConstants.SYSTEM_BUSY,StatusConstants.ADD_RESTRICTED,LayOutPageConstants.STAY_ON_PAGE);
+			}
+		}else{
+			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
+		}
+	}
+
 
 	@SuppressWarnings("rawtypes")
 	private int addProductVariants(OutletBean outletbean,ProductBean productBean,User currentUser,Map outletMap,List<OutletBean> outletsist,VarientValueBean varientValueBean,Product newProduct ){
@@ -1071,6 +1189,197 @@ public class ManageCompositeProductController {
 		
 		
 		return null;
+	}
+	
+	public boolean createCompositeProductAndCompositeProductHistory(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap){
+		try{
+			List<CompositeProduct> compositeProductList =  new ArrayList<>();
+			List<ProductVariantBean> productList = productBean.getProductList();
+			if(productList!=null && productList.size()>0){
+				for(ProductVariantBean productVariantBean:productList){
+					CompositeProduct compositeProduct = new CompositeProduct();
+					compositeProduct.setActiveIndicator(true);
+					compositeProduct.setUnitQuantity(Integer.valueOf(productVariantBean.getUniteQunatity()));
+					if(productVariantBean.getCompositeQunatityConsumed()!=null && !productVariantBean.getCompositeQunatityConsumed().equalsIgnoreCase("")){
+						compositeProduct.setCompositeQuantity(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+					}else{
+						compositeProduct.setCompositeQuantity(0);
+					}
+					if(productVariantBean.getIsProduct().equalsIgnoreCase("false")){
+						ProductVariant productVariant = productVariantMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
+						compositeProduct.setProductVariant(productVariant);
+					}
+					Product selectiveProductId = productMap.get(Integer.valueOf(productVariantBean.getProductId()));
+					compositeProduct.setProductBySelectiveProductAssociationId(selectiveProductId);
+					
+					compositeProduct.setCreatedDate(new Date());
+					compositeProduct.setLastUpdated(new Date());
+					compositeProduct.setCompositeProductUuid(newProduct.getProductUuid());
+					compositeProduct.setProductUuid(selectiveProductId.getProductUuid());
+					compositeProduct.setOutlet(newProduct.getOutlet());
+					compositeProduct.setProductByProductAssocicationId(newProduct);	
+					compositeProduct.setUserByCreatedBy(currentUser);
+					compositeProduct.setUserByUpdatedBy(currentUser);
+					compositeProduct.setCompany(currentUser.getCompany());
+					compositeProductList.add(compositeProduct);
+				}
+			}
+			
+			compositeProductService.addCompositeProductList(compositeProductList);
+			return true;
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+			return false;
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void createSelfProcessOrder(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap,
+			String sessionId,HttpServletRequest request){
+		try{
+			List<ProductVariantBean> productList = productBean.getProductList();
+			//Add Self StockOrder
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			StockOrderBean stockOrderBean = new StockOrderBean();
+			stockOrderBean.setActiveIndicator("true");
+			stockOrderBean.setAutofillReorder("true");
+			stockOrderBean.setRetailPriceBill("false");
+			stockOrderBean.setSupplierId(newProduct.getContact().getContactId()+"");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
+			int min = cal.get(Calendar.MINUTE);
+			stockOrderBean.setDiliveryDueDate(dateFormat.format(new Date()));			
+			stockOrderBean.setOrderNo("SPOR-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOrdrRecvDate(dateFormat.format(new Date()));
+			stockOrderBean.setStatusId("3"); 	// Completed		
+			stockOrderBean.setStockOrderTypeId("7"); //Self Process Order Remove
+			stockOrderBean.setStockRefNo("SPOR-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOutlet(newProduct.getOutlet().getOutletId()+"");
+			stockOrderBean.setRemarks("Self Process Order Created for Composite Product having id: "+newProduct.getProductId()+" with Product Name: "+newProduct.getProductName());
+			Response response = purchaseOrderController.addStockOrder(sessionId, stockOrderBean, request);
+			stockOrderBean.setStockOrderId(response.data.toString());
+			//Add Self StockOrder Details
+			List<StockOrderDetail> stockOrderDetailsAddList = new ArrayList<>();
+			List<Product> updateProductList =  new ArrayList<>();
+			List<ProductVariant> updateProductVariantList = new ArrayList<>();
+			if(productList!=null && productList.size()>0){
+				for(ProductVariantBean productVariantBean:productList){
+					StockOrderDetail stockOrderDetail = new StockOrderDetail();
+					stockOrderDetail.setActiveIndicator(true);
+					stockOrderDetail.setCompany(newProduct.getCompany());
+					stockOrderDetail.setCreatedBy(currentUser.getUserId());
+					if(productVariantBean.getIsProduct().equalsIgnoreCase("true")){
+						stockOrderDetail.setIsProduct(true);
+						Product product = productMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
+						stockOrderDetail.setProduct(product);
+						product.setCurrentInventory(product.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+						updateProductList.add(product);
+						
+					}else{
+						stockOrderDetail.setIsProduct(false);
+						ProductVariant productVariant = productVariantMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
+						stockOrderDetail.setProductVariant(productVariant);
+						productVariant.setCurrentInventory(productVariant.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+						updateProductVariantList.add(productVariant);
+					}
+					stockOrderDetail.setOrderProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+					stockOrderDetail.setOrdrSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+					stockOrderDetail.setRecvProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+					stockOrderDetail.setRecvSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+					stockOrderDetail.setRetailPrice(new BigDecimal(productVariantBean.getRetailPrice()));
+					StockOrder stockOrder = new StockOrder();
+					stockOrder.setStockOrderId(Integer.valueOf(stockOrderBean.getStockOrderId()));
+					stockOrderDetail.setStockOrder(stockOrder);
+					stockOrderDetailsAddList.add(stockOrderDetail);
+				}
+				stockOrderDetailService.addStockOrderDetailsList(stockOrderDetailsAddList, currentUser.getCompany().getCompanyId());
+				productService.updateProductList(updateProductList, newProduct.getCompany());
+				productVariantService.updateProductVariantList(updateProductVariantList, newProduct.getCompany());
+			}
+			
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public void createSelfProcessOrderRemove(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap,
+			String sessionId,HttpServletRequest request){
+		try{
+			List<ProductVariantBean> productList = productBean.getProductList();
+			//Add Self StockOrder
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			StockOrderBean stockOrderBean = new StockOrderBean();
+			stockOrderBean.setActiveIndicator("true");
+			stockOrderBean.setAutofillReorder("true");
+			stockOrderBean.setRetailPriceBill("false");
+			stockOrderBean.setSupplierId(newProduct.getContact().getContactId()+"");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			int year = cal.get(Calendar.YEAR);
+			int month = cal.get(Calendar.MONTH) + 1;
+			int day = cal.get(Calendar.DAY_OF_MONTH);
+			int hour = cal.get(Calendar.HOUR_OF_DAY);
+			int min = cal.get(Calendar.MINUTE);
+			stockOrderBean.setDiliveryDueDate(dateFormat.format(new Date()));			
+			stockOrderBean.setOrderNo("SPOA-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOrdrRecvDate(dateFormat.format(new Date()));
+			stockOrderBean.setStatusId("3"); 	// Completed		
+			stockOrderBean.setStockOrderTypeId("6"); //Self Process Order Add
+			stockOrderBean.setStockRefNo("SPOA-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOutlet(newProduct.getOutlet().getOutletId()+"");
+			stockOrderBean.setRemarks("Self Process Order Created for Composite Product having id: "+newProduct.getProductId()+" with Product Name: "+newProduct.getProductName());
+			Response response = purchaseOrderController.addStockOrder(sessionId, stockOrderBean, request);
+			stockOrderBean.setStockOrderId(response.data.toString());
+			//Add Self StockOrder Details
+			List<StockOrderDetail> stockOrderDetailsAddList = new ArrayList<>();
+			List<Product> updateProductList =  new ArrayList<>();
+			List<ProductVariant> updateProductVariantList = new ArrayList<>();
+			if(productList!=null && productList.size()>0){
+				for(ProductVariantBean productVariantBean:productList){
+					StockOrderDetail stockOrderDetail = new StockOrderDetail();
+					stockOrderDetail.setActiveIndicator(true);
+					stockOrderDetail.setCompany(newProduct.getCompany());
+					stockOrderDetail.setCreatedBy(currentUser.getUserId());
+					if(productVariantBean.getIsProduct().equalsIgnoreCase("true")){
+						stockOrderDetail.setIsProduct(true);
+						Product product = productMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
+						stockOrderDetail.setProduct(product);
+						product.setCurrentInventory(product.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+						updateProductList.add(product);
+						
+					}else{
+						stockOrderDetail.setIsProduct(false);
+						ProductVariant productVariant = productVariantMap.get(Integer.valueOf(productVariantBean.getProductVariantId()));
+						stockOrderDetail.setProductVariant(productVariant);
+						productVariant.setCurrentInventory(productVariant.getCurrentInventory()-Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+						updateProductVariantList.add(productVariant);
+					}
+					stockOrderDetail.setOrderProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+					stockOrderDetail.setOrdrSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+					stockOrderDetail.setRecvProdQty(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
+					stockOrderDetail.setRecvSupplyPrice(new BigDecimal(productVariantBean.getSupplyPriceExclTax()));
+					stockOrderDetail.setRetailPrice(new BigDecimal(productVariantBean.getRetailPrice()));
+					StockOrder stockOrder = new StockOrder();
+					stockOrder.setStockOrderId(Integer.valueOf(stockOrderBean.getStockOrderId()));
+					stockOrderDetail.setStockOrder(stockOrder);
+					stockOrderDetailsAddList.add(stockOrderDetail);
+				}
+				stockOrderDetailService.addStockOrderDetailsList(stockOrderDetailsAddList, currentUser.getCompany().getCompanyId());
+				productService.updateProductList(updateProductList, newProduct.getCompany());
+				productVariantService.updateProductVariantList(updateProductVariantList, newProduct.getCompany());
+			}
+			
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 	}
 
 

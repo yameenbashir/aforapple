@@ -116,7 +116,7 @@ public class CompositeProductDAOImpl implements CompositeProductDAO{
 			productHistory.setUser(compositeProduct.getUserByCreatedBy());
 			productHistory.setProductHistoryUuid(compositeProduct.getCompositeProductUuid());
 			productHistory.setCompany(compositeProduct.getCompany());
-			getSessionFactory().getCurrentSession().save(productHistory);
+			//getSessionFactory().getCurrentSession().save(productHistory);
 			return true;
 
 		}catch(HibernateException ex){
@@ -269,16 +269,17 @@ public class CompositeProductDAOImpl implements CompositeProductDAO{
 		try{
 			for(CompositeProduct compositeProduct: compositeProductList){
 				getSessionFactory().getCurrentSession().save(compositeProduct);	
-				CompositeProductHistory compositeProductHistory = new CompositeProductHistory();
+				/*CompositeProductHistory compositeProductHistory = new CompositeProductHistory();
 				if(compositeProduct.getCompositeQuantity()==0){
 					compositeProductHistory.setActionType(Actions.CREATE.getActionName());
 				}else {
-					compositeProductHistory.setActionType(Actions.INVENTORY_ADD.getActionName());
+					compositeProductHistory.setActionType(Actions.INVENTORY_SUBTRACT.getActionName());
 				}
 				compositeProductHistory.setActiveIndicator(true);
 				compositeProductHistory.setCompany(compositeProduct.getCompany());
 				compositeProductHistory.setCompositeProduct(compositeProduct);
 				compositeProductHistory.setCompositeProductUuid(compositeProduct.getCompositeProductUuid());
+				compositeProductHistory.setUnitQuantity(compositeProduct.getUnitQuantity());
 				compositeProductHistory.setCompositeQuantity(compositeProduct.getCompositeQuantity());
 				compositeProductHistory.setCreatedDate(new Date());
 				compositeProductHistory.setLastUpdated(new Date());
@@ -293,7 +294,7 @@ public class CompositeProductDAOImpl implements CompositeProductDAO{
 				compositeProductHistory.setUserByUpdatedBy(compositeProduct.getUserByUpdatedBy());
 				
 				
-				getSessionFactory().getCurrentSession().save(compositeProductHistory);
+				getSessionFactory().getCurrentSession().save(compositeProductHistory);*/
 			}
 			return true;
 		}

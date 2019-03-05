@@ -40,6 +40,7 @@ public class CompositeProduct  implements java.io.Serializable {
     private Product productBySelectiveProductAssociationId;
     private String compositeProductUuid;
     private String productUuid;
+    private int unitQuantity;
     private int compositeQuantity;
     private boolean activeIndicator;
     private Date createdDate;
@@ -51,7 +52,7 @@ public class CompositeProduct  implements java.io.Serializable {
    }
 
 	
-   public CompositeProduct(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, String compositeProductUuid, String productUuid, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated) {
+   public CompositeProduct(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated) {
        this.outlet = outlet;
        this.userByCreatedBy = userByCreatedBy;
        this.userByUpdatedBy = userByUpdatedBy;
@@ -60,12 +61,13 @@ public class CompositeProduct  implements java.io.Serializable {
        this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
        this.compositeProductUuid = compositeProductUuid;
        this.productUuid = productUuid;
+       this.unitQuantity = unitQuantity;
        this.compositeQuantity = compositeQuantity;
        this.activeIndicator = activeIndicator;
        this.createdDate = createdDate;
        this.lastUpdated = lastUpdated;
    }
-   public CompositeProduct(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, String compositeProductUuid, String productUuid, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, Set<CompositeProductHistory> compositeProductHistories, Set<ProductHistory> productHistories) {
+   public CompositeProduct(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, Set<CompositeProductHistory> compositeProductHistories, Set<ProductHistory> productHistories) {
       this.productVariant = productVariant;
       this.outlet = outlet;
       this.userByCreatedBy = userByCreatedBy;
@@ -75,6 +77,7 @@ public class CompositeProduct  implements java.io.Serializable {
       this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
       this.compositeProductUuid = compositeProductUuid;
       this.productUuid = productUuid;
+      this.unitQuantity = unitQuantity;
       this.compositeQuantity = compositeQuantity;
       this.activeIndicator = activeIndicator;
       this.createdDate = createdDate;
@@ -183,6 +186,16 @@ public class CompositeProduct  implements java.io.Serializable {
    
    public void setProductUuid(String productUuid) {
        this.productUuid = productUuid;
+   }
+
+   
+   @Column(name="UNIT_QUANTITY", nullable=false)
+   public int getUnitQuantity() {
+       return this.unitQuantity;
+   }
+   
+   public void setUnitQuantity(int unitQuantity) {
+       this.unitQuantity = unitQuantity;
    }
 
    

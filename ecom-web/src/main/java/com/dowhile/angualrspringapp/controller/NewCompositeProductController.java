@@ -1145,6 +1145,7 @@ public class NewCompositeProductController {
 							for(CompositeProduct compositeProduct:compositeProductList){
 								ProductVariantBean productVariantBean  = new ProductVariantBean();
 								Product productTemp = (Product) productMap.get(compositeProduct.getProductBySelectiveProductAssociationId().getProductId());
+								productVariantBean.setContactId(productTemp.getContact().getContactId());
 								productVariantBean.setProductId(productTemp.getProductId()+"");
 								if(compositeProduct.getProductVariant()!=null){
 									ProductVariant productVariant = mapProductVariantsList.get(compositeProduct.getProductVariant().getProductVariantId());
@@ -1152,6 +1153,7 @@ public class NewCompositeProductController {
 									productVariantBean.setVariantAttributeName(productTemp.getProductName()+"-"+productVariant.getVariantAttributeName());
 									productVariantBean.setCurrentInventory(productVariant.getCurrentInventory()+"");
 									productVariantBean.setProductVariantId(productVariant.getProductVariantId()+"");
+									productVariantBean.setIsProduct("false");
 									if(productVariant.getSupplyPriceExclTax() != null){
 										productVariantBean.setSupplyPriceExclTax(productVariant.getSupplyPriceExclTax().toString());
 										productVariantBean.setMarkupPrct(productVariant.getMarkupPrct().toString());
@@ -1164,7 +1166,9 @@ public class NewCompositeProductController {
 									productVariantBean.setProductVariantId(productTemp.getProductId()+"");
 									productVariantBean.setVariantAttributeName(productTemp.getProductName());
 									productVariantBean.setCurrentInventory(productTemp.getCurrentInventory()+"");
+									productVariantBean.setIsProduct("true");
 								}
+								productVariantBean.setUniteQunatity(compositeProduct.getUnitQuantity()+"");
 								productVariantBean.setCompositeQunatityConsumed(compositeProduct.getCompositeQuantity()+"");
 								productVariantBean.setCompositeProductId(compositeProduct.getCompositeProductId());
 								productList.add(productVariantBean);
@@ -2027,7 +2031,8 @@ public class NewCompositeProductController {
 				for(ProductVariantBean productVariantBean:productList){
 					CompositeProduct compositeProduct = new CompositeProduct();
 					compositeProduct.setActiveIndicator(true);
-					if(productVariantBean.getCompositeQunatity()!=null && !productVariantBean.getCompositeQunatity().equalsIgnoreCase("")){
+					compositeProduct.setUnitQuantity(Integer.valueOf(productVariantBean.getUniteQunatity()));
+					if(productVariantBean.getCompositeQunatityConsumed()!=null && !productVariantBean.getCompositeQunatityConsumed().equalsIgnoreCase("")){
 						compositeProduct.setCompositeQuantity(Integer.valueOf(productVariantBean.getCompositeQunatityConsumed()));
 					}else{
 						compositeProduct.setCompositeQuantity(0);
@@ -2060,6 +2065,7 @@ public class NewCompositeProductController {
 			return false;
 		}
 	}
+	
 	@SuppressWarnings("rawtypes")
 	public void createSelfProcessOrder(Product newProduct,ProductBean productBean,User currentUser,Map<Integer , Product> productMap ,Map<Integer,ProductVariant> productVariantMap,
 			String sessionId,HttpServletRequest request){
@@ -2080,11 +2086,11 @@ public class NewCompositeProductController {
 			int hour = cal.get(Calendar.HOUR_OF_DAY);
 			int min = cal.get(Calendar.MINUTE);
 			stockOrderBean.setDiliveryDueDate(dateFormat.format(new Date()));			
-			stockOrderBean.setOrderNo("SPO-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setOrderNo("SPOR-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
 			stockOrderBean.setOrdrRecvDate(dateFormat.format(new Date()));
 			stockOrderBean.setStatusId("3"); 	// Completed		
 			stockOrderBean.setStockOrderTypeId("7"); //Self Process Order Remove
-			stockOrderBean.setStockRefNo("SPO-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
+			stockOrderBean.setStockRefNo("SPOR-"+ (month+"/"+ day+"/"+ year+ " " + hour + ":" + min));
 			stockOrderBean.setOutlet(newProduct.getOutlet().getOutletId()+"");
 			stockOrderBean.setRemarks("Self Process Order Created for Composite Product having id: "+newProduct.getProductId()+" with Product Name: "+newProduct.getProductName());
 			Response response = purchaseOrderController.addStockOrder(sessionId, stockOrderBean, request);
@@ -2133,6 +2139,8 @@ public class NewCompositeProductController {
 			ex.printStackTrace();
 		}
 	}
+	
+	
 
 }
 

@@ -54,8 +54,9 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 	$scope.productVariantValuesCollectionOldTwo = [];
 	$scope.productVariantValuesCollectionOldThree = [];
 	$scope.productList = [];
+	$scope.productDisplayList = [];
 	$scope.productVariantBean = {};
-	$scope.productVariantBean.compositeQunatity = "1";
+	$scope.productVariantBean.uniteQunatity = "1";
 	$scope.myObj = {};
 	$scope.myObj.id = "1";
 	$scope.myObj.value = "";
@@ -100,14 +101,14 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 					}, 2000);
 					return;
 				}
-				if(parseInt($scope.temp.compositeQunatity)<=parseInt($scope.temp.currentInventory)
-						&& parseInt($scope.temp.compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
+				if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+						&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
 					var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 					var markUp = parseFloat($scope.temp.markupPrct);
 					var result = supplyPrice*(markUp/100)+supplyPrice;
 					$scope.temp.retailPrice = (result.toFixed(2)).toString();
 					$scope.temp.discount = "0.00";
-					$scope.temp.compositeQunatityConsumed = $scope.temp.compositeQunatity*$scope.gui.compositeQunatity;
+					$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
 					/*$scope.gui.standardProduct = true;
 					$scope.gui.varientProducts = true;
 					$scope.gui.trackingProduct = true;
@@ -122,7 +123,7 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 					$scope.productList.push($scope.temp);
 				}else{
 					$scope.dynamicError = true;
-					$scope.dynamicErrorMessage = "Product "+$scope.productVariantBean.variantAttributeName+" cousume quantity can not be greater than available quantity."+$scope.productVariantBean.currentInventory;
+					$scope.dynamicErrorMessage = "Product "+$scope.productVariantBean.variantAttributeName+" consume quantity can not be greater than available quantity."+$scope.productVariantBean.currentInventory;
 					$timeout(function(){
 						$scope.dynamicError = false;
 					}, 2000);
@@ -134,6 +135,10 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 				$timeout(function(){
 					$scope.dynamicError = false;
 				}, 2000);
+				$scope.airportName = [];
+				$scope.productVariantBean = {};
+				$scope.productVariantBean.uniteQunatity = "1";
+				return;
 			}
 		}else{
 			for(var i=0;i<$scope.productVariantBeanList.length;i++){
@@ -149,14 +154,14 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 							}, 2000);
 							return;
 						}
-						if(parseInt($scope.temp.compositeQunatity)<=parseInt($scope.temp.currentInventory)
-								&& parseInt($scope.temp.compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
+						if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+								&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
 							var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 							var markUp = parseFloat($scope.temp.markupPrct);
 							var result = supplyPrice*(markUp/100)+supplyPrice;
 							$scope.temp.retailPrice = (result.toFixed(2)).toString();
 							$scope.temp.discount = "0.00";
-							$scope.temp.compositeQunatityConsumed = $scope.temp.compositeQunatity*$scope.gui.compositeQunatity;
+							$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
 							$scope.productList.push($scope.temp);
 						}else{
 							$scope.dynamicError = true;
@@ -172,13 +177,17 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 						$timeout(function(){
 							$scope.dynamicError = false;
 						}, 2000);
+						$scope.airportName = [];
+						$scope.productVariantBean = {};
+						$scope.productVariantBean.uniteQunatity = "1";
+						return;
 					}
 				}
 			}
 		}
 		$scope.airportName = [];
 		$scope.productVariantBean = {};
-		$scope.productVariantBean.compositeQunatity = "1";
+		$scope.productVariantBean.uniteQunatity = "1";
 		$scope.calculateProductSupplierPrice();
 	};
 	
@@ -190,6 +199,36 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 				}
 			}
 		}
+	};
+	
+	$scope.removeCompositeProduct = function(compositeProductVariant){
+		$scope.loading = true;
+		$http.post('manageCompositeProduct/removeCompositeProduct/'+$scope._s_tk_com, compositeProductVariant)
+		.success(function(Response) {
+			$scope.loading = false;
+
+			$scope.responseStatus = Response.status;
+			if ($scope.responseStatus == 'SUCCESSFUL') {
+				$scope.productSuccess = true;
+				$scope.productSuccessMessage = Response.data;
+				$timeout(function(){
+					$scope.productSuccess = false;
+					$window.location = Response.layOutPath;
+				}, 1000);
+
+			}else if($scope.responseStatus == 'INVALIDSESSION'||$scope.responseStatus == 'SYSTEMBUSY') {
+				$scope.productError = true;
+				$scope.productErrorMessage = Response.data;
+				$window.location = Response.layOutPath;
+			}else {
+				$scope.productError = true;
+				$scope.productErrorMessage = Response.data;
+			}
+		}).error(function() {
+			$scope.loading = false;
+			$scope.productError = true;
+			$scope.productErrorMessage = $scope.systemBusy;
+		});
 	};
 	
 	$scope.calculateProductSupplierPrice = function(){
@@ -214,11 +253,11 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 		}
 		if($scope.productList.length>0){
 			for(var i=0;i<$scope.productList.length;i++){
-				if(!isNaN($scope.productList[i].compositeQunatity)){
-					if(parseInt($scope.productList[i].compositeQunatity)<=parseInt($scope.productList[i].currentInventory)
-							&& parseInt($scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.productList[i].currentInventory)){
-						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity;
-						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].compositeQunatity*$scope.gui.compositeQunatity);
+				if(!isNaN($scope.productList[i].uniteQunatity)){
+					if(parseInt($scope.productList[i].uniteQunatity)<=parseInt($scope.productList[i].currentInventory)
+							&& parseInt($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.productList[i].currentInventory)){
+						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity;
+						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity);
 						retailPrice = retailPrice+retailPric;
 					}else{
 						$scope.dynamicError = true;
@@ -234,7 +273,13 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 				}
 			}
 		}
-		$scope.productBean.supplyPriceExclTax = retailPrice;
+		if($scope.productDisplayList.length>0){
+			for(var i=0;i<$scope.productDisplayList.length;i++){
+				var retailPric = parseFloat($scope.productDisplayList[i].retailPrice)*parseFloat($scope.productDisplayList[i].uniteQunatity*$scope.gui.compositeQunatity);
+				retailPrice = retailPrice+retailPric;
+			}
+		}
+		$scope.productBean.supplyPriceExclTax = retailPrice/$scope.gui.compositeQunatity;
 		$scope.evaluateRetailPrice()
 	};
 	
@@ -242,6 +287,13 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 		if($scope.productList.length>0){
 			for(var i=0;i<$scope.productList.length;i++){
 				if($scope.productList[i].productVariantId==variantId){
+					return true;
+				}
+			}
+		}
+		if($scope.productDisplayList.length>0){
+			for(var i=0;i<$scope.productDisplayList.length;i++){
+				if($scope.productDisplayList[i].productVariantId==variantId){
 					return true;
 				}
 			}
@@ -897,14 +949,14 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 					$scope.productBeansList = $scope.data.productBeansList;
 				}
 				if($scope.data.productBean.productList!=null){
-					$scope.productList = null;
-					$scope.productList = angular.copy($scope.data.productBean.productList);
-					if($scope.productList != null && $scope.productList.length>0){
-						for(var i = 0;i<$scope.productList.length;i++){
-							var supplyPrice = parseFloat($scope.productList[i].supplyPriceExclTax);
-							var markUp = parseFloat($scope.productList[i].markupPrct);
+					$scope.productDisplayList = null;
+					$scope.productDisplayList = angular.copy($scope.data.productBean.productList);
+					if($scope.productDisplayList != null && $scope.productDisplayList.length>0){
+						for(var i = 0;i<$scope.productDisplayList.length;i++){
+							var supplyPrice = parseFloat($scope.productDisplayList[i].supplyPriceExclTax);
+							var markUp = parseFloat($scope.productDisplayList[i].markupPrct);
 							var result = supplyPrice*(markUp/100)+supplyPrice;
-							$scope.productList[i].retailPrice = (result.toFixed(2)).toString();
+							$scope.productDisplayList[i].retailPrice = (result.toFixed(2)).toString();
 						}
 					}
 					
@@ -2042,7 +2094,7 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 				data : function(term) {
 					term = term.toLowerCase();
 					$scope.productVariantBean = {};
-					$scope.productVariantBean.compositeQunatity = "1";
+					$scope.productVariantBean.uniteQunatity = "1";
 
 					var productVariantResults = _.filter($scope.productVariantBeanList, function(val) {
 						return val.variantAttributeName.toLowerCase().includes(term) ;
@@ -2071,7 +2123,7 @@ var ManageCompositeProductController = ['$scope', '$http', '$window','$cookieSto
 				itemSelected : function(item) {
 
 					$scope.productVariantBean = item.item;
-					$scope.productVariantBean.compositeQunatity = "1";
+					$scope.productVariantBean.uniteQunatity = "1";
 					
 					//	$scope.airportName = [];
 

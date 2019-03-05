@@ -2,12 +2,14 @@ package com.dowhile;
 // Generated Jan 20, 2019 12:01:05 AM by Hibernate Tools 3.4.0.CR1
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -25,45 +27,29 @@ import javax.persistence.TemporalType;
 public class CompositeProductHistory  implements java.io.Serializable {
 
 
-     private Integer compositeProductHistoryId;
-     private ProductVariant productVariant;
-     private Outlet outlet;
-     private User userByCreatedBy;
-     private User userByUpdatedBy;
-     private Product productByProductAssocicationId;
-     private Company company;
-     private Product productBySelectiveProductAssociationId;
-     private CompositeProduct compositeProduct;
-     private String compositeProductUuid;
-     private String productUuid;
-     private int compositeQuantity;
-     private boolean activeIndicator;
-     private Date createdDate;
-     private Date lastUpdated;
-     private String actionType;
+    private Integer compositeProductHistoryId;
+    private ProductVariant productVariant;
+    private Outlet outlet;
+    private User userByCreatedBy;
+    private User userByUpdatedBy;
+    private Product productByProductAssocicationId;
+    private Company company;
+    private Product productBySelectiveProductAssociationId;
+    private CompositeProduct compositeProduct;
+    private String compositeProductUuid;
+    private String productUuid;
+    private int unitQuantity;
+    private int compositeQuantity;
+    private boolean activeIndicator;
+    private Date createdDate;
+    private Date lastUpdated;
+    private String actionType;
 
-    public CompositeProductHistory() {
-    }
+   public CompositeProductHistory() {
+   }
 
 	
-    public CompositeProductHistory(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
-        this.outlet = outlet;
-        this.userByCreatedBy = userByCreatedBy;
-        this.userByUpdatedBy = userByUpdatedBy;
-        this.productByProductAssocicationId = productByProductAssocicationId;
-        this.company = company;
-        this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
-        this.compositeProduct = compositeProduct;
-        this.compositeProductUuid = compositeProductUuid;
-        this.productUuid = productUuid;
-        this.compositeQuantity = compositeQuantity;
-        this.activeIndicator = activeIndicator;
-        this.createdDate = createdDate;
-        this.lastUpdated = lastUpdated;
-        this.actionType = actionType;
-    }
-    public CompositeProductHistory(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
-       this.productVariant = productVariant;
+   public CompositeProductHistory(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
        this.outlet = outlet;
        this.userByCreatedBy = userByCreatedBy;
        this.userByUpdatedBy = userByUpdatedBy;
@@ -73,174 +59,203 @@ public class CompositeProductHistory  implements java.io.Serializable {
        this.compositeProduct = compositeProduct;
        this.compositeProductUuid = compositeProductUuid;
        this.productUuid = productUuid;
+       this.unitQuantity = unitQuantity;
        this.compositeQuantity = compositeQuantity;
        this.activeIndicator = activeIndicator;
        this.createdDate = createdDate;
        this.lastUpdated = lastUpdated;
        this.actionType = actionType;
-    }
+   }
+   public CompositeProductHistory(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
+      this.productVariant = productVariant;
+      this.outlet = outlet;
+      this.userByCreatedBy = userByCreatedBy;
+      this.userByUpdatedBy = userByUpdatedBy;
+      this.productByProductAssocicationId = productByProductAssocicationId;
+      this.company = company;
+      this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
+      this.compositeProduct = compositeProduct;
+      this.compositeProductUuid = compositeProductUuid;
+      this.productUuid = productUuid;
+      this.unitQuantity = unitQuantity;
+      this.compositeQuantity = compositeQuantity;
+      this.activeIndicator = activeIndicator;
+      this.createdDate = createdDate;
+      this.lastUpdated = lastUpdated;
+      this.actionType = actionType;
+   }
+  
+    @Id @GeneratedValue(strategy=IDENTITY)
+
    
-     @Id @GeneratedValue(strategy=IDENTITY)
-
-    
-    @Column(name="COMPOSITE_PRODUCT_HISTORY_ID", unique=true, nullable=false)
-    public Integer getCompositeProductHistoryId() {
-        return this.compositeProductHistoryId;
-    }
-    
-    public void setCompositeProductHistoryId(Integer compositeProductHistoryId) {
-        this.compositeProductHistoryId = compositeProductHistoryId;
-    }
+   @Column(name="COMPOSITE_PRODUCT_HISTORY_ID", unique=true, nullable=false)
+   public Integer getCompositeProductHistoryId() {
+       return this.compositeProductHistoryId;
+   }
+   
+   public void setCompositeProductHistoryId(Integer compositeProductHistoryId) {
+       this.compositeProductHistoryId = compositeProductHistoryId;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="PRODUCT_VARIANT_ASSOCICATION_ID")
-    public ProductVariant getProductVariant() {
-        return this.productVariant;
-    }
-    
-    public void setProductVariant(ProductVariant productVariant) {
-        this.productVariant = productVariant;
-    }
+   @JoinColumn(name="PRODUCT_VARIANT_ASSOCICATION_ID")
+   public ProductVariant getProductVariant() {
+       return this.productVariant;
+   }
+   
+   public void setProductVariant(ProductVariant productVariant) {
+       this.productVariant = productVariant;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="OUTLET_ASSOCICATION_ID", nullable=false)
-    public Outlet getOutlet() {
-        return this.outlet;
-    }
-    
-    public void setOutlet(Outlet outlet) {
-        this.outlet = outlet;
-    }
+   @JoinColumn(name="OUTLET_ASSOCICATION_ID", nullable=false)
+   public Outlet getOutlet() {
+       return this.outlet;
+   }
+   
+   public void setOutlet(Outlet outlet) {
+       this.outlet = outlet;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="CREATED_BY", nullable=false)
-    public User getUserByCreatedBy() {
-        return this.userByCreatedBy;
-    }
-    
-    public void setUserByCreatedBy(User userByCreatedBy) {
-        this.userByCreatedBy = userByCreatedBy;
-    }
+   @JoinColumn(name="CREATED_BY", nullable=false)
+   public User getUserByCreatedBy() {
+       return this.userByCreatedBy;
+   }
+   
+   public void setUserByCreatedBy(User userByCreatedBy) {
+       this.userByCreatedBy = userByCreatedBy;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="UPDATED_BY", nullable=false)
-    public User getUserByUpdatedBy() {
-        return this.userByUpdatedBy;
-    }
-    
-    public void setUserByUpdatedBy(User userByUpdatedBy) {
-        this.userByUpdatedBy = userByUpdatedBy;
-    }
+   @JoinColumn(name="UPDATED_BY", nullable=false)
+   public User getUserByUpdatedBy() {
+       return this.userByUpdatedBy;
+   }
+   
+   public void setUserByUpdatedBy(User userByUpdatedBy) {
+       this.userByUpdatedBy = userByUpdatedBy;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="PRODUCT_ASSOCICATION_ID", nullable=false)
-    public Product getProductByProductAssocicationId() {
-        return this.productByProductAssocicationId;
-    }
-    
-    public void setProductByProductAssocicationId(Product productByProductAssocicationId) {
-        this.productByProductAssocicationId = productByProductAssocicationId;
-    }
+   @JoinColumn(name="PRODUCT_ASSOCICATION_ID", nullable=false)
+   public Product getProductByProductAssocicationId() {
+       return this.productByProductAssocicationId;
+   }
+   
+   public void setProductByProductAssocicationId(Product productByProductAssocicationId) {
+       this.productByProductAssocicationId = productByProductAssocicationId;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="COMPANY_ASSOCIATION_ID", nullable=false)
-    public Company getCompany() {
-        return this.company;
-    }
-    
-    public void setCompany(Company company) {
-        this.company = company;
-    }
+   @JoinColumn(name="COMPANY_ASSOCIATION_ID", nullable=false)
+   public Company getCompany() {
+       return this.company;
+   }
+   
+   public void setCompany(Company company) {
+       this.company = company;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="SELECTIVE_PRODUCT_ASSOCIATION_ID", nullable=false)
-    public Product getProductBySelectiveProductAssociationId() {
-        return this.productBySelectiveProductAssociationId;
-    }
-    
-    public void setProductBySelectiveProductAssociationId(Product productBySelectiveProductAssociationId) {
-        this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
-    }
+   @JoinColumn(name="SELECTIVE_PRODUCT_ASSOCIATION_ID", nullable=false)
+   public Product getProductBySelectiveProductAssociationId() {
+       return this.productBySelectiveProductAssociationId;
+   }
+   
+   public void setProductBySelectiveProductAssociationId(Product productBySelectiveProductAssociationId) {
+       this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
+   }
 
 @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="COMPOSITE_PRODUCT_ID", nullable=false)
-    public CompositeProduct getCompositeProduct() {
-        return this.compositeProduct;
-    }
-    
-    public void setCompositeProduct(CompositeProduct compositeProduct) {
-        this.compositeProduct = compositeProduct;
-    }
+   @JoinColumn(name="COMPOSITE_PRODUCT_ID", nullable=false)
+   public CompositeProduct getCompositeProduct() {
+       return this.compositeProduct;
+   }
+   
+   public void setCompositeProduct(CompositeProduct compositeProduct) {
+       this.compositeProduct = compositeProduct;
+   }
 
-    
-    @Column(name="COMPOSITE_PRODUCT_UUID", nullable=false, length=500)
-    public String getCompositeProductUuid() {
-        return this.compositeProductUuid;
-    }
-    
-    public void setCompositeProductUuid(String compositeProductUuid) {
-        this.compositeProductUuid = compositeProductUuid;
-    }
+   
+   @Column(name="COMPOSITE_PRODUCT_UUID", nullable=false, length=500)
+   public String getCompositeProductUuid() {
+       return this.compositeProductUuid;
+   }
+   
+   public void setCompositeProductUuid(String compositeProductUuid) {
+       this.compositeProductUuid = compositeProductUuid;
+   }
 
-    
-    @Column(name="PRODUCT_UUID", nullable=false, length=500)
-    public String getProductUuid() {
-        return this.productUuid;
-    }
-    
-    public void setProductUuid(String productUuid) {
-        this.productUuid = productUuid;
-    }
+   
+   @Column(name="PRODUCT_UUID", nullable=false, length=500)
+   public String getProductUuid() {
+       return this.productUuid;
+   }
+   
+   public void setProductUuid(String productUuid) {
+       this.productUuid = productUuid;
+   }
 
-    
-    @Column(name="COMPOSITE_QUANTITY", nullable=false)
-    public int getCompositeQuantity() {
-        return this.compositeQuantity;
-    }
-    
-    public void setCompositeQuantity(int compositeQuantity) {
-        this.compositeQuantity = compositeQuantity;
-    }
+   
+   @Column(name="UNIT_QUANTITY", nullable=false)
+   public int getUnitQuantity() {
+       return this.unitQuantity;
+   }
+   
+   public void setUnitQuantity(int unitQuantity) {
+       this.unitQuantity = unitQuantity;
+   }
 
-    
-    @Column(name="ACTIVE_INDICATOR", nullable=false)
-    public boolean isActiveIndicator() {
-        return this.activeIndicator;
-    }
-    
-    public void setActiveIndicator(boolean activeIndicator) {
-        this.activeIndicator = activeIndicator;
-    }
+   
+   @Column(name="COMPOSITE_QUANTITY", nullable=false)
+   public int getCompositeQuantity() {
+       return this.compositeQuantity;
+   }
+   
+   public void setCompositeQuantity(int compositeQuantity) {
+       this.compositeQuantity = compositeQuantity;
+   }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="CREATED_DATE", nullable=false, length=19)
-    public Date getCreatedDate() {
-        return this.createdDate;
-    }
-    
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+   
+   @Column(name="ACTIVE_INDICATOR", nullable=false)
+   public boolean isActiveIndicator() {
+       return this.activeIndicator;
+   }
+   
+   public void setActiveIndicator(boolean activeIndicator) {
+       this.activeIndicator = activeIndicator;
+   }
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="LAST_UPDATED", nullable=false, length=19)
-    public Date getLastUpdated() {
-        return this.lastUpdated;
-    }
-    
-    public void setLastUpdated(Date lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
+   @Temporal(TemporalType.TIMESTAMP)
+   @Column(name="CREATED_DATE", nullable=false, length=19)
+   public Date getCreatedDate() {
+       return this.createdDate;
+   }
+   
+   public void setCreatedDate(Date createdDate) {
+       this.createdDate = createdDate;
+   }
 
-    
-    @Column(name="ACTION_TYPE", nullable=false, length=100)
-    public String getActionType() {
-        return this.actionType;
-    }
-    
-    public void setActionType(String actionType) {
-        this.actionType = actionType;
-    }
+   @Temporal(TemporalType.TIMESTAMP)
+   @Column(name="LAST_UPDATED", nullable=false, length=19)
+   public Date getLastUpdated() {
+       return this.lastUpdated;
+   }
+   
+   public void setLastUpdated(Date lastUpdated) {
+       this.lastUpdated = lastUpdated;
+   }
+
+   
+   @Column(name="ACTION_TYPE", nullable=false, length=100)
+   public String getActionType() {
+       return this.actionType;
+   }
+   
+   public void setActionType(String actionType) {
+       this.actionType = actionType;
+   }
 
 
 
