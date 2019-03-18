@@ -45,6 +45,8 @@ values ('COMPANY_RECEIPT_IMAGE','brand_kites.jpg',@companyId,@createdBy,@created
 insert into configuration (PROPERTY_NAME,PROPERTY_VALUE,COMPANY_ASSOCIATION_ID,CREATED_BY,UPDATED_BY,CREATED_DATE,LAST_UPDATED,ACTIVE_INDICATOR) 
 values ('SUB_DOMAIN_NAME','kites',@companyId,@createdBy,@createdBy,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,1);
 
+-- ------------------- line item discount ---------------------------------
+insert into configuration (PROPERTY_NAME,PROPERTY_VALUE,COMPANY_ASSOCIATION_ID,CREATED_BY,UPDATED_BY,CREATED_DATE,LAST_UPDATED,ACTIVE_INDICATOR) values ('INVOICE_LINE_LEVEL_DISCOUNT','false',@companyId,@createdBy,@createdBy,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,1);
 
 
 -- -----------------New Product and Manage Product UI configurations -------------
