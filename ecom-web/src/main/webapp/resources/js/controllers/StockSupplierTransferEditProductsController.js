@@ -511,7 +511,7 @@ var StockSupplierTransferEditProductsController = ['$sce', '$scope', '$http', '$
 			$scope.error = false;
 			$scope.loading = true;
 			$scope.stockOrderBean.statusId = "3"; // Completed status
-			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateAndTransferToSupplierStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;
 
