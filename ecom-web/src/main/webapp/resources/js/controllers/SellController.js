@@ -40,6 +40,7 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 	$scope.isReturnEnableonSell = true;
 	$scope.totallineItemDiscount = parseFloat(0);
 	$scope.isInvoiceLevelDiscountEnable = false;
+	$scope.isInvoiceDetailLevelDiscountEnable = true;
 //$scope.totalDiscount = parseFloat(0);
 	$scope.InvoiceMainBean.itemsCount = parseFloat(0);
 	$scope.isValidInvoice = true;
@@ -77,6 +78,10 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 		{$scope.isInvoiceLevelDiscountEnable = true;}
 		else
 		{$scope.isInvoiceLevelDiscountEnable = false;}
+		if($scope.sellControllerBean.isInvoiceDetailLevelDiscountEnable == 'true')
+		{$scope.isInvoiceDetailLevelDiscountEnable = true;}
+		else
+		{$scope.isInvoiceDetailLevelDiscountEnable = false;}
 		
 		if($scope.sellControllerBean.priceBookBean != null && $scope.sellControllerBean.priceBookBean.length > 0)
 			{

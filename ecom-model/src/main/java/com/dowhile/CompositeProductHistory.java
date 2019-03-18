@@ -35,7 +35,7 @@ public class CompositeProductHistory  implements java.io.Serializable {
     private Product productByProductAssocicationId;
     private Company company;
     private Product productBySelectiveProductAssociationId;
-    private CompositeProduct compositeProduct;
+    private int compositeProductId;
     private String compositeProductUuid;
     private String productUuid;
     private int unitQuantity;
@@ -49,14 +49,14 @@ public class CompositeProductHistory  implements java.io.Serializable {
    }
 
 	
-   public CompositeProductHistory(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
+   public CompositeProductHistory(Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, int compositeProductId, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
        this.outlet = outlet;
        this.userByCreatedBy = userByCreatedBy;
        this.userByUpdatedBy = userByUpdatedBy;
        this.productByProductAssocicationId = productByProductAssocicationId;
        this.company = company;
        this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
-       this.compositeProduct = compositeProduct;
+       this.compositeProductId = compositeProductId;
        this.compositeProductUuid = compositeProductUuid;
        this.productUuid = productUuid;
        this.unitQuantity = unitQuantity;
@@ -66,7 +66,7 @@ public class CompositeProductHistory  implements java.io.Serializable {
        this.lastUpdated = lastUpdated;
        this.actionType = actionType;
    }
-   public CompositeProductHistory(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, CompositeProduct compositeProduct, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
+   public CompositeProductHistory(ProductVariant productVariant, Outlet outlet, User userByCreatedBy, User userByUpdatedBy, Product productByProductAssocicationId, Company company, Product productBySelectiveProductAssociationId, int compositeProductId, String compositeProductUuid, String productUuid, int unitQuantity, int compositeQuantity, boolean activeIndicator, Date createdDate, Date lastUpdated, String actionType) {
       this.productVariant = productVariant;
       this.outlet = outlet;
       this.userByCreatedBy = userByCreatedBy;
@@ -74,7 +74,7 @@ public class CompositeProductHistory  implements java.io.Serializable {
       this.productByProductAssocicationId = productByProductAssocicationId;
       this.company = company;
       this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
-      this.compositeProduct = compositeProduct;
+      this.compositeProductId = compositeProductId;
       this.compositeProductUuid = compositeProductUuid;
       this.productUuid = productUuid;
       this.unitQuantity = unitQuantity;
@@ -167,14 +167,14 @@ public class CompositeProductHistory  implements java.io.Serializable {
        this.productBySelectiveProductAssociationId = productBySelectiveProductAssociationId;
    }
 
-@ManyToOne(fetch=FetchType.LAZY)
-   @JoinColumn(name="COMPOSITE_PRODUCT_ID", nullable=false)
-   public CompositeProduct getCompositeProduct() {
-       return this.compositeProduct;
+   
+   @Column(name="COMPOSITE_PRODUCT_ID", nullable=false)
+   public int getCompositeProductId() {
+       return this.compositeProductId;
    }
    
-   public void setCompositeProduct(CompositeProduct compositeProduct) {
-       this.compositeProduct = compositeProduct;
+   public void setCompositeProductId(int compositeProductId) {
+       this.compositeProductId = compositeProductId;
    }
 
    

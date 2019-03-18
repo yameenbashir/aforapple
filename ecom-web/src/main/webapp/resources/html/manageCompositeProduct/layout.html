@@ -896,7 +896,7 @@
 									
 									<div class="col-md-3">Product:</div>
 									<div class="col-md-4">Quantity</div>
-									<div class="col-md-2">Order No:</div>
+									<!-- <div class="col-md-2">Order No:</div> -->
 									<!-- <div class="col-md-2" ng-show="gui.shwoProductTag">Discount %</div> -->
 									
 									
@@ -930,7 +930,7 @@
 											Product</button>
 									</div>
 									
-									<div class="col-md-2" ng-show="gui.shwoProductTag">
+									<!-- <div class="col-md-2" ng-show="gui.shwoProductTag">
 										<div class="inner-addon right-addon">
 
 											<i class="glyphicon glyphicon-search"></i> <input type="text"
@@ -939,15 +939,15 @@
 												placeholder="Start typing for Order No..."
 												auto-complete="autoCompleteTagOptions" />
 										</div>
-									</div>
+									</div> -->
 									
 									
-									<div class="col-md-2" ng-show="gui.shwoProductTag">
+									<!-- <div class="col-md-2" ng-show="gui.shwoProductTag">
 										<button class="btn btn-success btn click-to-select unit "
 											ng-click="addProductByTag()"
 											ng-disabled="!productTagBean.tagId">Add
 											Product By Order No</button>
-									</div>
+									</div> -->
 										
 								</div>
 							</div>
@@ -974,7 +974,7 @@
 														<div class="col-md-2">Product</div>
 														<div class="col-md-2">Supply Price</div>
 														<div class="col-md-1">Markup % </div>
-														<div class="col-md-1">Current Inventory</div>
+														<div class="col-md-1" ng-show="gui.isConsumeCompositeQunatity">Current Inventory</div>
 														<div class="col-md-2">Retail Price <small>(Exclusive Tax)</small></div>
 														<div class="col-md-1">Unit Quantity </div>
 														
@@ -1008,7 +1008,7 @@
 																	ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
 																	required style="width: 100%;" ng-disabled="true">
 															</div>
-															<div class="col-md-1 input-container">
+															<div class="col-md-1 input-container" ng-show="gui.isConsumeCompositeQunatity">
 																<input type="text"
 																	data-ng-model="product.currentInventory"
 																	min="1" class="" id="Name" 
@@ -1064,7 +1064,7 @@
 														<div class="col-md-2">Product</div>
 														<div class="col-md-2">Supply Price</div>
 														<div class="col-md-1">Markup % </div>
-														<div class="col-md-1">Current Inventory</div>
+														<div class="col-md-1" ng-show="gui.isConsumeCompositeQunatity">Current Inventory</div>
 														<div class="col-md-2">Retail Price <small>(Exclusive Tax)</small></div>
 														<div class="col-md-1">Unit Quantity </div>
 														
@@ -1098,7 +1098,7 @@
 																	ng-pattern='/^[0-9]+(\.[0-9]{1,5})?$/'
 																	required style="width: 100%;" ng-disabled="true">
 															</div>
-															<div class="col-md-1 input-container">
+															<div class="col-md-1 input-container" ng-show="gui.isConsumeCompositeQunatity">
 																<input type="text"
 																	data-ng-model="product.currentInventory"
 																	min="1" class="" id="Name" 

@@ -152,7 +152,7 @@
 												</div>
 												<div class="col-md-6">
 													<input ng-blur="calculateBill(false,invoiceDetail,'add')"
-														ng-readonly="itemDetailDisable"
+														ng-readonly="isInvoiceDetailLevelDiscountEnable"
 														ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
 														class="wr-input wr-input--sell-tendered ng-pristine ng-valid ng-not-empty ng-valid-valid-characters ng-valid-valid-min-value ng-valid-valid-max-value ng-touched"
 														name="tenderedAmount"
@@ -162,7 +162,7 @@
 												</div>
 												<div class="col-md-3">
 													<input ng-blur="calculateBill(true,invoiceDetail,'add')"
-														ng-readonly="itemDetailDisable"
+														ng-readonly="isInvoiceDetailLevelDiscountEnable"
 														ng-pattern="/^[0-9]+(\.[0-9]{1,2})?$/"
 														class="wr-input wr-input--sell-tendered ng-pristine ng-valid ng-not-empty ng-valid-valid-characters ng-valid-valid-min-value ng-valid-valid-max-value ng-touched"
 														name="tenderedAmount"

@@ -35,6 +35,7 @@ public class SellControllerBean implements Serializable{
 	private String phoneNumber ;
 	private String isReturnEnableonSell = "false"; 
 	private String isInvoiceLevelDiscountEnable = "true";
+	private String isInvoiceDetailLevelDiscountEnable = "true";
 	private String companyImagePath;
 	private String autoCreateStandardVariant;
 	private String defaultVariantName;
@@ -154,6 +155,19 @@ public class SellControllerBean implements Serializable{
 	}
 	public void setTermsAndConditions(String termsAndConditions) {
 		this.termsAndConditions = termsAndConditions;
+	}
+	/**
+	 * @return the isInvoiceDetailLevelDiscountEnable
+	 */
+	public String getIsInvoiceDetailLevelDiscountEnable() {
+		return isInvoiceDetailLevelDiscountEnable;
+	}
+	/**
+	 * @param isInvoiceDetailLevelDiscountEnable the isInvoiceDetailLevelDiscountEnable to set
+	 */
+	public void setIsInvoiceDetailLevelDiscountEnable(
+			String isInvoiceDetailLevelDiscountEnable) {
+		this.isInvoiceDetailLevelDiscountEnable = isInvoiceDetailLevelDiscountEnable;
 	}
 
 }

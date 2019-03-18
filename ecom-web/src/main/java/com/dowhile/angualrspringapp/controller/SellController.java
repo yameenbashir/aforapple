@@ -329,6 +329,14 @@ public class SellController  {
 				{
 					sellControllerBean.setIsInvoiceLevelDiscountEnable("false");
 				}
+				Configuration configurationInvoiceLineLevelDiscount = configurationService.getConfigurationByPropertyNameByCompanyId("INVOICE_LINE_LEVEL_DISCOUNT",currentUser.getCompany().getCompanyId());
+				if(configurationInvoiceLineLevelDiscount!=null && configurationInvoiceLineLevelDiscount.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+					sellControllerBean.setIsInvoiceDetailLevelDiscountEnable("true");
+				}
+				else
+				{
+					sellControllerBean.setIsInvoiceDetailLevelDiscountEnable("false");
+				}
 				
 				if(currentUser.getOutlet().getAddress()!=null){
 					address =  addressService.getAddressByAddressId(currentUser.getOutlet().getAddress().getAddressId(), company.getCompanyId());

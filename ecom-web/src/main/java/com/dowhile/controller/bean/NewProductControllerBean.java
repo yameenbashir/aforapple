@@ -40,6 +40,7 @@ public class NewProductControllerBean {
 	private ProductConfigurationBean productConfigurationBean;
 	private String showDutyCalculator;
 	List<ProductVariantBean> productBeansList;
+	private boolean consumeCompositeQunatity;
 	
 	/**
 	 * 
@@ -66,6 +67,7 @@ public class NewProductControllerBean {
 	 * @param productConfigurationBean
 	 * @param showDutyCalculator
 	 * @param productBeansList
+	 * @param consumeCompositeQunatity
 	 */
 	public NewProductControllerBean(List<SupplierBean> supplierBeans,
 			List<ProductTypeBean> productTypeBeanList,
@@ -78,7 +80,9 @@ public class NewProductControllerBean {
 			Map<String, Boolean> productVariantBarCodeMap,
 			List<TagBean> tagBeanList, String showProductTag,
 			ProductConfigurationBean productConfigurationBean,
-			String showDutyCalculator, List<ProductVariantBean> productBeansList) {
+			String showDutyCalculator,
+			List<ProductVariantBean> productBeansList,
+			boolean consumeCompositeQunatity) {
 		this.supplierBeans = supplierBeans;
 		this.productTypeBeanList = productTypeBeanList;
 		this.brandBeanList = brandBeanList;
@@ -97,6 +101,7 @@ public class NewProductControllerBean {
 		this.productConfigurationBean = productConfigurationBean;
 		this.showDutyCalculator = showDutyCalculator;
 		this.productBeansList = productBeansList;
+		this.consumeCompositeQunatity = consumeCompositeQunatity;
 	}
 
 	/**
@@ -353,5 +358,19 @@ public class NewProductControllerBean {
 	 */
 	public void setProductBeansList(List<ProductVariantBean> productBeansList) {
 		this.productBeansList = productBeansList;
+	}
+
+	/**
+	 * @return the consumeCompositeQunatity
+	 */
+	public boolean isConsumeCompositeQunatity() {
+		return consumeCompositeQunatity;
+	}
+
+	/**
+	 * @param consumeCompositeQunatity the consumeCompositeQunatity to set
+	 */
+	public void setConsumeCompositeQunatity(boolean consumeCompositeQunatity) {
+		this.consumeCompositeQunatity = consumeCompositeQunatity;
 	}
 }

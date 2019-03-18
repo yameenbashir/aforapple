@@ -36,6 +36,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 	$scope.checkDuplicate = false;
 	$scope.RateArea = true;
 	$scope.gui.showDutyCalculator = false;
+	$scope.gui.isConsumeCompositeQunatity = false;
 	$scope.showHideRateText = "Hide Assessment";
 	$scope.varientWarningMessage = "Please select Varient Attribute";
 	$scope.verientsOutletList = [];
@@ -91,7 +92,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 			$scope.temp = {};
 			if(!checkproductVariantExistinProductList($scope.productVariantBean.productId) ){
 				$scope.temp = angular.copy($scope.productVariantBean);
-				if(parseInt($scope.temp.currentInventory)==0){
+				if(parseInt($scope.temp.currentInventory)==0 && $scope.gui.isConsumeCompositeQunatity){
 					$scope.dynamicError = true;
 					$scope.dynamicErrorMessage = "Product "+$scope.productVariantBean.variantAttributeName+" current inventory is 0.You can not add it.";
 					$timeout(function(){
@@ -99,7 +100,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 					}, 2000);
 					return;
 				}
-				if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+				if($scope.gui.isConsumeCompositeQunatity && parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
 						&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
 					var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 					var markUp = parseFloat($scope.temp.markupPrct);
@@ -107,16 +108,16 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 					$scope.temp.retailPrice = (result.toFixed(2)).toString();
 					$scope.temp.discount = "0.00";
 					$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
-					/*$scope.gui.standardProduct = true;
-					$scope.gui.varientProducts = true;
-					$scope.gui.trackingProduct = true;
-					gui.varientProducts
-					for(var i=0;i<$scope.outletList.length;i++){
-				var salesTax = parseFloat($scope.outletList[i].defaultTax);
-				var taxAmount = result*(salesTax/100);
-				$scope.outletList[i].taxAmount = (taxAmount.toFixed(2)).toString();
-				$scope.outletList[i].retailPrice = ((taxAmount+result).toFixed(2)).toString();
-			}*/
+					
+					
+					$scope.productList.push($scope.temp);
+				}else if (!$scope.gui.isConsumeCompositeQunatity){
+					var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
+					var markUp = parseFloat($scope.temp.markupPrct);
+					var result = supplyPrice*(markUp/100)+supplyPrice;
+					$scope.temp.retailPrice = (result.toFixed(2)).toString();
+					$scope.temp.discount = "0.00";
+					$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
 					
 					$scope.productList.push($scope.temp);
 				}else{
@@ -140,7 +141,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 					$scope.temp = {};
 					if(!checkproductVariantExistinProductList($scope.productVariantBeanList[i].productVariantId)){
 						$scope.temp = angular.copy($scope.productVariantBeanList[i]);
-						if(parseInt($scope.temp.currentInventory)==0){
+						if(parseInt($scope.temp.currentInventory)==0 && $scope.gui.isConsumeCompositeQunatity){
 							$scope.dynamicError = true;
 							$scope.dynamicErrorMessage = "Product Variant "+$scope.productVariantBean.variantAttributeName+" current inventory is 0.You can not add it.";
 							$timeout(function(){
@@ -148,8 +149,16 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 							}, 2000);
 							return;
 						}
-						if(parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
+						if($scope.gui.isConsumeCompositeQunatity && parseInt($scope.temp.uniteQunatity)<=parseInt($scope.temp.currentInventory)
 								&& parseInt($scope.temp.uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.temp.currentInventory)){
+							var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
+							var markUp = parseFloat($scope.temp.markupPrct);
+							var result = supplyPrice*(markUp/100)+supplyPrice;
+							$scope.temp.retailPrice = (result.toFixed(2)).toString();
+							$scope.temp.discount = "0.00";
+							$scope.temp.compositeQunatityConsumed = $scope.temp.uniteQunatity*$scope.gui.compositeQunatity;
+							$scope.productList.push($scope.temp);
+						}else if(!$scope.gui.isConsumeCompositeQunatity){
 							var supplyPrice = parseFloat($scope.temp.supplyPriceExclTax);
 							var markUp = parseFloat($scope.temp.markupPrct);
 							var result = supplyPrice*(markUp/100)+supplyPrice;
@@ -214,8 +223,12 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 		if($scope.productList.length>0){
 			for(var i=0;i<$scope.productList.length;i++){
 				if(!isNaN($scope.productList[i].uniteQunatity)){
-					if(parseInt($scope.productList[i].uniteQunatity)<=parseInt($scope.productList[i].currentInventory)
+					if($scope.gui.isConsumeCompositeQunatity && parseInt($scope.productList[i].uniteQunatity)<=parseInt($scope.productList[i].currentInventory)
 							&& parseInt($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity)<=parseInt($scope.productList[i].currentInventory)){
+						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity;
+						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity);
+						retailPrice = retailPrice+retailPric;
+					}else if(!$scope.gui.isConsumeCompositeQunatity){
 						$scope.productList[i].compositeQunatityConsumed = $scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity;
 						var retailPric = parseFloat($scope.productList[i].retailPrice)*parseFloat($scope.productList[i].uniteQunatity*$scope.gui.compositeQunatity);
 						retailPrice = retailPrice+retailPric;
@@ -880,6 +893,14 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 					}else{
 						$scope.gui.shwoProductTag = false;
 					}
+				}
+				if($scope.data.consumeCompositeQunatity!=null){
+					if($scope.data.consumeCompositeQunatity){
+						$scope.gui.isConsumeCompositeQunatity = true;
+					}else{
+						$scope.gui.isConsumeCompositeQunatity = false;
+					}
+					
 				}
 				if($scope.data.showDutyCalculator!=null){
 					if($scope.data.showDutyCalculator=='true'){

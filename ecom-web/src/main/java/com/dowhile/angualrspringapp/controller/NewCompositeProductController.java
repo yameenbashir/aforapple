@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping;
 
 import com.dowhile.Brand;
 import com.dowhile.CompositeProduct;
@@ -309,9 +310,15 @@ public class NewCompositeProductController {
 				}else{
 					newProductControllerBean.setShowDutyCalculator(ControllersConstants.FALSE);
 				}
+				Configuration consumeCompositeQunatityConfiguration = configurationMap.get("CONSUME_COMPOSITE_QUNATITY");
+				boolean isConsumeCompositeQunatity = false;
+				if(consumeCompositeQunatityConfiguration!=null && consumeCompositeQunatityConfiguration.getPropertyValue().equalsIgnoreCase(ControllersConstants.TRUE)){
+					isConsumeCompositeQunatity = true;
+				}
 				//Map<Integer, Map<String, Configuration>> allCompaniesConfigurationsMap = applicationCacheController.populateAllCompaniesConfigurationsMap(ControllersConstants.BOOLEAN_FALSE);
 				
 				newProductControllerBean.setProductConfigurationBean(ConfigurationUtil.setProductConifurationsFromConfigurationMap(configurationMap));
+				newProductControllerBean.setConsumeCompositeQunatity(isConsumeCompositeQunatity);
 
 				util.AuditTrail(request, currentUser, "NewProductController.getNewProductControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived NewProductController data successfully ",false);
@@ -787,14 +794,19 @@ public class NewCompositeProductController {
 			}else{
 			}
 			if(newProduct!=null && productBean.getIsComposite()!=null && productBean.getIsComposite().equalsIgnoreCase("true")){
+				Configuration consumeCompositeQunatityConfiguration = configurationMap.get("CONSUME_COMPOSITE_QUNATITY");
+				boolean isConsumeCompositeQunatity = false;
+				if(consumeCompositeQunatityConfiguration!=null && consumeCompositeQunatityConfiguration.getPropertyValue().equalsIgnoreCase(ControllersConstants.TRUE)){
+					isConsumeCompositeQunatity = true;
+				}
 				if(newProduct.getCurrentInventory()>0){
 					boolean isCreated = createCompositeProductAndCompositeProductHistory(newProduct,productBean,currentUser,productMap , productVariantMap);
-					if(isCreated){
+					if(isCreated && isConsumeCompositeQunatity){
 						createSelfProcessOrder(newProduct,productBean,currentUser,productMap , productVariantMap,sessionId,request);
 					}
 				}else if(productBean.getStandardProduct().equalsIgnoreCase("true") && productBean.getVarientProducts().equalsIgnoreCase("true") && isCcreateSelfProcessOrder){
 					boolean isCreated = createCompositeProductAndCompositeProductHistory(newProduct,productBean,currentUser,productMap , productVariantMap);
-					if(isCreated){
+					if(isCreated && isConsumeCompositeQunatity){
 						createSelfProcessOrder(newProduct,productBean,currentUser,productMap , productVariantMap,sessionId,request);
 					}
 				}

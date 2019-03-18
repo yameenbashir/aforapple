@@ -467,7 +467,7 @@ var StockSupplierTransferDetailsController = ['$scope', '$sce', '$http', '$timeo
 			$scope.error = false;
 			$scope.loading = true;
 			$scope.stockOrderBean.statusId = "3"; // Completed status
-			$http.post('purchaseOrderDetails/updateAndReturnStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
+			$http.post('purchaseOrderDetails/updateAndTransferToSupplierStockOrderDetails/'+$scope._s_tk_com+'/'+$scope.grandTotal+'/'+$scope.stockOrderBean.itemCount, $scope.stockOrderDetailBeansList)
 			.success(function(Response) {
 				$scope.loading = false;
 
@@ -504,7 +504,7 @@ var StockSupplierTransferDetailsController = ['$scope', '$sce', '$http', '$timeo
 
 	$scope.autoCompleteOptions = {
 			minimumChars : 1,
-			dropdownHeight : '105px',
+			dropdownHeight : '205px',
 			data : function(term) {
 				term = term.toLowerCase();
 				if(term.length>15){

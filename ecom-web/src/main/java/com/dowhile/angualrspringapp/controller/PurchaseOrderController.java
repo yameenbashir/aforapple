@@ -45,6 +45,7 @@ import com.dowhile.service.StatusService;
 import com.dowhile.service.StockOrderService;
 import com.dowhile.service.StockOrderTypeService;
 import com.dowhile.service.util.ServiceUtil;
+import com.dowhile.util.DateTimeUtil;
 import com.dowhile.util.SessionValidator;
 
 /**
@@ -438,15 +439,23 @@ public class PurchaseOrderController {
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 				if (stockOrderBean != null) {				
 					StockOrder stockOrder = stockOrderService.getStockOrderByStockOrderID(Integer.parseInt(stockOrderBean.getStockOrderId()),currentUser.getCompany().getCompanyId());
-					stockOrder.setStockOrderId(Integer.parseInt(stockOrderBean.getStockOrderId()));
+					if(stockOrderBean.getStockOrderId() != null){
+						stockOrder.setStockOrderId(Integer.parseInt(stockOrderBean.getStockOrderId()));
+					}
 					stockOrder.setActiveIndicator(true);
 					if(stockOrderBean.getRetailPriceBill() != null){
 						stockOrder.setRetailPriceBill(Boolean.valueOf(stockOrderBean.getRetailPriceBill()));
 					}
-					stockOrder.setAutofillReorder(Boolean.valueOf(stockOrderBean.getAutofillReorder()));
-					stockOrder.setDiliveryDueDate(dateFormat.parse(stockOrderBean.getDiliveryDueDate()));
+					if(stockOrderBean.getAutofillReorder() != null){
+						stockOrder.setAutofillReorder(Boolean.valueOf(stockOrderBean.getAutofillReorder()));
+					}
+					if(stockOrderBean.getDiliveryDueDate() != null){
+						stockOrder.setDiliveryDueDate(dateFormat.parse(stockOrderBean.getDiliveryDueDate()));
+					}
 					stockOrder.setLastUpdated(new Date());
+					if(stockOrderBean.getOrderNo()!= null){
 					stockOrder.setOrderNo(stockOrderBean.getOrderNo());
+					}
 					stockOrder.setOutletByOutletAssocicationId(outletService.getOuletByOutletId(Integer.parseInt(stockOrderBean.getOutletId()),currentUser.getCompany().getCompanyId()));
 					if(stockOrderBean.getSourceOutletId() != null && stockOrderBean.getSourceOutletId() != ""){
 						stockOrder.setOutletBySourceOutletAssocicationId(outletService.getOuletByOutletId(Integer.parseInt(stockOrderBean.getSourceOutletId()),currentUser.getCompany().getCompanyId()));
@@ -461,14 +470,22 @@ public class PurchaseOrderController {
 					else{
 						stockOrder.setOutletBySourceOutletAssocicationId(outletService.getOuletByOutletId(Integer.parseInt(stockOrderBean.getOutletId()), currentUser.getCompany().getCompanyId()));
 						stockOrder.setOutletByOutletAssocicationId(outletService.getOuletByOutletId(Integer.parseInt(stockOrderBean.getSupplierId()), currentUser.getCompany().getCompanyId()));
-					}*/
-					stockOrder.setStatus(statusService.getStatusByStatusId(Integer.parseInt(stockOrderBean.getStatusId()))); 				
-					stockOrder.setStockOrderType(stockOrderTypeService.getStockOrderTypeByStockOrderTypeId(Integer.parseInt(stockOrderBean.getStockOrderTypeId())));
-					stockOrder.setStockRefNo(stockOrderBean.getStockRefNo());
+					}*/					
+					if(stockOrderBean.getStatusId() != null){
+						stockOrder.setStatus(statusService.getStatusByStatusId(Integer.parseInt(stockOrderBean.getStatusId()))); 				
+					}
+					if(stockOrderBean.getStockOrderTypeId() != null){
+						stockOrder.setStockOrderType(stockOrderTypeService.getStockOrderTypeByStockOrderTypeId(Integer.parseInt(stockOrderBean.getStockOrderTypeId())));
+					}
+					if(stockOrderBean.getStockRefNo() != null){
+						stockOrder.setStockRefNo(stockOrderBean.getStockRefNo());
+					}
 					if(stockOrderBean.getSupplierId() != null && stockOrderBean.getSupplierId() != ""){ 
 						stockOrder.setContactId(Integer.parseInt(stockOrderBean.getSupplierId()));
 					}
-					stockOrder.setContactInvoiceNo(stockOrderBean.getSupplierInvoiceNo());
+					if(stockOrderBean.getSupplierInvoiceNo() != null){
+						stockOrder.setContactInvoiceNo(stockOrderBean.getSupplierInvoiceNo());
+					}
 					stockOrder.setUpdatedBy(currentUser.getUserId());
 					stockOrderService.updateStockOrder(stockOrder,currentUser.getCompany().getCompanyId());
 

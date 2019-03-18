@@ -225,8 +225,8 @@
 															<th>Product</th>
 															<!-- <th>Stock on Hand</th> -->
 															<th>Quantity</th>
-															<th  ng-hide="isAdmin()">Supply Price</th>
-															<!-- <th>Retail Price</th> -->
+															<!-- <th  ng-hide="isAdmin()">Supply Price</th> -->
+															<th>Retail Price</th>
 															<th>Total</th>
 
 														</tr>
@@ -239,16 +239,14 @@
 															<td ng-bind="stockOrderDetailBean.variantAttributeName"></td>
 															<!-- <td	ng-bind="stockOrderDetailBean.productVariantCurrInventory"></td> -->
 															<td ng-bind="stockOrderDetailBean.orderProdQty"></td>
-															<td ng-bind="stockOrderDetailBean.ordrSupplyPrice"  ng-hide="isAdmin()"></td>
-															<!-- <td ng-bind="stockOrderDetailBean.retailPrice"></td> -->
+															<!-- <td ng-bind="stockOrderDetailBean.ordrSupplyPrice"  ng-hide="isAdmin()"></td> -->
+															 <td ng-bind="stockOrderDetailBean.retailPrice"></td>
 															<td ng-bind="stockOrderDetailBean.total"></td>
 
 														</tr>
 													</tbody>
 													<tfoot>
 													<tr>
-														<th></th>
-														<th></th>
 														<th>Total Item Count</th>
 														<th ng-bind = "stockOrderBean.itemCount"></th>													
 														<th>Total</th>														
@@ -300,8 +298,8 @@
 															<th>Product</th>
 															<!-- <th>Stock on Hand</th> -->
 															<th>Quantity</th>
-														<!-- 	<th>Retail Price</th> -->
-															<th>Total</th>
+														 	<!-- <th>Retail Price</th>
+															<th>Total</th> -->
 
 														</tr>
 													</thead>
@@ -313,19 +311,18 @@
 															<td ng-bind="stockOrderDetailBean.variantAttributeName"></td>
 															<!-- <td	ng-bind="stockOrderDetailBean.productVariantCurrInventory"></td> -->
 															<td ng-bind="stockOrderDetailBean.orderProdQty"></td>
-															<!-- <td ng-bind="stockOrderDetailBean.retailPrice"></td> -->
-															<td ng-bind="stockOrderDetailBean.total"></td>
+															<!-- <td ng-bind="stockOrderDetailBean.retailPrice"></td>
+															<td ng-bind="stockOrderDetailBean.total"></td> -->
 														</tr>
 													</tbody>
 													<tfoot>
 													<tr>
 														<th></th>
-														<th></th>
 														<th>Total Item Count</th>
 														<th ng-bind = "stockOrderBean.itemCount"></th>														
-														<th>Total</th>
+														<!-- <th>Total</th> -->
 														
-														<th ng-bind = "grandTotal"></th>
+														<!-- <th ng-bind = "grandTotal"></th> -->
 													</tr>													
 												</tfoot>
 												</table>
