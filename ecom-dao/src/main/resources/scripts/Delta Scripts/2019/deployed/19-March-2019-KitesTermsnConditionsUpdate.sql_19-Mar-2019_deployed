@@ -1,0 +1,11 @@
+USE `ecom`;
+update configuration set PROPERTY_VALUE = '<div>
+Thank you for your Shopping.<br> 
+Items once purchased are non refundable,but can be exchanged within maximum of 5 days with original sale invoice.<br>
+Items purchased during sale period can be exchanged within the same sale compaign with original sale invoice only and can not be exchanged afterwards.<br>
+Claims will be entertained as per company policy.<br>
+Claims processing time is 10 working days and final decision will be on sole discretion of the company.<br>
+Claims of pilling on garment will not be entertained.<br>
+Cash refunds are not allowed, you may exchange one product with another of similar value or greater value by paying the difference.  <br>
+</div>'
+where PROPERTY_NAME = "TERMS_AND_CONDITIONS" and COMPANY_ASSOCIATION_ID = 1;
