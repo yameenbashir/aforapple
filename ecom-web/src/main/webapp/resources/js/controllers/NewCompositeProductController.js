@@ -90,7 +90,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 		}
 		if($scope.productVariantBean.isProduct.toString() == "true"){
 			$scope.temp = {};
-			if(!checkproductVariantExistinProductList($scope.productVariantBean.productId) ){
+			if(!checkproductVariantExistinProductList(true,$scope.productVariantBean.productId) ){
 				$scope.temp = angular.copy($scope.productVariantBean);
 				if(parseInt($scope.temp.currentInventory)==0 && $scope.gui.isConsumeCompositeQunatity){
 					$scope.dynamicError = true;
@@ -139,7 +139,7 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 			for(var i=0;i<$scope.productVariantBeanList.length;i++){
 				if($scope.productVariantBean.productVariantId == $scope.productVariantBeanList[i].productVariantId){
 					$scope.temp = {};
-					if(!checkproductVariantExistinProductList($scope.productVariantBeanList[i].productVariantId)){
+					if(!checkproductVariantExistinProductList(false,$scope.productVariantBeanList[i].productVariantId)){
 						$scope.temp = angular.copy($scope.productVariantBeanList[i]);
 						if(parseInt($scope.temp.currentInventory)==0 && $scope.gui.isConsumeCompositeQunatity){
 							$scope.dynamicError = true;
@@ -250,12 +250,19 @@ var NewCompositeProductController = ['$scope', '$http', '$window','$cookieStore'
 		$scope.evaluateRetailPrice()
 	};
 	
-	function checkproductVariantExistinProductList(variantId){
+	function checkproductVariantExistinProductList(isProduct,variantId){
 		if($scope.productList.length>0){
 			for(var i=0;i<$scope.productList.length;i++){
-				if($scope.productList[i].productVariantId==variantId){
-					return true;
+				if(isProduct){
+					if($scope.productList[i].productId==variantId){
+						return true;
+					}
+				}else{
+					if($scope.productList[i].productVariantId==variantId){
+						return true;
+					}
 				}
+				
 			}
 		}
 		return false;
