@@ -1284,7 +1284,7 @@ public class PurchaseOrderDetailsController {
 								stockOrderDetail.setIsProduct(false);
 								//stockOrderDetail.setProductVariant(productVariant);
 								int preQuantity = productVariant.getCurrentInventory();
-								productVariant.setCurrentInventory(preQuantity );//- stockOrderDetail.getOrderProdQty()						
+								productVariant.setCurrentInventory(preQuantity - stockOrderDetail.getOrderProdQty());						
 								productVariant.setLastUpdated(new Date());
 								productVariant.setUserByUpdatedBy(currentUser);
 								//productVariantService.updateProductVariant(productVariant, Actions.UPDATE, productVariant.getCurrentInventory(),currentUser.getCompany());
@@ -1295,7 +1295,7 @@ public class PurchaseOrderDetailsController {
 								//stockOrderDetail.setProduct(product);
 								stockOrderDetail.setIsProduct(true);
 								int preQuantity = product.getCurrentInventory();
-								product.setCurrentInventory(preQuantity );//- stockOrderDetail.getOrderProdQty()						
+								product.setCurrentInventory(preQuantity - stockOrderDetail.getOrderProdQty());						
 								product.setLastUpdated(new Date());
 								product.setUserByUpdatedBy(currentUser);
 								//productService.updateProduct(product, Actions.INVENTORY_TRANSFER, product.getCurrentInventory(),currentUser.getCompany());
@@ -1570,7 +1570,7 @@ public class PurchaseOrderDetailsController {
 								stockOrderDetail.setProductVariant(productVariant);
 								stockOrderDetail.setIsProduct(false);
 								int preQuantity = productVariant.getCurrentInventory();
-								productVariant.setCurrentInventory(preQuantity );//- stockOrderDetail.getOrderProdQty()						
+								productVariant.setCurrentInventory(preQuantity - stockOrderDetail.getOrderProdQty());						
 								productVariant.setLastUpdated(new Date());
 								productVariant.setUserByUpdatedBy(currentUser);
 								//productVariantService.updateProductVariant(productVariant, Actions.UPDATE, productVariant.getCurrentInventory(),currentUser.getCompany());
@@ -1581,7 +1581,7 @@ public class PurchaseOrderDetailsController {
 								stockOrderDetail.setProduct(product);
 								stockOrderDetail.setIsProduct(true);
 								int preQuantity = product.getCurrentInventory();
-								product.setCurrentInventory(preQuantity );//- stockOrderDetail.getOrderProdQty()						
+								product.setCurrentInventory(preQuantity - stockOrderDetail.getOrderProdQty());						
 								product.setLastUpdated(new Date());
 								product.setUserByUpdatedBy(currentUser);
 								//productService.updateProduct(product, Actions.UPDATE, product.getCurrentInventory(),currentUser.getCompany());
