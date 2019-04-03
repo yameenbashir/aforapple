@@ -328,7 +328,7 @@ public class ProductVariant  implements java.io.Serializable {
    }
 
    
-   @Column(name="MARKUP_PRCT", nullable=false, precision=8, scale=5)
+   @Column(name="MARKUP_PRCT", nullable=false, precision=12, scale=5)
    public BigDecimal getMarkupPrct() {
        return this.markupPrct;
    }
