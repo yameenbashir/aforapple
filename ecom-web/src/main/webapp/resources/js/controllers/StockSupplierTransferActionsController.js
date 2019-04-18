@@ -105,8 +105,8 @@ var StockSupplierTransferActionsController = ['$scope', '$http', '$window', '$ti
 					+'</div>'
 					+'<div class="row">'
 					+'<div class="col-md-2"></div> '
-					+'<div class="col-md-2"><h4><label> Address: </label> </h4></div>'
-					+'<div class="col-md-2"><h4>'+$scope.stockOrderBean.outletAddress+' </h4></div> '
+					+'<div class="col-md-2"><h4><label> Remarks: </label> </h4></div>'
+					+'<div class="col-md-2"><h4>'+$scope.stockOrderBean.remarks+' </h4></div> '
 					+'<div class="col-md-6"></div> '
 					+'</div> <div>';
 				setTimeout(
