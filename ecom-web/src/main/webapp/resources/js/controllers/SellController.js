@@ -886,11 +886,13 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 					$scope.InvoiceMainBeanList = [];
 					$scope.InvoiceMainBeanList.push($scope.InvoiceMainBean);
 					localforage.setItem('InvoiceMainBeanList', $scope.InvoiceMainBeanList);
+					localforage.setItem('invoiceMainBeanNewList', $scope.InvoiceMainBeanList);
 
 				}else{
 					$scope.InvoiceMainBeanList = value;
 					$scope.InvoiceMainBeanList.push($scope.InvoiceMainBean);
 					localforage.setItem('InvoiceMainBeanList', $scope.InvoiceMainBeanList);
+					localforage.setItem('invoiceMainBeanNewList', $scope.InvoiceMainBeanList);
 
 				}
 				$rootScope.InvoiceMainBeanList = value;
@@ -1007,6 +1009,7 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 			if($rootScope.online){
 				$scope.InvoiceMainBeanList.push($scope.InvoiceMainBean);
 				localforage.setItem('InvoiceMainBeanList', $scope.InvoiceMainBeanList);
+				localforage.setItem('invoiceMainBeanNewList', $scope.InvoiceMainBeanList);
 				$scope.salenoncashSuccess(Response);
 			}
 			$scope.loading = false;
@@ -1104,6 +1107,7 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 			if($rootScope.online){
 				$scope.InvoiceMainBeanList.push($scope.InvoiceMainBean);
 				localforage.setItem('InvoiceMainBeanList', $scope.InvoiceMainBeanList);
+				localforage.setItem('invoiceMainBeanNewList', $scope.InvoiceMainBeanList);
 				$scope.success = true;
 				$scope.successMessage = Response.data;
 				// $scope.salesComplete = true;
@@ -1157,6 +1161,10 @@ var SellController =  ['$scope', '$http', '$window', '$cookieStore', '$rootScope
 	$scope.registerOpen = false;
 	$scope.dailyRegesterId = "";
 	$scope.getAllProducts = function() {
+		/*if(!$rootScope.online){
+			$scope.registerOpen = true;
+			return;
+		}*/
 		if (typeof $scope.sellControllerBean.registerStatus != 'undefined') {
 			if ($scope.sellControllerBean.registerStatus == 'true') {
 				$scope.dailyRegesterId = $scope.sellControllerBean.dailyRegisterId;

@@ -169,33 +169,34 @@ App.run(['$rootScope', '$templateCache','$cookieStore','$window','$http','$timeo
 	$rootScope.synchsales = function() {
 		$rootScope.successSynchsales = false;
 		$rootScope.errorSynchsales = false;
-		$rootScope.loadingSynchsales = true;
+		
 
-		localforage.getItem('InvoiceMainBeanList').then(function(value) {
+		localforage.getItem('invoiceMainBeanNewList').then(function(value) {
 			// This code runs once the value has been loaded
 			// from the offline store.
 
 			if(value!=null && $cookieStore.get('_s_tk_com')!=null && typeof $cookieStore.get('_s_tk_com') != 'undefined'){
-				$rootScope.InvoiceMainBeanList = value;
-
-				$http.post('sell/synchsales/' + $cookieStore.get('_s_tk_com'),$rootScope.InvoiceMainBeanList).success(function(Response) {
+				$rootScope.invoiceMainBeanNewRootList = value;
+				$rootScope.loadingSynchsales = true;
+				$http.post('sell/synchsales/' + $cookieStore.get('_s_tk_com'),$rootScope.invoiceMainBeanNewRootList).success(function(Response) {
 
 					if (Response.status == 'SUCCESSFUL') {
 
-						if($rootScope.InvoiceMainBeanList != null)
+						if($rootScope.invoiceMainBeanNewRootList != null)
 						{
 
-							$rootScope.InvoiceMainBeanList = _.filter($rootScope.InvoiceMainBeanList, function(val) {
+							$rootScope.invoiceMainBeanNewRootList = _.filter($rootScope.invoiceMainBeanNewRootList, function(val) {
 								return val.synchedInd == 'true'
 
 							});
 
 							//updating the sale data in index DB
-							localforage.setItem('InvoiceMainBeanList', $rootScope.InvoiceMainBeanList);
+							localforage.setItem('invoiceMainBeanNewList', null);
+							localforage.setItem('InvoiceMainBeanList', null);
 						}
 
 						$rootScope.successSynchsales = true;
-						$rootScope.successMessageSynchsales = Response.data;
+						$rootScope.successMessageSynchsales = 'Request Processed successfully.';
 						$rootScope.loadingSynchsales = false;
 						$timeout(function() {
 							$rootScope.successSynchsales = false;
@@ -273,7 +274,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 
 	$routeProvider.when('/home', {
 		templateUrl: 'resources/html/home/layout.html',
-		controller: HomeController,
+		controller:HomeController,
 		resolve: {
 			"HomeControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
 				var myDefer = $q.defer();
@@ -2468,12 +2469,13 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 
 				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["status"]==true){
 
+					
 					localforage.getItem('InvoiceMainBeanList').then(function(value) {
-						$rootScope.InvoiceMainBeanList = value;
+						$rootScope.invoiceMainBeanStatusList = value;
 						$timeout(function(){
 							myDefer.resolve({
 								loadControllerData: function() {
-									controllerData = $rootScope.InvoiceMainBeanList;
+									controllerData = $rootScope.invoiceMainBeanStatusList;
 									return 	controllerData;  
 								}
 							});
@@ -5236,6 +5238,10 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 	$routeProvider.when('/backup', {
 		templateUrl: 'resources/html/backup/layout.html',
 		controller: BackupController
+	});
+	$routeProvider.when('/undefined', {
+		templateUrl: 'resources/html/login/layout.html',
+		controller: LoginController
 	});
 	$routeProvider.otherwise({redirectTo: '/home'});
 
