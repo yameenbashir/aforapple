@@ -14,13 +14,13 @@ var StatusController = ['$scope', '$http', '$window', '$cookieStore','$rootScope
 	$scope.brandBean = {};
 	
 	$scope.sessionValidation = function() {
-		 $rootScope.newflag = false;
+		/* $rootScope.newflag = false;
 		
 		 localforage.getItem('invoiceMainBeanNewList').then(function(value) {
 			 $scope.invoiceMainBeanStatusList = value;
 			 localforage.setItem('InvoiceMainBeanList', $scope.invoiceMainBeanStatusList);
 			
-		 });
+		 });*/
 		$scope.fetchData();
 	};
 
