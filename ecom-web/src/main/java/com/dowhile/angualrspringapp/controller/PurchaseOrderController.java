@@ -122,8 +122,8 @@ public class PurchaseOrderController {
 				}
 				else{
 					purchaseOrderControllerBean.setRetailPriceBill("false");
-				}			
-				
+				}		
+
 				util.AuditTrail(request, currentUser, "PurchaseOrderController.getPurchaseOrderControllerData", 
 						"User "+ currentUser.getUserEmail()+" retrived PurchaseOrderControllerData successfully ",false);
 				return new Response(purchaseOrderControllerBean, StatusConstants.SUCCESS,
@@ -145,6 +145,54 @@ public class PurchaseOrderController {
 
 	}
 
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping(value = "/stockSupplierTransferRetailPrice/{sessionId}", method = RequestMethod.POST)
+	public @ResponseBody Response stockSupplierTransferRetailPrice(@PathVariable("sessionId") String sessionId,
+			@RequestBody StockOrderBean stockOrderBean, HttpServletRequest request){
+		if(SessionValidator.isSessionValid(sessionId, request)){
+			HttpSession session =  request.getSession(false);
+			Map<String ,Configuration> configurationMap = (Map<String, Configuration>) session.getAttribute("configurationMap");
+			User currentUser = (User) session.getAttribute("user");	
+			String retailPriceBill =  "false";
+			try {			
+				
+				Configuration stockSupplierTransferRetailBill = configurationMap.get("RETAIL_PRICE_BILL_STOCK_SUPPLIER_TRANSFER");
+				if (stockOrderBean != null) {	
+					if(stockOrderBean.getStockOrderTypeId().toString().equalsIgnoreCase("5")){
+						if(stockSupplierTransferRetailBill != null ){
+							if(stockSupplierTransferRetailBill.getPropertyValue().toString().equalsIgnoreCase(ControllersConstants.TRUE)){
+								retailPriceBill = stockSupplierTransferRetailBill.getPropertyValue().toString();
+							}
+							else{
+								retailPriceBill = stockSupplierTransferRetailBill.getPropertyValue().toString();
+							}
+						}
+						else{
+							retailPriceBill = "false";
+						}
+					}
+					util.AuditTrail(request, currentUser, "PurchaseOrderController.stockSupplierTransferRetailPrice", 
+							"User "+ currentUser.getUserEmail()+" get StockSupplierTransfer retail price bill+"+stockOrderBean.getStockOrderId()+" successfully ",false);
+					return new Response(retailPriceBill,StatusConstants.SUCCESS,	LayOutPageConstants.STAY_ON_PAGE);
+				}else{
+					util.AuditTrail(request, currentUser, "PurchaseOrderController.stockSupplierTransferRetailPrice", "User "+ 
+							currentUser.getUserEmail()+" Unable to get StockSupplierTransfer retail price bill : ",false);
+					return new Response(MessageConstants.SYSTEM_BUSY,StatusConstants.BUSY,LayOutPageConstants.STAY_ON_PAGE);
+				}
+
+			}catch(Exception e){
+				e.printStackTrace();
+				StringWriter errors = new StringWriter();
+				e.printStackTrace(new PrintWriter(errors));
+				util.AuditTrail(request, currentUser, "PurchaseOrderController.stockSupplierTransferRetailPrice",
+						"Error Occured " + errors.toString(),true);
+				return new Response(MessageConstants.SYSTEM_BUSY,StatusConstants.BUSY,LayOutPageConstants.STAY_ON_PAGE);
+			}
+		}else{
+			return new Response(MessageConstants.INVALID_SESSION,StatusConstants.INVALID,LayOutPageConstants.LOGIN);
+		}		
+	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@RequestMapping(value = "/getAllOutlets/{sessionId}", method = RequestMethod.POST)
@@ -365,7 +413,7 @@ public class PurchaseOrderController {
 					//In case of self process order we are setting remarks
 					if(stockOrderBean.getRemarks()!=null && !stockOrderBean.getRemarks().equalsIgnoreCase("")){
 						stockOrder.setRemarks(stockOrderBean.getRemarks());
-							
+
 					}
 					//stockOrder.setReturnNo(stockOrderBean.getReturnNo());
 					stockOrder.setStatus(statusService.getStatusByStatusId(Integer.parseInt(stockOrderBean.getStatusId().trim()))); 				
@@ -454,7 +502,7 @@ public class PurchaseOrderController {
 					}
 					stockOrder.setLastUpdated(new Date());
 					if(stockOrderBean.getOrderNo()!= null){
-					stockOrder.setOrderNo(stockOrderBean.getOrderNo());
+						stockOrder.setOrderNo(stockOrderBean.getOrderNo());
 					}
 					stockOrder.setOutletByOutletAssocicationId(outletService.getOuletByOutletId(Integer.parseInt(stockOrderBean.getOutletId()),currentUser.getCompany().getCompanyId()));
 					if(stockOrderBean.getSourceOutletId() != null && stockOrderBean.getSourceOutletId() != ""){
@@ -487,6 +535,7 @@ public class PurchaseOrderController {
 						stockOrder.setContactInvoiceNo(stockOrderBean.getSupplierInvoiceNo());
 					}
 					stockOrder.setUpdatedBy(currentUser.getUserId());
+			
 					stockOrderService.updateStockOrder(stockOrder,currentUser.getCompany().getCompanyId());
 
 					util.AuditTrail(request, currentUser, "PurchaseOrderController.addStockOrder", 
