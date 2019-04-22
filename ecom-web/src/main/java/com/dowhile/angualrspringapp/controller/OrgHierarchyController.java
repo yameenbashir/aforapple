@@ -91,7 +91,7 @@ public class OrgHierarchyController {
 			
 			User currentUser = (User) session.getAttribute("user");
 			try {
-				List<Outlet> outlets = outletService.getOutlets(currentUser.getCompany().getCompanyId());
+				List<Outlet> outlets = outletService.getAllActiveOutletsByCompanyId(currentUser.getCompany().getCompanyId());
 				OrganizationGraph organizationGraph =  new OrganizationGraph();
 				organizationGraph.setName(makeTitle(currentUser.getCompany().getCompanyName(),String.valueOf(currentUser.getCompany().getCompanyId()),sessionId,"top-level"));
 				organizationGraph.setTitle(currentUser.getCompany().getCompanyName());
