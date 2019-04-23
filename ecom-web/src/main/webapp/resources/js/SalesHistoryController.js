@@ -8,6 +8,7 @@ var SalesHistoryController = ['$scope', '$http', '$window','$cookieStore','$root
 	
 	$rootScope.MainSideBarhideit = false;
 	$rootScope.MainHeaderideit = false;
+	$rootScope.applyDateRange = false;
 	
 	
 	$scope.sesssionValidation = function(){
@@ -108,6 +109,28 @@ var SalesHistoryController = ['$scope', '$http', '$window','$cookieStore','$root
 	
 		return false;
 	}
+	
+	$("#reportrange").on("change", function(event){
+		var innerText = document.getElementById("reportrange").innerText;
+		//alert(innerText);
+		$scope.dateRange = "";
+		$scope.dateRange = innerText;
+		$scope.$apply();
+		$scope.fetchSalesReportByDateRange();
+	});
+	
+	$scope.fetchSalesReportByDateRange = function() {
+		$scope.salesReportSuccess = false;
+		$scope.salesReportError = false;
+		$scope.loading = true;
+		var dateRang = $scope.dateRange.split("-");
+		$rootScope.salesReportStartDate = dateRang[0].trim(); 
+		$rootScope.salesReportEndDate = dateRang[1].trim(); 
+		$rootScope.limit = 0;
+		$rootScope.applyDateRange = true;
+		$route.reload();
+
+	};
 	
 	
 }];

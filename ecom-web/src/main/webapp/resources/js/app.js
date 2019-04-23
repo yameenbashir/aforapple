@@ -2084,7 +2084,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 				if($rootScope.limit === undefined)
 				{$rootScope.limit = 10;}
 				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["salesHistory"]==true){
-					controllerData = $http.get('salesHistory/getData/'+$cookieStore.get('_s_tk_com') + '/' + $rootScope.limit).success(function(Response) {
+					controllerData = $http.get('salesHistory/getData/'+$cookieStore.get('_s_tk_com') + '/' + $rootScope.limit+'/'+$rootScope.salesReportStartDate+"/"+$rootScope.salesReportEndDate+'/'+$rootScope.applyDateRange).success(function(Response) {
 						controllerData = Response;
 						//$rootScope.InvoiceMainBeansBindedCopy = controllerData;
 						localStorage.setItem("salesHistory", JSON.stringify(controllerData));
