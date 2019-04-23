@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
-import org.apache.poi.util.StringUtil;
-
 /**
  * @author Yameen Bashir
  *
