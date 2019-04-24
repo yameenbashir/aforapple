@@ -79,6 +79,7 @@
   <table-filter match-catalog="ecom" match-name="stock_order"/>
   <table-filter match-catalog="ecom" match-name="stock_order_detail"/>
   <table-filter match-catalog="ecom" match-name="stock_order_type"/>
+  <table-filter match-catalog="ecom" match-name="stock_order_v"/>
   <table-filter match-catalog="ecom" match-name="supplier_sales_report"/>
   <table-filter match-catalog="ecom" match-name="tag"/>
   <table-filter match-catalog="ecom" match-name="tag_sales_report"/>
