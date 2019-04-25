@@ -174,7 +174,7 @@ public class InventoryReportController {
 								//BigDecimal netPricee = (new BigDecimal(inventoryReport.getId().getSupplyPriceExclTax()).multiply(new BigDecimal(productBean.getMarkupPrct()).divide(new BigDecimal(100)))).add(new BigDecimal(productBean.getSupplyPriceExclTax())).setScale(5,RoundingMode.HALF_EVEN);
 								//BigDecimal newNetPrices =netPricee.setScale(2,RoundingMode.HALF_EVEN);
 								
-								BigDecimal retialPriceExclTax = (inventoryReport.getId().getSupplyPriceExclTax().setScale(2, RoundingMode.HALF_EVEN).multiply(inventoryReport.getId().getMarkupPrct().setScale(5, RoundingMode.HALF_EVEN).divide(new BigDecimal(100)))).add(inventoryReport.getId().getSupplyPriceExclTax()).setScale(5,RoundingMode.HALF_EVEN);
+								//BigDecimal retialPriceExclTax = (inventoryReport.getId().getSupplyPriceExclTax().setScale(2, RoundingMode.HALF_EVEN).multiply(inventoryReport.getId().getMarkupPrct().setScale(5, RoundingMode.HALF_EVEN).divide(new BigDecimal(100)))).add(inventoryReport.getId().getSupplyPriceExclTax()).setScale(5,RoundingMode.HALF_EVEN);
 								//retialPriceExclTax =retialPriceExclTax.setScale(5,RoundingMode.HALF_EVEN);
 								
 								inventoryReportBean.setStockValue((inventoryReport.getId().getNetPrice().setScale(2, RoundingMode.HALF_EVEN).multiply(new BigDecimal(inventoryReport.getId().getCurrentInventory()))).toString());
