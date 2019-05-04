@@ -34,8 +34,8 @@
 							class="vd-flex vd-flex--forced-row vd-flex--row vd-flex--justify-between vd-flex--align-center  ng-scope">
 							  
               
-							<span>   A list of all of your consignments
-							</span>
+							<!-- <span>   A list of all of your consignments
+							</span> -->
 							<div class="vd-button-group">
 							 <button id="btn_receiveStock" class="btn btn-success btn-lg" ng-click="addReceiveOrder()" ng-hide="isAdmin()">Receive Stock</button>
 							 <!-- <button id="btn_orderStock" class="btn btn-success btn-lg" ng-click="addPurchaseOrder()" ng-hide="isAdmin()">Order Stock</button> -->
@@ -44,11 +44,42 @@
 							 <button id="btn_transferStock" class="btn btn-success btn-lg" ng-click="addStockTransfer()" ng-hide="isAdmin()"  >Transfer Stock</button>
 							 <button id="btn_returntoWarehouseStock" class="btn btn-success btn-lg" ng-click="addStockReturntoWarehouse()" ng-hide="!isAdmin()">Return To Warehouse</button>
 							  <button id="btn_inventoryCountStock" class="btn btn-success btn-lg" ng-click="addInventoryCount()">Audit</button>
+							 
                              
 							</div>
+							
 						</div>
+						
 					</div>
 					</vd-section>
+					<vd-section sticky="" type="secondary"
+						class="cv-action-bar vd-section vd-section--secondary"
+						role="region">
+					<div class="vd-section-wrap">
+						<div
+							class="vd-flex vd-flex--forced-row vd-flex--row vd-flex--justify-between vd-flex--align-center  ng-scope">
+							  
+              
+							
+							<span ng-show="!loadAll">   A list of all of your consignments <i class="fa fa-hand-o-down text-white fa-4x" ></i>
+							</span>
+							<span ng-show="loadAll">  List all of your consignments by clicking on Load All Stock Orders
+							<i class="fa fa-hand-o-right text-white fa-4x" ></i></span>
+							<div class="vd-button-group" align="right" ng-show="dataLoading">
+									<button class="btn  btn-primary btn-lg" ng-disabled="!loadAll"
+										ng-click="loadAllStockOrders()">Load All Stock Orders</button>
+								</div>
+				<div class="vd-button-group" align="right" ng-show="!dataLoading">
+									<button class="btn  btn-primary btn-lg" ng-disabled="true">
+										Loading All Stock Orders<i
+											class="fa fa-arrow-right text-muted fa-spinner fa-spin "></i></button>
+								</div>
+							
+						</div>
+						
+					</div>
+					</vd-section>
+					
 
 	    	
 	    			<div class="box box-primary newFont">
@@ -56,6 +87,7 @@
                
 				 </div><!-- /.box-header -->
 				<div class="box-body">
+				 
 				<table id="myTable"  class="display" cellspacing="0" width="100%"  ng-clock>
 				    <thead >
 				        <tr >

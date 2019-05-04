@@ -185,10 +185,10 @@ App.run(['$rootScope', '$templateCache','$cookieStore','$window','$http','$timeo
 						if($rootScope.invoiceMainBeanNewRootList != null)
 						{
 
-							$rootScope.invoiceMainBeanNewRootList = _.filter($rootScope.invoiceMainBeanNewRootList, function(val) {
+							/*$rootScope.invoiceMainBeanNewRootList = _.filter($rootScope.invoiceMainBeanNewRootList, function(val) {
 								return val.synchedInd == 'true'
 
-							});
+							});*/
 
 							//updating the sale data in index DB
 							localforage.setItem('invoiceMainBeanNewList', null);
@@ -938,6 +938,55 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 		}
 
 	}); 
+	
+	$routeProvider.when('/downloadProducts', {
+		templateUrl: 'resources/html/downloadProducts/layout.html',
+		controller: DownloadProductsController,
+
+		resolve: {
+			"DownloadProductsControllerPreLoad": function( $q, $timeout,$http ,$cookieStore,$window,$rootScope) {
+				var myDefer = $q.defer();
+				var controllerData ='';
+				$rootScope.globalPageLoader = true;
+
+				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["products"]==true){
+					$timeout(function(){
+						myDefer.resolve({
+							loadControllerData: function() {
+								return 	controllerData;  
+							}
+						});
+					},10);
+//					controllerData = $http.post('products/getAllProducts/'+$cookieStore.get('_s_tk_com')).success(function(Response) {
+//						controllerData = Response.data;
+//						$timeout(function(){
+//							myDefer.resolve({
+//								loadControllerData: function() {
+//									return 	controllerData;  
+//								}
+//							});
+//						},10);
+//					}).error(function() {
+//						$window.location = '/app/#/login';
+//					});
+
+				}else{
+					if(typeof ($rootScope.menuMap) != "undefined"){
+						$window.location = '/app/#/login';
+						$rootScope.showErrorLoginModal = true;
+						$timeout(function(){
+							$rootScope.showErrorLoginModal = false;
+						}, 2000);	
+					}else{
+						$window.location = '/app/#/login';
+
+					}	    		    					
+				}
+				return myDefer.promise;
+			}
+		}
+
+	}); 
 
 	$routeProvider.when('/manageProduct', {
 		templateUrl: 'resources/html/manageProduct/layout.html',
@@ -1039,7 +1088,7 @@ App.config(['$routeProvider', function ( $routeProvider,$scope,$http) {
 
 				if(typeof ($rootScope.menuMap) !== "undefined" && $rootScope.menuMap["stockControl"]==true){
 					$rootScope.stockControlLoadedFully = true;
-					controllerData = $http.post('stockControl/getAllStockOrders/'+$cookieStore.get('_s_tk_com')).success(function(Response) {
+					controllerData = $http.post('stockControl/getAllStockOrders/'+$cookieStore.get('_s_tk_com')+'/'+"false").success(function(Response) {
 						controllerData = Response.data;
 						$timeout(function(){
 							myDefer.resolve({

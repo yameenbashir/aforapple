@@ -8,6 +8,8 @@ var StockControlController = ['$scope', '$http', '$window','$cookieStore','$root
 	
 	$rootScope.MainSideBarhideit = false;
 	$rootScope.MainHeaderideit = false;
+	$scope.dataLoading = false;
+	$scope.loadAll = true;
 	$scope.sesssionValidation = function(){
 		if(SessionService.validate()){
 			$scope._s_tk_com =  $cookieStore.get('_s_tk_com');	
@@ -161,9 +163,48 @@ var StockControlController = ['$scope', '$http', '$window','$cookieStore','$root
 						}, 10);
 			}
 		}
+		$scope.lodAllStockOrdersAsynchrnously();
 		$rootScope.globalPageLoader = false;
 	};
 	
+	$scope.lodAllStockOrdersAsynchrnously = function(){
+		$scope.dataLoading = false;
+		$http.post('stockControl/getAllStockOrders/'+$cookieStore.get('_s_tk_com')+'/'+"true").success(function(Response) {
+			$scope.data = Response.data;
+			$scope.dataLoading = true;
+		}).error(function() {
+			$window.location = '/app/#/login';
+		});
+	};
+	
+	$scope.loadAllStockOrders = function(){
+		$scope.dataLoading = false;
+		$scope.stockOrderBeansList = [];
+		$scope.stockOrderBeansList = $scope.data.stockOrderBeansList;
+/*		for(var i=0;i<$scope.data.productBeanList.length;i++){
+			if(!checkProductExist($scope.data.productBeanList[i])){
+				$scope.productsList.push($scope.data.productBeanList[i]);
+			}
+		}*/
+		var table = $('#myTable').DataTable();
+		if(table){
+			 table.destroy();
+		}
+		setTimeout(
+				function() 
+				{
+					$('#myTable').DataTable( {
+						responsive: true,
+						paging: true,
+						searching:true,
+						bInfo : true
+					} );
+
+
+				}, 10);
+		$scope.dataLoading = true;
+		$scope.loadAll = false;
+	};	
 	$scope.sessionValidation();
 	
 }];

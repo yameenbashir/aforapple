@@ -241,6 +241,9 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	<bean id="CompositeProductHistoryService" class="com.dowhile.service.impl.CompositeProductHistoryServiceImpl">
 		<property name="compositeProductHistoryDAO" ref="CompositeProductHistoryDAO" />
 	</bean>
+	<bean id="StockOrderVService" class="com.dowhile.service.impl.StockOrderVServiceImpl">
+		<property name="stockOrderVDAO" ref="StockOrderVDAO" />
+	</bean>
 	
 	<!-- <bean id="ContactUsService" class="com.dowhile.service.impl.ContactUsServiceImpl">
 		<property name="contactUsDAO" ref="ContactUsDAO" />
@@ -453,6 +456,9 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 	<bean id="CompositeProductHistoryDAO" class="com.dowhile.dao.impl.CompositeProductHistoryDAOImpl">
 		<property name="sessionFactory" ref="SessionFactory" />
 	</bean>
+	<bean id="StockOrderVDAO" class="com.dowhile.dao.impl.StockOrderVDAOImpl">
+		<property name="sessionFactory" ref="SessionFactory" />
+	</bean>
 	
 		
 	<!-- <bean id="ContactUsDAO" class="com.dowhile.dao.impl.ContactUsDAOImpl">
@@ -544,6 +550,7 @@ http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
 				<value>com.dowhile.ContactsSummmary</value>
 				<value>com.dowhile.ProductPriceHistory</value>
 				<value>com.dowhile.CompositeProductHistory</value>
+				<value>com.dowhile.StockOrderV</value>
 
 			</list>
 		</property>
