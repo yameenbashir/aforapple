@@ -38,6 +38,7 @@
   <table-filter match-catalog="ecom" match-name="inventory_count"/>
   <table-filter match-catalog="ecom" match-name="inventory_count_detail"/>
   <table-filter match-catalog="ecom" match-name="inventory_count_type"/>
+  <table-filter match-catalog="ecom" match-name="inventory_count_v"/>
   <table-filter match-catalog="ecom" match-name="inventory_report"/>
   <table-filter match-catalog="ecom" match-name="invoice_detail"/>
   <table-filter match-catalog="ecom" match-name="invoice_main"/>
