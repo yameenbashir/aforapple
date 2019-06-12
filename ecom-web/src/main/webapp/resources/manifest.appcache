@@ -16,7 +16,8 @@ CACHE:
 	bower_components/fullcalendar/dist/fullcalendar.js
 	bower_components/fullcalendar/dist/gcal.js
 
-	js/controllers/merged/output.js?v=2.2.9
+
+	js/controllers/merged/output.js?v=2.3.0
 	js/OrgHierarchyController.js
 
 	js/bootstrap.js
