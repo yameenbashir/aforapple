@@ -166,10 +166,10 @@ public class InventoryCountController {
 						inventoryCountBean.setAuditTransfer(String.valueOf(autoTransfer));
 						int inventoryCountId = 0;
 						if(inventoryCount.getCreatedDate() != null){
-							inventoryCountBean.setCreatedDate(simpleDateFormat.format(inventoryCount.getCreatedDate()).toString());
+							inventoryCountBean.setCreatedDate(DateTimeUtil.convertDBDateTimeToGuiFormat(inventoryCount.getCreatedDate()));
 						}
 						if(inventoryCount.getLastUpdated() != null){
-							inventoryCountBean.setLastUpdated(simpleDateFormat.format(inventoryCount.getLastUpdated()).toString());
+							inventoryCountBean.setLastUpdated(DateTimeUtil.convertDBDateTimeToGuiFormat(inventoryCount.getLastUpdated()));
 						}
 						if(inventoryCount.getCreatedBy() != null){
 							inventoryCountBean.setCreatedBy(String.valueOf(inventoryCount.getCreatedBy()));
