@@ -446,7 +446,7 @@ public class StockControlController {
 						stockOrderBean.setStockOrderTypeDesc(stockOrderV.getId().getStockOrderTypeDesc().toString());
 
 						stockOrderBean.setStockRefNo(stockOrderV.getId().getStockRefNo());
-						if(stockOrderBean.getSourceOutletId() == null){
+						if(stockOrderV.getId().getContactId() != 0){
 							stockOrderBean.setSupplierId(String.valueOf(stockOrderV.getId().getContactId()));
 							stockOrderBean.setSupplierName(stockOrderV.getId().getSupplier());
 						}
